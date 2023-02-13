@@ -1,4 +1,4 @@
-package com.filmdoms.community.review.data.entity;
+package com.filmdoms.community.board.data;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

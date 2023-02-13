@@ -23,19 +23,15 @@ public class AmazonS3Upload {
 
     private final AmazonS3 amazonS3;
 
-    public String upload(MultipartFile multipartFile) throws IOException {
-        String uuidFileName = UUID.randomUUID().toString() ;
-        String originalFileName = multipartFile.getOriginalFilename();
+    public String upload(MultipartFile multipartFile,String uuidFileName, String originalFileName ) throws IOException {
 
         String s3FileName = uuidFileName+ "-" + originalFileName ;
-
 
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentLength(multipartFile.getInputStream().available());
 
         amazonS3.putObject(bucket, s3FileName, multipartFile.getInputStream(), objMeta);
         String fileUrl =  amazonS3.getUrl(bucket, s3FileName).toString();
-        imageFileRepository.save(new ImageFile(uuidFileName,originalFileName,fileUrl));
 
         return fileUrl;
     }

@@ -1,4 +1,4 @@
-package com.filmdoms.community.review.data.constant;
+package com.filmdoms.community.board.data.constant;
 
 import lombok.AllArgsConstructor;
 
