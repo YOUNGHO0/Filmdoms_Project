@@ -1,6 +1,5 @@
 package com.filmdoms.community.account.controller;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -8,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.account.data.dto.AccountDto;
+import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.dto.request.LoginRequestDto;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -16,14 +15,19 @@ import com.filmdoms.community.account.service.AccountService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(
+        controllers = AccountController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class,
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
 @DisplayName("컨트롤러 - 회원 서비스")
 public class AccountControllerTest {
 
@@ -40,7 +44,7 @@ public class AccountControllerTest {
         // Given
         String username = "username";
         String password = "password";
-        when(accountService.login(username, password)).thenReturn(mock(AccountDto.class));
+        when(accountService.login(username, password)).thenReturn("mockJwtString");
 
         // When & Then
         mockMvc.perform(post("/api/v1/account/login")
@@ -49,9 +53,7 @@ public class AccountControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'SUCCESS')]").exists())
-                .andExpect(jsonPath("$..result[?(@..username)]").exists())
-                .andExpect(jsonPath("$..result[?(@..nickname)]").exists())
-                .andExpect(jsonPath("$..result[?(@..email)]").exists());
+                .andExpect(jsonPath("$..result[?(@..accessToken)]").exists());
     }
 
     @Test
