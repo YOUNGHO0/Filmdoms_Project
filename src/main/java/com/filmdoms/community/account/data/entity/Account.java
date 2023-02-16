@@ -64,13 +64,14 @@ public class Account {
         this.dateCreated = Timestamp.from(Instant.now());
     }
 
-    private Account(Long id, String username, String password) {
+    private Account(Long id, String username, String password, AccountRole role) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.accountRole = role;
     }
 
-    public static Account of(String username, String password) {
-        return new Account(null, username, password);
+    public static Account of(String username, String password, AccountRole role) {
+        return new Account(null, username, password, role);
     }
 }

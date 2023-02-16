@@ -4,6 +4,7 @@ import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.constants.AccountStatus;
 import com.filmdoms.community.account.data.entity.Account;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +44,9 @@ public class AccountDto implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Collection<GrantedAuthority> collect = new ArrayList<>();
+        collect.add((GrantedAuthority) () -> accountRole.getName());
+        return collect;
     }
 
     @Override
