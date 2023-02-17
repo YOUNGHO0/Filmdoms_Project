@@ -1,0 +1,36 @@
+jwt:
+  secret-key: ${JWT_KEY}
+
+---
+
+# 로컬 환경에서 테스트시 사용할 프로파일
+# CommunityApplication 을 우클릭하고, [그 외 실행/디버그], [실행 구성 수정] 선택 후에, 활성화된 프로파일에 local을 입력한다.
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  h2:
+    console:
+      enabled: true
+#     localhost:8080/${path}로 H2DB 접속
+      path: /h2-console
+
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    # JDBC URL을 jdbc:h2:mem:account 로 설정후 Connect를 누르면 DB에 접근 가능
+    url: jdbc:h2:mem:account;MODE=MySQL;
+    username: SA
+    password:
