@@ -3,6 +3,7 @@ jwt:
 
 ---
 
+
 # 로컬 환경에서 테스트시 사용할 프로파일
 # CommunityApplication 을 우클릭하고, [그 외 실행/디버그], [실행 구성 수정] 선택 후에, 활성화된 프로파일에 local을 입력한다.
 spring:
@@ -36,15 +37,17 @@ spring:
     username: SA
     password:
 
-  cloud:
-    aws:
-      credentials:
-        accessKey: ${AWS_ACCESS_KEY_ID}       # AWS IAM AccessKey 적기
-        secretKey: ${AWS_SECRET_ACCESS_KEY}   # AWS IAM SecretKey 적기
-      s3:
-        bucket: 버킷 이름    # ex) marryting-gyunny
-        dir: S3 디렉토리 이름 # ex) /gyunny
-      region:
-        static: ap-northeast-2
-      stack:
-        auto: false
+
+cloud:
+  aws:
+    credentials:
+      accessKey:  ${AWS_ACCESS_KEY_ID}
+      secretKey:  ${AWS_SECRET_ACCESS_KEY}
+    s3:
+      bucket: ${BUCKET_NAME}
+      dir: /image
+    region:
+      static: ap-northeast-2
+
+    stack:
+      auto: false
