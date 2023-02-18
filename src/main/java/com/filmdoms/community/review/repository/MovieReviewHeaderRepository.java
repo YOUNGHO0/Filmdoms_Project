@@ -1,6 +1,6 @@
-package com.filmdoms.community.account.repository;
+package com.filmdoms.community.review.repository;
 
-import com.filmdoms.community.account.data.entity.review.MovieReviewHeader;
+import com.filmdoms.community.review.data.entity.MovieReviewHeader;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

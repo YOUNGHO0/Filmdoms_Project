@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.data.entity.review;
+package com.filmdoms.community.review.data.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

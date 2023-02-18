@@ -1,7 +1,8 @@
-package com.filmdoms.community.account.data.entity.review;
+package com.filmdoms.community.review.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.data.entity.BaseTimeEntity;
+import com.filmdoms.community.review.data.constant.MovieReviewTag;
+import com.filmdoms.community.review.data.constant.PostStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

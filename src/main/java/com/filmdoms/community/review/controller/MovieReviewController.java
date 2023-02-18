@@ -1,8 +1,8 @@
-package com.filmdoms.community.account.controller;
+package com.filmdoms.community.review.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.account.data.dto.response.review.MovieReviewMainPageDto;
-import com.filmdoms.community.account.service.MovieReviewService;
+import com.filmdoms.community.review.data.dto.response.MovieReviewMainPageDto;
+import com.filmdoms.community.review.service.MovieReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

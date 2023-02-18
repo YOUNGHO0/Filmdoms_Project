@@ -1,15 +1,15 @@
-package com.filmdoms.community.account.service;
+package com.filmdoms.community.review.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
-import com.filmdoms.community.account.data.dto.response.review.MovieReviewMainPageDto;
+import com.filmdoms.community.review.data.dto.response.MovieReviewMainPageDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.data.entity.review.MovieReviewComment;
-import com.filmdoms.community.account.data.entity.review.MovieReviewContent;
-import com.filmdoms.community.account.data.entity.review.MovieReviewHeader;
-import com.filmdoms.community.account.data.entity.review.MovieReviewTag;
+import com.filmdoms.community.review.data.entity.MovieReviewComment;
+import com.filmdoms.community.review.data.entity.MovieReviewContent;
+import com.filmdoms.community.review.data.entity.MovieReviewHeader;
+import com.filmdoms.community.review.data.constant.MovieReviewTag;
 import com.filmdoms.community.account.repository.AccountRepository;
-import com.filmdoms.community.account.repository.MovieReviewCommentRepository;
-import com.filmdoms.community.account.repository.MovieReviewHeaderRepository;
+import com.filmdoms.community.review.repository.MovieReviewCommentRepository;
+import com.filmdoms.community.review.repository.MovieReviewHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

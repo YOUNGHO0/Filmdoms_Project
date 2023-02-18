@@ -1,10 +1,12 @@
-package com.filmdoms.community.account.repository;
+package com.filmdoms.community.review.repository;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.data.entity.review.MovieReviewContent;
-import com.filmdoms.community.account.data.entity.review.MovieReviewHeader;
-import com.filmdoms.community.account.data.entity.review.MovieReviewTag;
+import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.review.data.entity.MovieReviewContent;
+import com.filmdoms.community.review.data.entity.MovieReviewHeader;
+import com.filmdoms.community.review.data.constant.MovieReviewTag;
+import com.filmdoms.community.review.repository.MovieReviewHeaderRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

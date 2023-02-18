@@ -1,7 +1,7 @@
-package com.filmdoms.community.account.data.dto.response.review;
+package com.filmdoms.community.review.data.dto.response;
 
-import com.filmdoms.community.account.data.entity.review.MovieReviewHeader;
-import com.filmdoms.community.account.data.entity.review.MovieReviewTag;
+import com.filmdoms.community.review.data.entity.MovieReviewHeader;
+import com.filmdoms.community.review.data.constant.MovieReviewTag;
 import lombok.Getter;
 
 @Getter

@@ -1,7 +1,7 @@
-package com.filmdoms.community.account.data.entity.review;
+package com.filmdoms.community.review.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.filmdoms.community.account.data.entity.BaseTimeEntity;
+import com.filmdoms.community.review.data.constant.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
