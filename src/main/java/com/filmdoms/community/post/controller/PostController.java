@@ -26,4 +26,11 @@ public class PostController {
                 .map(PostMainPageResponseDto::from)
                 .collect(Collectors.toList()));
     }
+
+    // TODO: 게시글 작성 기능 구현 후 삭제
+    @PostMapping("/test/post")
+    public Response testPost(@RequestParam String title) {
+        postService.testPost(title);
+        return Response.success();
+    }
 }
