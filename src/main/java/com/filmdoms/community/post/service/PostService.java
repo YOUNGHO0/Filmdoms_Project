@@ -30,4 +30,18 @@ public class PostService {
                 .map(PostBriefDto::from)
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    // TODO: 게시글 작성 기능 구현 후 삭제
+    public void testPost(String title) {
+        Account testAccount = Account.of(1L, "tester", "testpw", AccountRole.USER);
+        postRepository.save(
+                Post.builder()
+                        .account(testAccount)
+                        .postCategory(PostCategory.FREE)
+                        .title(title)
+                        .content("This is a test post.")
+                        .view(0)
+                        .build()
+        );
+    }
 }

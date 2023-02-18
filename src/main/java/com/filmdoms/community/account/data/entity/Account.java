@@ -74,4 +74,8 @@ public class Account {
     public static Account of(String username, String password, AccountRole role) {
         return new Account(null, username, password, role);
     }
+
+    public static Account of(Long id, String username, String password, AccountRole role) {
+        return new Account(id, username, password, role);
+    }
 }
