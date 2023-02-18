@@ -36,4 +36,10 @@ public class AccountController {
         AccountDto accountDto = accountService.join();
         return Response.success();
     }
+
+    @GetMapping("/hello")
+    public String test()
+    {
+        return "테스트에 성공하였습니다";
+    }
 }
