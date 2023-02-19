@@ -44,7 +44,11 @@ class PostControllerTest {
         given(postService.getMainPagePosts()).willReturn(getMockPostBriefDtos());
 
         // When & Then
+<<<<<<< HEAD
         mockMvc.perform(get("/api/v1/main/post"))
+=======
+        mockMvc.perform(get("/api/main/post"))
+>>>>>>> #11-main-post
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
