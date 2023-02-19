@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config.amazons3;
+package com.filmdoms.community.imagefile.amazons3;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

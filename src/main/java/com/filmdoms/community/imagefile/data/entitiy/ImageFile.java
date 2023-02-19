@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.data.entity;
+package com.filmdoms.community.imagefile.data.entitiy;
 
 
 import jakarta.persistence.*;
