@@ -6,6 +6,48 @@ server:
       enabled: false
 ---
 
+spring:
+  config:
+    activate:
+      on-profile: default
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:account;MODE=MySQL;
+    username: SA
+
+cloud:
+  aws:
+    credentials:
+      accessKey:  ${AWS_ACCESS_KEY_ID}
+      secretKey:  ${AWS_SECRET_ACCESS_KEY}
+    s3:
+      bucket: ${BUCKET_NAME}
+      dir: /image
+    region:
+      static: ap-northeast-2
+
+    stack:
+      auto: false
+
+
+---
 
 # 로컬 환경에서 테스트시 사용할 프로파일
 # CommunityApplication 을 우클릭하고, [그 외 실행/디버그], [실행 구성 수정] 선택 후에, 활성화된 프로파일에 local을 입력한다.
