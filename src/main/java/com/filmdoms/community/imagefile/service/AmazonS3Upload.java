@@ -1,9 +1,9 @@
-package com.filmdoms.community.account.service;
+package com.filmdoms.community.imagefile.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.filmdoms.community.account.data.entity.ImageFile;
-import com.filmdoms.community.account.repository.ImageFileRepository;
+import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
+import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

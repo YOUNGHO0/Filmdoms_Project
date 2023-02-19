@@ -5,12 +5,8 @@ import com.filmdoms.community.account.data.dto.request.LoginRequestDto;
 import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.service.AccountService;
-import com.filmdoms.community.account.service.AmazonS3Upload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping()
@@ -18,7 +14,7 @@ import java.io.IOException;
 public class AccountController {
 
     private final AccountService accountService;
-    private final AmazonS3Upload amazonS3Upload;
+
 
     @PostMapping("/login")
     public Response<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
@@ -44,11 +40,5 @@ public class AccountController {
     }
 
 
-    @PostMapping("/api/v1/fileupload")
-    public Response<String> uploadFile(@RequestParam("images") MultipartFile multipartFile) throws IOException {
-
-        return Response.success(amazonS3Upload.upload(multipartFile)) ;
-
-    }
 
 }
