@@ -6,28 +6,24 @@ jwt:
 spring:
   config:
     activate:
-      on-profile: default
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+      on-profile: dev
 
   jpa:
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
     open-in-view: false
-    database-platform: org.hibernate.dialect.H2Dialect
 
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:account;MODE=MySQL;
-    username: SA
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/filmdoms
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 cloud:
   aws:
@@ -74,8 +70,8 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     # JDBC URL을 jdbc:h2:mem:account 로 설정후 Connect를 누르면 DB에 접근 가능
-    url: jdbc:h2:tcp://localhost/~/account
-    #jdbc:h2:mem:account;MODE=MySQL;
+    url: jdbc:h2:mem:account;MODE=MySQL;
+    #jdbc:h2:tcp://localhost/~/account
     username: SA
     password:
 
