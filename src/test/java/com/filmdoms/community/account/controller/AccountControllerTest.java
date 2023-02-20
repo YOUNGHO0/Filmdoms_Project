@@ -47,7 +47,7 @@ public class AccountControllerTest {
         when(accountService.login(username, password)).thenReturn("mockJwtString");
 
         // When & Then
-        mockMvc.perform(post("/api/v1/account/login")
+        mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new LoginRequestDto(username, password)))
                 ).andDo(print())
@@ -67,7 +67,7 @@ public class AccountControllerTest {
         );
 
         // When & Then
-        mockMvc.perform(post("/api/v1/account/login")
+        mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new LoginRequestDto(username, password)))
                 ).andDo(print())
@@ -86,7 +86,7 @@ public class AccountControllerTest {
         );
 
         // When & Then
-        mockMvc.perform(post("/api/v1/account/login")
+        mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new LoginRequestDto(username, password)))
                 ).andDo(print())
