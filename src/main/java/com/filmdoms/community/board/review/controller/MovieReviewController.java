@@ -1,23 +1,23 @@
-package com.filmdoms.community.review.controller;
+package com.filmdoms.community.board.review.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.review.data.dto.response.MovieReviewMainPageDto;
-import com.filmdoms.community.review.service.MovieReviewService;
+import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
+import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
+import com.filmdoms.community.board.review.service.MovieReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
-@Controller
+@RestController
 @RequestMapping("/api/v1/review")
 @RequiredArgsConstructor
 public class MovieReviewController {
 
     private final MovieReviewService movieReviewService;
+
+
 
     @GetMapping("/main-page")
     public ResponseEntity<Response<List<MovieReviewMainPageDto>>> mainPageReview() {
@@ -30,4 +30,13 @@ public class MovieReviewController {
         movieReviewService.initData();
         return ResponseEntity.ok().body(Response.success());
     }
+
+    @PostMapping("/write")
+    public Response<String> writeReview(@RequestPart MovieReviewPostDto movieReviewPostDto, @RequestPart MultipartFile multipartFile )
+    {
+
+     return movieReviewService.writeMovieReview(movieReviewPostDto,multipartFile);
+    }
+
+
 }
