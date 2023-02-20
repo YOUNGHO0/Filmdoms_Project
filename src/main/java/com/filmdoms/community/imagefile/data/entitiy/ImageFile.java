@@ -3,7 +3,6 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardContentCore;
-import com.filmdoms.community.board.review.data.entity.MovieReviewContent;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +20,7 @@ public class ImageFile extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "content_id")
-    private BoardContentCore boardContentCore;
+    public BoardContentCore boardContentCore;
 
 
     public ImageFile(String uuidFileName, String originalFileName, String fileUrl, BoardContentCore boardContentCore) {

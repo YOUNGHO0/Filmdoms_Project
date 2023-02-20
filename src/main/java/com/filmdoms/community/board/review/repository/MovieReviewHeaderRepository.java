@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface MovieReviewHeaderRepository extends JpaRepository<MovieReviewHeader, Long> {
 
-    public List<MovieReviewHeader> findTop5ByOrderByDateCreatedDesc();
+     List<MovieReviewHeader> findTop5ByOrderByDateCreatedDesc();
+
+
 }
