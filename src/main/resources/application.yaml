@@ -1,6 +1,9 @@
 jwt:
   secret-key: ${JWT_KEY}
-
+server:
+  error:
+    whitelabel:
+      enabled: false
 ---
 
 
