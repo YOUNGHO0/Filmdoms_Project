@@ -4,11 +4,13 @@ server:
   error:
     whitelabel:
       enabled: false
+
 ---
 
 
 # 로컬 환경에서 테스트시 사용할 프로파일
 # CommunityApplication 을 우클릭하고, [그 외 실행/디버그], [실행 구성 수정] 선택 후에, 활성화된 프로파일에 local을 입력한다.
+
 spring:
   config:
     activate:
@@ -54,6 +56,9 @@ cloud:
 
     stack:
       auto: false
+
+
+---
 
 
 # 로컬 환경에서 테스트시 사용할 프로파일
