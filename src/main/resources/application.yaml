@@ -97,6 +97,7 @@ cloud:
       bucket: ${BUCKET_NAME}
       dir: /image
     region:
+
       static: ap-northeast-2
 
     stack:
