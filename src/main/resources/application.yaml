@@ -68,12 +68,6 @@ spring:
     activate:
       on-profile: dev
 
-  h2:
-    console:
-      enabled: true
-#     localhost:8080/${path}로 H2DB 접속
-      path: /h2-console
-
   jpa:
     defer-datasource-initialization: true
     hibernate:
@@ -84,7 +78,7 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
     open-in-view: false
-    database-platform: org.hibernate.dialect.H2Dialect
+
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
