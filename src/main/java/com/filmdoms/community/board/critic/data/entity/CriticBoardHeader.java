@@ -6,6 +6,7 @@ import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import com.filmdoms.community.post.data.entity.Post;
 import jakarta.persistence.Entity;
+import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -15,9 +16,10 @@ public class CriticBoardHeader extends BoardHeadCore {
 
     String preHeader;
 
-    public CriticBoardHeader(String title, Account author, int view, PostStatus postStatus, BoardContent content,String preHeader)
+
+    public CriticBoardHeader(String title, Account author, PostStatus postStatus, BoardContent content,String preHeader)
     {
-        super(title,author,view,postStatus,content);
+        super(title,author,content);
         this.preHeader =preHeader;
 
     }

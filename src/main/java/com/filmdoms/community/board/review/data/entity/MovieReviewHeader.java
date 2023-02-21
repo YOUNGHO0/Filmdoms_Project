@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Table(name = "\"movie_review_header\"")
 
 public class MovieReviewHeader extends BoardHeadCore {
@@ -23,13 +24,14 @@ public class MovieReviewHeader extends BoardHeadCore {
     @Enumerated(EnumType.STRING)
     private MovieReviewTag tag;
 
+    @Builder.Default
     @OneToMany(mappedBy = "header", cascade = CascadeType.REMOVE)
     private List<MovieReviewComment> comments = new ArrayList<>();
 
-    @Builder
-    public MovieReviewHeader(String title, Account author, int view, PostStatus postStatus, BoardContent content, String preHeader,MovieReviewTag tag)
+
+    public MovieReviewHeader(String title, Account author, BoardContent content, MovieReviewTag tag)
     {
-        super(title,author,view,postStatus,content);
+        super(title,author,content);
         this.tag = tag;
 
     }

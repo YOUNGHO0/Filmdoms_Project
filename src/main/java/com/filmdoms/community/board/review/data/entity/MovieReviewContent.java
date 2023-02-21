@@ -5,6 +5,7 @@ import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +14,14 @@ import java.util.List;
 @DiscriminatorValue("MovieReviewContent")
 @Table(name = "\"movie_review_content\"")
 @NoArgsConstructor
-@Data
+@SuperBuilder
 public class MovieReviewContent extends BoardContent {
 
-
-    @OneToMany(mappedBy = "boardContentCore" )
-    public List<ImageFile> imageFiles = new ArrayList<>();
 
 
 
    public MovieReviewContent(String contentName){
-       this.setContent(contentName);
+       super(contentName);
     }
 
 

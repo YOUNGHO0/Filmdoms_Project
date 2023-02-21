@@ -5,10 +5,14 @@ import com.filmdoms.community.board.data.constant.PostStatus;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "DTYPE")
+@SuperBuilder
+@Getter
 public class BoardHeadCore extends  BaseTimeEntity {
 
     @Id
@@ -21,8 +25,10 @@ public class BoardHeadCore extends  BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account author;
 
+    @Builder.Default
     private int view = 0;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private PostStatus status = PostStatus.ACTIVE;
 
@@ -31,12 +37,11 @@ public class BoardHeadCore extends  BaseTimeEntity {
     private BoardContent content;
 
 
-    @Builder
-    public BoardHeadCore(String title, Account author, int view, PostStatus status, BoardContent content) {
+
+    public BoardHeadCore(String title, Account author, BoardContent content) {
 
         this.title = title;
         this.author = author;
-        this.status = status;
         this.content = content;
     }
 
