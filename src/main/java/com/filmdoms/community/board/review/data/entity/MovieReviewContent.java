@@ -1,6 +1,6 @@
 package com.filmdoms.community.board.review.data.entity;
 
-import com.filmdoms.community.board.data.BoardContentCore;
+import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "\"movie_review_content\"")
 @NoArgsConstructor
 @Data
-public class MovieReviewContent extends BoardContentCore {
+public class MovieReviewContent extends BoardContent {
 
 
     @OneToMany(mappedBy = "boardContentCore" )

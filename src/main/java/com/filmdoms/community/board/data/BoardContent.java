@@ -8,7 +8,7 @@ import lombok.Data;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "DTYPE")
 @Data
-public class BoardContentCore extends BaseTimeEntity {
+public class BoardContent extends BaseTimeEntity {
 
     @Id @GeneratedValue
     Long id;

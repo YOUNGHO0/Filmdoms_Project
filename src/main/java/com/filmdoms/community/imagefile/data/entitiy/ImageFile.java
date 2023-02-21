@@ -2,7 +2,6 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.BoardContentCore;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
