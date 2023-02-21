@@ -37,7 +37,6 @@ public class MovieReviewService {
     private final MovieReviewCommentRepository commentRepository;
     private final AccountRepository accountRepository;
     private final ImageFileRepository imageFileRepository;
-
     private final AmazonS3Upload amazonS3Upload;
 
 
