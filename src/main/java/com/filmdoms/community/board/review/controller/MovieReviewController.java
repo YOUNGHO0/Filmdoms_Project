@@ -32,7 +32,7 @@ public class MovieReviewController {
     }
 
     @PostMapping("/write")
-    public Response<String> writeReview(@RequestPart MovieReviewPostDto movieReviewPostDto, @RequestPart MultipartFile multipartFile )
+    public Response<String> writeReview(@RequestPart MovieReviewPostDto movieReviewPostDto, @RequestPart(required = false) MultipartFile multipartFile )
     {
 
      return movieReviewService.writeMovieReview(movieReviewPostDto,multipartFile);
