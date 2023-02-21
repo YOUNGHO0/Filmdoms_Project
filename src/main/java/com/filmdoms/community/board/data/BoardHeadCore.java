@@ -3,11 +3,12 @@ package com.filmdoms.community.board.data;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Data
 public class BoardHeadCore extends  BaseTimeEntity {
 
     @Id
@@ -30,4 +31,16 @@ public class BoardHeadCore extends  BaseTimeEntity {
     private BoardContent content;
 
 
+    @Builder
+    public BoardHeadCore(String title, Account author, int view, PostStatus status, BoardContent content) {
+
+        this.title = title;
+        this.author = author;
+        this.status = status;
+        this.content = content;
+    }
+
+    public BoardHeadCore() {
+
+    }
 }
