@@ -73,7 +73,7 @@ public class MovieReviewService {
 
             try {
               String url =  amazonS3Upload.upload(multipartFile, uuidFileName, originalFileName);
-              ImageFile imageFile = new ImageFile(uuidFileName, originalFileName,url,header.getContent());
+              ImageFile imageFile = new ImageFile(uuidFileName, originalFileName,url,header);
               imageFileRepository.save(imageFile);
                 log.info("이미지업로드완료");
               return Response.success(url);
