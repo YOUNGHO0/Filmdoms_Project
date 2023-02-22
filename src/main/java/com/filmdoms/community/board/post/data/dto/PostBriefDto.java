@@ -1,9 +1,9 @@
 package com.filmdoms.community.board.post.data.dto;
 
-import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.board.post.data.constants.PostCategory;
-import com.filmdoms.community.board.post.data.entity.Post;
+import com.filmdoms.community.board.post.data.entity.PostHeader;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,26 +17,22 @@ import lombok.Getter;
 public class PostBriefDto {
 
     private Long id;
-    private AccountDto accountDto;
+    private PostAccountDto author;
     private PostCategory postCategory;
     private String title;
-    private String content;
     private Integer view;
-    private Integer postCommentsCount;
-    private Timestamp dateCreated;
-    private Timestamp dateLastModified;
+    private Integer commentCount;
+    private LocalDateTime dateCreated;
 
-    public static PostBriefDto from(Post entity) {
+    public static PostBriefDto from(PostHeader entity) {
         return new PostBriefDto(
                 entity.getId(),
-                AccountDto.from(entity.getAccount()),
-                entity.getPostCategory(),
+                PostAccountDto.from(entity.getAuthor()),
+                entity.getCategory(),
                 entity.getTitle(),
-                entity.getContent(),
                 entity.getView(),
-                entity.getPostComments().size(),
-                entity.getDateCreated(),
-                entity.getDateLastModified()
+                entity.getComments().size(),
+                entity.getDateCreated()
         );
     }
 }
