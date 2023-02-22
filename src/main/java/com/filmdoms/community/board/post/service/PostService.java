@@ -1,11 +1,11 @@
-package com.filmdoms.community.post.service;
+package com.filmdoms.community.board.post.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.post.data.dto.PostBriefDto;
-import com.filmdoms.community.post.data.entity.Post;
-import com.filmdoms.community.post.repository.PostRepository;
+import com.filmdoms.community.board.post.data.constants.PostCategory;
+import com.filmdoms.community.board.post.data.dto.PostBriefDto;
+import com.filmdoms.community.board.post.repository.PostRepository;
+import com.filmdoms.community.board.post.data.entity.Post;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class PostService {
     @Transactional(readOnly = true) // 이거 안붙여주면 댓글 개수 셀 때 지연로딩 때문에 오류가 난다.
     public List<PostBriefDto> getMainPagePosts() {
 
-        return postRepository.findFirst4ByOrderByDateCreated()
+        return postRepository.findFirst4ByOrderByIdDesc()
                 .stream()
                 .map(PostBriefDto::from)
                 .collect(Collectors.toUnmodifiableList());

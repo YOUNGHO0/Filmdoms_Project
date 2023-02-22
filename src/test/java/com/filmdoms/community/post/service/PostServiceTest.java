@@ -4,17 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.post.data.dto.PostBriefDto;
-import com.filmdoms.community.post.data.entity.Post;
-import com.filmdoms.community.post.repository.PostRepository;
+import com.filmdoms.community.board.post.data.constants.PostCategory;
+import com.filmdoms.community.board.post.data.dto.PostBriefDto;
+import com.filmdoms.community.board.post.data.entity.Post;
+import com.filmdoms.community.board.post.repository.PostRepository;
+import com.filmdoms.community.board.post.service.PostService;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ class PostServiceTest {
     @DisplayName("최근 게시글 조회를 요청하면, 최근 게시글을 4개 반환한다.")
     void givenNothing_whenSearchingRecentPosts_thenReturnsRecentPosts() {
         // Given
-        given(postRepository.findFirst4ByOrderByDateCreated()).willReturn(getMockPosts());
+        given(postRepository.findFirst4ByOrderByIdDesc()).willReturn(getMockPosts());
 
         // When
         List<PostBriefDto> postBriefDtos = postService.getMainPagePosts();

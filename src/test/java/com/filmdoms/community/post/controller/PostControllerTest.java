@@ -8,9 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.filmdoms.community.account.config.SecurityConfig;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.post.data.dto.PostBriefDto;
-import com.filmdoms.community.post.service.PostService;
+import com.filmdoms.community.board.post.controller.PostController;
+import com.filmdoms.community.board.post.data.constants.PostCategory;
+import com.filmdoms.community.board.post.data.dto.PostBriefDto;
+import com.filmdoms.community.board.post.service.PostService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class PostControllerTest {
         given(postService.getMainPagePosts()).willReturn(getMockPostBriefDtos());
 
         // When & Then
-        mockMvc.perform(get("/api/v1/main/post"))
+        mockMvc.perform(get("/api/v1/post/main-page"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
