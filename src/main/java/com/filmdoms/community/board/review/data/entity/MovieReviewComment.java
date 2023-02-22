@@ -12,13 +12,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
-@Table(name = "\"movie_review_comment\"")
+@Table(name = "movie_review_comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @BatchSize(size = 1000)
 @Getter
 public class MovieReviewComment extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonIgnore

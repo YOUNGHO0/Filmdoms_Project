@@ -4,8 +4,8 @@ import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
+import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,22 +28,21 @@ class MovieReviewHeaderRepositoryTest {
         Account author = Account.of("user1", "1234", AccountRole.USER);
         accountRepository.save(author);
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             MovieReviewHeader header = MovieReviewHeader.builder()
                     .tag(MovieReviewTag.A)
                     .title("review " + i)
                     .author(author)
-                    .content(BoardContent.builder().content("test content").build())
+                    .boardContent(BoardContent.builder().content("test content").build())
                     .build();
             movieReviewHeaderRepository.save(header);
             Thread.sleep(10);
         }
 
         List<MovieReviewHeader> result = movieReviewHeaderRepository.findTop5ByOrderByDateCreatedDesc();
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             Assertions.assertThat(result.get(i).getTitle())
                     .endsWith(String.valueOf(9 - i));
         }
     }
-
 }

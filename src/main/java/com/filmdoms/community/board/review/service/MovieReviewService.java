@@ -1,17 +1,17 @@
 package com.filmdoms.community.board.review.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
+import com.filmdoms.community.board.data.constant.MovieReviewTag;
 import com.filmdoms.community.board.review.data.dto.request.MovieReviewCreateRequestDto;
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewCreateResponseDto;
-import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
-import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
 import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
-import com.filmdoms.community.board.data.constant.MovieReviewTag;
-import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.review.repository.MovieReviewCommentRepository;
 import com.filmdoms.community.board.review.repository.MovieReviewHeaderRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
@@ -56,7 +56,7 @@ public class MovieReviewService {
                 .tag(requestDto.getTag())
                 .author(author)
                 .title(requestDto.getTitle())
-                .content(content)
+                .boardContent(content)
                 .build();
 
         MovieReviewHeader savedHeader = headerRepository.save(header);
@@ -71,7 +71,7 @@ public class MovieReviewService {
         Account author = Account.of("movieReviewUser", "1234", AccountRole.USER);
         accountRepository.save(author);
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             BoardContent content = BoardContent.builder()
                     .content("test content")
                     .build();
@@ -80,14 +80,14 @@ public class MovieReviewService {
                     .tag(MovieReviewTag.A)
                     .title("review " + i)
                     .author(author)
-                    .content(content)
+                    .boardContent(content)
                     .build();
 
             headerRepository.save(header);
             Thread.sleep(10);
 
             //임시 데이터 10개 모두에 댓글 달리도록 수정
-            for(int j = 0; j < i % 2 + 1; j++) {
+            for (int j = 0; j < i % 2 + 1; j++) {
                 MovieReviewComment comment = MovieReviewComment.builder()
                         .header(header)
                         .author(author)

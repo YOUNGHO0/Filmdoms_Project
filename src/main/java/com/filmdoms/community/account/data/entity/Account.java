@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "\"account\"", indexes = {
+@Table(name = "account", indexes = {
         @Index(columnList = "username"),
         @Index(columnList = "email")
 })

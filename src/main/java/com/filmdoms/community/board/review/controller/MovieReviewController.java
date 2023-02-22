@@ -2,18 +2,17 @@ package com.filmdoms.community.board.review.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.board.review.data.dto.request.MovieReviewCreateRequestDto;
-import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewCreateResponseDto;
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
 import com.filmdoms.community.board.review.service.MovieReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/review")
