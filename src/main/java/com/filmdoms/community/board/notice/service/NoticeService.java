@@ -72,7 +72,6 @@ public class NoticeService {
         }
     }
 
-    //추후 수정 필수 (현재 메인 이미지 파일은 noticeHeader.mainImage와 일대일 매핑 상태, noticeHeader.imageFiles와 연관 관계가 맺어지지 않음)
     public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, MultipartFile mainImageMultipartFile, List<MultipartFile> subImageMultipartFiles) throws IOException {
         //인증 로직 필요
 
