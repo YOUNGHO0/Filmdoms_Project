@@ -2,27 +2,26 @@ package com.filmdoms.community.board.data;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE")
+@DiscriminatorColumn
 @NoArgsConstructor
-@SuperBuilder
-public class BoardContent extends BaseTimeEntity {
+
+public final class BoardContent  {
 
     @Id @GeneratedValue
     Long id;
     String content;
 
 
-    public BoardContent(String content)
+    @Builder
+    private BoardContent(String content)
     {
         this.content = content;
     }
-
 
 
 

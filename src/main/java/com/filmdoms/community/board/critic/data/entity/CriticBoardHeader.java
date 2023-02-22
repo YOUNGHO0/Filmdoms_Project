@@ -4,21 +4,21 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.board.data.constant.PostStatus;
-import com.filmdoms.community.post.data.entity.Post;
 import jakarta.persistence.Entity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
 
 @Entity
-@SuperBuilder
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CriticBoardHeader extends BoardHeadCore {
 
 
     String preHeader;
 
-
+    @Builder
     public CriticBoardHeader(String title, Account author, PostStatus postStatus, BoardContent content,String preHeader)
     {
         super(title,author,content);
@@ -26,7 +26,5 @@ public class CriticBoardHeader extends BoardHeadCore {
 
     }
 
-    public CriticBoardHeader() {
 
-    }
 }

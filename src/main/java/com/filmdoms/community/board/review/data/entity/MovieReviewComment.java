@@ -7,14 +7,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "\"movie_review_comment\"")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @BatchSize(size = 1000)
-@SuperBuilder
 public class MovieReviewComment extends BaseTimeEntity {
 
     @Id @GeneratedValue
@@ -31,10 +29,10 @@ public class MovieReviewComment extends BaseTimeEntity {
 
     private String content;
 
-    @Builder.Default
+
     private CommentStatus status = CommentStatus.ACTIVE;
 
-
+    @Builder
     public MovieReviewComment(MovieReviewHeader header, MovieReviewComment parentComment, String content) {
         this.header = header;
         this.parentComment = parentComment;

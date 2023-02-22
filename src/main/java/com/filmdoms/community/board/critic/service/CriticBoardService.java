@@ -7,15 +7,10 @@ import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetRespo
 import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.critic.repository.CriticBoardHeaderRepository;
 import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.board.data.BoardHeadCore;
-import com.filmdoms.community.board.data.constant.MovieReviewTag;
-import com.filmdoms.community.board.data.constant.PostStatus;
-import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
-import com.filmdoms.community.board.review.data.entity.MovieReviewContent;
-import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3Upload;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -52,7 +47,7 @@ public class CriticBoardService {
         CriticBoardHeader criticBoardHeader = CriticBoardHeader.builder()
                 .preHeader(dto.getPreHeader())
                 .title(dto.getTitle())
-                .content(new BoardContent(dto.getContent()))
+                .content(BoardContent.builder().content(dto.getContent()).build())
                 .author(accountRepository.findByUsername(dto.getAuthor()).get())
                 .build();
 
@@ -89,7 +84,7 @@ public class CriticBoardService {
 
     public List<CriticBoardGetResponseDto> getCriticBoardList()
     {
-        List<CriticBoardHeader> resultBoard = em.createQuery("SELECT c from CriticBoardHeader c join fetch c.content join fetch c.author order by c.id desc  limit 5", CriticBoardHeader.class).getResultList();
+        List<CriticBoardHeader> resultBoard = em.createQuery("SELECT c from CriticBoardHeader c join fetch c.boardContent join fetch c.author order by c.id desc  limit 5", CriticBoardHeader.class).getResultList();
 
 
         TypedQuery<ImageFile> query = em.createQuery(
@@ -133,6 +128,7 @@ public class CriticBoardService {
     public String updateCriticBoard()
     {
 
+
         return "";
     }
 
@@ -140,6 +136,14 @@ public class CriticBoardService {
     {
 
         return "";
+    }
+
+    @PostConstruct
+    public void setInitalData()
+    {
+        // 초기 데이터 작성
+
+
     }
 
 

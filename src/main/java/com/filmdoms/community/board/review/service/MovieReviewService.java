@@ -1,16 +1,15 @@
 package com.filmdoms.community.board.review.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
-import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
-import com.filmdoms.community.board.review.data.entity.MovieReviewContent;
-import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
-import com.filmdoms.community.board.data.constant.MovieReviewTag;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.board.data.BoardContent;
+import com.filmdoms.community.board.data.constant.MovieReviewTag;
+import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
+import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
+import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
+import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
 import com.filmdoms.community.board.review.repository.MovieReviewCommentRepository;
 import com.filmdoms.community.board.review.repository.MovieReviewHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
@@ -56,7 +55,7 @@ public class MovieReviewService {
                 .tag(MovieReviewTag.A)
                 .title(dto.getTitle())
                 .author(accountRepository.findByUsername(dto.getAuthor()).get())
-                .content(new MovieReviewContent(dto.getContent()))
+                .content(BoardContent.builder().content(dto.getContent()).build())
                 .build();
         log.info("영화 작성 시작2");
 
@@ -96,7 +95,7 @@ public class MovieReviewService {
                     .tag(MovieReviewTag.A)
                     .title("review " + i)
                     .author(author)
-                    .content(new MovieReviewContent("test content"))
+                    .content(BoardContent.builder().content("test_content").build())
                     .build();
             headerRepository.save(header);
             Thread.sleep(10);

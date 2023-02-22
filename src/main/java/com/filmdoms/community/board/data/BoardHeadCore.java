@@ -3,20 +3,19 @@ package com.filmdoms.community.board.data;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE")
-@SuperBuilder
+@DiscriminatorColumn
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class BoardHeadCore extends  BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
@@ -25,27 +24,23 @@ public class BoardHeadCore extends  BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account author;
 
-    @Builder.Default
+
     private int view = 0;
 
-    @Builder.Default
+
     @Enumerated(EnumType.STRING)
     private PostStatus status = PostStatus.ACTIVE;
 
-    @JoinColumn(name = "movie_review_content_id")
+    @JoinColumn(name = "board_content_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private BoardContent content;
+    private BoardContent boardContent;
 
 
 
-    public BoardHeadCore(String title, Account author, BoardContent content) {
-
+    protected BoardHeadCore(String title, Account author, BoardContent boardContent) {
         this.title = title;
         this.author = author;
-        this.content = content;
-    }
-
-    public BoardHeadCore() {
-
+        this.boardContent = boardContent;
     }
 }
+
