@@ -1,62 +1,60 @@
 package com.filmdoms.community.board.post.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.board.data.constant.CommentStatus;
+import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
-import java.time.Instant;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Entity
-@Table(name = "post_comment")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PostComment {
+@Table(name = "\"post_comment\"")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class PostComment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "post_id")
-    @ManyToOne(optional = false)
-    private Post post;
+    @JoinColumn(name = "account_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Account author;
 
-    @JoinColumn(name = "user_id")
-    @ManyToOne(optional = false)
-    private Account account;
+    @JsonIgnore
+    @JoinColumn(name = "post_header_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private PostHeader header;
 
-    @Setter
+    @JoinColumn(name = "post_comment_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PostComment parentComment;
+
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "date_created")
-    private Timestamp dateCreated;
-
-    @Column(name = "date_last_modified")
-    private Timestamp dateLastModified;
-
-    @PrePersist
-    void dateCreated() {
-        this.dateCreated = Timestamp.from(Instant.now());
+    private CommentStatus status = CommentStatus.ACTIVE;
+    
+    @Builder
+    private PostComment(Account author, PostHeader header, PostComment parentComment, String content) {
+        this.author = author;
+        this.header = header;
+        this.parentComment = parentComment;
+        this.content = content;
     }
 
-    @PreUpdate
-    void dateLastModified() {
-        this.dateLastModified = Timestamp.from(Instant.now());
-    }
 
 }
