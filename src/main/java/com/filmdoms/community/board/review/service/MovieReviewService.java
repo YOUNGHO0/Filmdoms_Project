@@ -1,21 +1,20 @@
 package com.filmdoms.community.board.review.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.filmdoms.community.account.data.constants.AccountRole;
-import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
-import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
-import com.filmdoms.community.board.review.data.entity.MovieReviewContent;
-import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
-import com.filmdoms.community.board.data.constant.MovieReviewTag;
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.board.data.BoardContent;
+import com.filmdoms.community.board.data.constant.MovieReviewTag;
+import com.filmdoms.community.board.review.data.dto.request.MovieReviewCreateRequestDto;
+import com.filmdoms.community.board.review.data.dto.response.MovieReviewCreateResponseDto;
+import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
+import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
+import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
 import com.filmdoms.community.board.review.repository.MovieReviewCommentRepository;
 import com.filmdoms.community.board.review.repository.MovieReviewHeaderRepository;
-import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
-import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import com.filmdoms.community.imagefile.service.AmazonS3Upload;
+import com.filmdoms.community.imagefile.service.ImageFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,10 +34,7 @@ public class MovieReviewService {
     private final MovieReviewHeaderRepository headerRepository;
     private final MovieReviewCommentRepository commentRepository;
     private final AccountRepository accountRepository;
-    private final ImageFileRepository imageFileRepository;
-
-    private final AmazonS3Upload amazonS3Upload;
-
+    private final ImageFileService imageFileService;
 
     public List<MovieReviewMainPageDto> getMainPageDtos() {
         return headerRepository.findTop5ByOrderByDateCreatedDesc()
@@ -48,71 +43,58 @@ public class MovieReviewService {
                 .collect(Collectors.toList());
     }
 
+    public MovieReviewCreateResponseDto createReview(MovieReviewCreateRequestDto requestDto, List<MultipartFile> imageMultipartFiles) throws IOException {
+        //인증 로직 필요
 
-    public Response writeMovieReview(MovieReviewPostDto dto, MultipartFile multipartFile) {
+        Account author = accountRepository.findById(requestDto.getAccountId()).orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        log.info("영화 작성 시작");
+        BoardContent content = BoardContent.builder()
+                .content(requestDto.getContent())
+                .build();
 
         MovieReviewHeader header = MovieReviewHeader.builder()
-                .tag(MovieReviewTag.A)
-                .title(dto.getTitle())
-                .author(accountRepository.findByUsername(dto.getAuthor()).get())
-                .content(new MovieReviewContent(dto.getContent()))
+                .tag(requestDto.getTag())
+                .author(author)
+                .title(requestDto.getTitle())
+                .boardContent(content)
                 .build();
-        log.info("영화 작성 시작2");
 
-        headerRepository.save(header);
+        MovieReviewHeader savedHeader = headerRepository.save(header);
 
+        //이미지 추가 로직
+        imageFileService.saveImages(imageMultipartFiles, header);
 
-        String uuidFileName = null;
-        String originalFileName = null;
-        if (multipartFile != null) {
-            uuidFileName = UUID.randomUUID().toString();
-            originalFileName = multipartFile.getOriginalFilename();
-            log.info("영화 작성 시작3");
-
-            try {
-              String url =  amazonS3Upload.upload(multipartFile, uuidFileName, originalFileName);
-              ImageFile imageFile = new ImageFile(uuidFileName, originalFileName,url,header.getContent());
-              imageFileRepository.save(imageFile);
-                log.info("이미지업로드완료");
-              return Response.success(url);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-
-        log.info("영화 작성 시작4");
-
-        return Response.success();
+        return new MovieReviewCreateResponseDto(savedHeader);
     }
 
     public void initData() throws InterruptedException {
-        Account author = Account.of("user1", "1234", AccountRole.USER);
+        Account author = Account.of("movieReviewUser", "1234", AccountRole.USER);
         accountRepository.save(author);
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
+            BoardContent content = BoardContent.builder()
+                    .content("test content")
+                    .build();
+
             MovieReviewHeader header = MovieReviewHeader.builder()
                     .tag(MovieReviewTag.A)
                     .title("review " + i)
                     .author(author)
-                    .content(new MovieReviewContent("test content"))
+                    .boardContent(content)
                     .build();
+
             headerRepository.save(header);
             Thread.sleep(10);
-        }
-        List<MovieReviewHeader> result = headerRepository.findTop5ByOrderByDateCreatedDesc();
-        for(int i = 0; i < result.size(); i++) {
-            MovieReviewHeader header = result.get(i);
-            for(int j = 0; j < i % 2 + 1; j++) {
+
+            //임시 데이터 10개 모두에 댓글 달리도록 수정
+            for (int j = 0; j < i % 2 + 1; j++) {
                 MovieReviewComment comment = MovieReviewComment.builder()
                         .header(header)
+                        .author(author)
                         .content("test comment")
                         .build();
                 commentRepository.save(comment);
             }
         }
     }
-
 }

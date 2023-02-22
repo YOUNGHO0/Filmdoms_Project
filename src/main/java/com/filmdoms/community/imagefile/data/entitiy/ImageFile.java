@@ -2,7 +2,8 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.BoardContentCore;
+import com.filmdoms.community.board.data.BoardContent;
+import com.filmdoms.community.board.data.BoardHeadCore;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class ImageFile extends BaseTimeEntity {
 
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String originalFileName;
     String uuidFileName;
@@ -19,14 +20,14 @@ public class ImageFile extends BaseTimeEntity {
 
 
     @ManyToOne
-    @JoinColumn(name = "content_id")
-    public BoardContentCore boardContentCore;
+    @JoinColumn(name = "board_head_core_id")
+    public BoardHeadCore boardHeadCore;
 
 
-    public ImageFile(String uuidFileName, String originalFileName, String fileUrl, BoardContentCore boardContentCore) {
+    public ImageFile(String uuidFileName, String originalFileName, String fileUrl, BoardHeadCore boardHeadCore) {
         this.uuidFileName = uuidFileName;
         this.originalFileName = originalFileName;
         this.fileUrl = fileUrl;
-        this.boardContentCore = boardContentCore;
+        this.boardHeadCore = boardHeadCore;
     }
 }
