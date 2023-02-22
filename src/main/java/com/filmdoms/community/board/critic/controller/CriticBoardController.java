@@ -6,11 +6,13 @@ import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetRespo
 import com.filmdoms.community.board.critic.service.CriticBoardService;
 import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/critic")
@@ -24,12 +26,17 @@ public class CriticBoardController {
         return criticBoardService.writeCritic(criticBoardPostRequestDto,multipartFile);
     }
 
-//    @GetMapping("/list")
-//    public Response getCriticBoardList()
-//    {
-//
-//        return Response()
-//
-//
-//    }
+    @GetMapping("/list")
+    public Response getCriticBoardList()
+    {
+        List<CriticBoardGetResponseDto> criticBoardList = criticBoardService.getCriticBoardList();
+
+        for(int i=0; i<criticBoardList.size(); i++)
+        {
+            log.info("게시글 목록{}",criticBoardList.get(i).getTitle());
+        }
+        return Response.success(criticBoardList);
+
+
+    }
 }

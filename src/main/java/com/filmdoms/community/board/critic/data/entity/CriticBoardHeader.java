@@ -7,10 +7,12 @@ import com.filmdoms.community.board.data.constant.PostStatus;
 import com.filmdoms.community.post.data.entity.Post;
 import jakarta.persistence.Entity;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @SuperBuilder
+@Getter
 public class CriticBoardHeader extends BoardHeadCore {
 
 

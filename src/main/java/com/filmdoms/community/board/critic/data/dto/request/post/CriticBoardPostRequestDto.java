@@ -4,6 +4,7 @@ import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import lombok.Data;
 
+
 @Data
 public class CriticBoardPostRequestDto {
 
