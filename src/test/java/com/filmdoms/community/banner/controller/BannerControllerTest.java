@@ -1,6 +1,5 @@
 package com.filmdoms.community.banner.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -10,12 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.banner.data.dto.BannerDto;
-import com.filmdoms.community.banner.data.entity.Banner;
 import com.filmdoms.community.banner.service.BannerService;
-import com.filmdoms.community.post.controller.PostController;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.post.data.dto.PostBriefDto;
-import com.filmdoms.community.post.service.PostService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
