@@ -70,7 +70,7 @@ public class MovieReviewService {
     }
 
     public void initData() throws InterruptedException {
-        Account author = Account.of("user1", "1234", AccountRole.USER);
+        Account author = Account.of("movieReviewUser", "1234", AccountRole.USER);
         accountRepository.save(author);
 
         for(int i = 0; i < 10; i++) {
@@ -87,11 +87,8 @@ public class MovieReviewService {
 
             headerRepository.save(header);
             Thread.sleep(10);
-        }
-        List<MovieReviewHeader> result = headerRepository.findTop5ByOrderByDateCreatedDesc();
 
-        for(int i = 0; i < result.size(); i++) {
-            MovieReviewHeader header = result.get(i);
+            //임시 데이터 10개 모두에 댓글 달리도록 수정
             for(int j = 0; j < i % 2 + 1; j++) {
                 MovieReviewComment comment = MovieReviewComment.builder()
                         .header(header)
