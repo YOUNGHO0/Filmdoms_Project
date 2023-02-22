@@ -2,17 +2,19 @@ package com.filmdoms.community.board.data;
 
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
+@Table(name = "board_content")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class BoardContent extends BaseTimeEntity {
+public final class BoardContent {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String content;

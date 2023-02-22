@@ -6,14 +6,16 @@ import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "\"movie_review_header\"")
+@Table(name = "movie_review_header")
 @DiscriminatorValue("MovieReviewHeader")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -29,8 +31,8 @@ public class MovieReviewHeader extends BoardHeadCore {
     private List<ImageFile> imageFiles = new ArrayList<>();
 
     @Builder
-    private MovieReviewHeader(MovieReviewTag tag, String title, Account author, BoardContent content) {
-        super(title, author, content);
+    private MovieReviewHeader(MovieReviewTag tag, String title, Account author, BoardContent boardContent) {
+        super(title, author, boardContent);
         this.tag = tag;
     }
 }

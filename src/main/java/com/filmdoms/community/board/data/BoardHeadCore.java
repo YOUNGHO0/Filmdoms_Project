@@ -3,10 +3,12 @@ package com.filmdoms.community.board.data;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "board_head_core")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,13 +30,13 @@ public class BoardHeadCore extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private PostStatus status = PostStatus.ACTIVE;
 
-    @JoinColumn(name = "board_content_core_id")
+    @JoinColumn(name = "board_content_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private BoardContent content;
+    private BoardContent boardContent;
 
-    protected BoardHeadCore(String title, Account author, BoardContent content) {
+    protected BoardHeadCore(String title, Account author, BoardContent boardContent) {
         this.title = title;
         this.author = author;
-        this.content = content;
+        this.boardContent = boardContent;
     }
 }
