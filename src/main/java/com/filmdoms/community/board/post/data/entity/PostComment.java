@@ -20,9 +20,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Getter
 @Entity
-@Table(name = "\"post_comment\"")
+@Table(name = "post_comment")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostComment extends BaseTimeEntity {
 

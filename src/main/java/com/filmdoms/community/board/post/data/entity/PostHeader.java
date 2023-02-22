@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @DiscriminatorValue("PostHeader")
-@Table(name = "\"post_header\"", indexes = {
+@Table(name = "post_header", indexes = {
         @Index(columnList = "category")
 })
 @Getter
