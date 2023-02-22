@@ -1,20 +1,18 @@
 package com.filmdoms.community.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.post.data.dto.PostBriefDto;
-import com.filmdoms.community.post.data.entity.Post;
-import com.filmdoms.community.post.repository.PostRepository;
+import com.filmdoms.community.board.data.BoardContent;
+import com.filmdoms.community.board.post.data.constants.PostCategory;
+import com.filmdoms.community.board.post.data.dto.PostBriefDto;
+import com.filmdoms.community.board.post.data.entity.PostHeader;
+import com.filmdoms.community.board.post.repository.PostHeaderRepository;
+import com.filmdoms.community.board.post.service.PostService;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +34,13 @@ class PostServiceTest {
     PostService postService;
 
     @MockBean
-    PostRepository postRepository;
+    PostHeaderRepository postHeaderRepository;
 
     @Test
     @DisplayName("최근 게시글 조회를 요청하면, 최근 게시글을 4개 반환한다.")
     void givenNothing_whenSearchingRecentPosts_thenReturnsRecentPosts() {
         // Given
-        given(postRepository.findFirst4ByOrderByDateCreated()).willReturn(getMockPosts());
+        given(postHeaderRepository.findFirst4ByOrderByIdDesc()).willReturn(getMockPosts());
 
         // When
         List<PostBriefDto> postBriefDtos = postService.getMainPagePosts();
@@ -53,36 +51,32 @@ class PostServiceTest {
     }
 
 
-    public List<Post> getMockPosts() {
+    public List<PostHeader> getMockPosts() {
         Account testAccount = Account.of(1L, "tester", "testpw", AccountRole.USER);
         return List.of(
-                Post.builder()
-                        .account(testAccount)
-                        .postCategory(PostCategory.FREE)
-                        .title("test post1")
-                        .content("This is a test post.")
-                        .view(0)
-                        .build(),
-                Post.builder()
-                        .account(testAccount)
-                        .postCategory(PostCategory.FREE)
-                        .title("test post2")
-                        .content("This is a test post.")
-                        .view(0)
-                        .build(),
-                Post.builder()
-                        .account(testAccount)
-                        .postCategory(PostCategory.FREE)
-                        .title("test post3")
-                        .content("This is a test post.")
-                        .view(0)
-                        .build(),
-                Post.builder()
-                        .account(testAccount)
-                        .postCategory(PostCategory.FREE)
+                PostHeader.builder()
+                        .author(testAccount)
+                        .category(PostCategory.FREE)
                         .title("test post4")
-                        .content("This is a test post.")
-                        .view(0)
+                        .content(BoardContent.builder().content("This is a test post.").build())
+                        .build(),
+                PostHeader.builder()
+                        .author(testAccount)
+                        .category(PostCategory.FREE)
+                        .title("test post3")
+                        .content(BoardContent.builder().content("This is a test post.").build())
+                        .build(),
+                PostHeader.builder()
+                        .author(testAccount)
+                        .category(PostCategory.FREE)
+                        .title("test post2")
+                        .content(BoardContent.builder().content("This is a test post.").build())
+                        .build(),
+                PostHeader.builder()
+                        .author(testAccount)
+                        .category(PostCategory.FREE)
+                        .title("test post1")
+                        .content(BoardContent.builder().content("This is a test post.").build())
                         .build()
         );
     }

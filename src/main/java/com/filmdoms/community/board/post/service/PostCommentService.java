@@ -1,10 +1,10 @@
-package com.filmdoms.community.postComment.service;
+package com.filmdoms.community.board.post.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.postComment.data.entity.PostComment;
-import com.filmdoms.community.postComment.repository.PostCommentRepository;
-import com.filmdoms.community.post.repository.PostRepository;
+import com.filmdoms.community.board.post.data.entity.PostComment;
+import com.filmdoms.community.board.post.repository.PostCommentRepository;
+import com.filmdoms.community.board.post.repository.PostHeaderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PostCommentService {
 
-    private final PostRepository postRepository;
+    private final PostHeaderRepository postHeaderRepository;
     private final PostCommentRepository postCommentRepository;
 
     // TODO: 댓글 작성 기능 구현 후 삭제
@@ -20,9 +20,9 @@ public class PostCommentService {
         Account testAccount = Account.of(1L, "tester", "testpw", AccountRole.USER);
         postCommentRepository.save(
                 PostComment.builder()
-                        .account(testAccount)
-                        .post(postRepository.getReferenceById(postId))
-                        .content("content")
+                        .author(testAccount)
+                        .header(postHeaderRepository.getReferenceById(postId))
+                        .content("댓글 내용")
                         .build()
         );
     }

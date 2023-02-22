@@ -1,8 +1,8 @@
-package com.filmdoms.community.postComment.data.dto;
+package com.filmdoms.community.board.post.data.dto;
 
-import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.postComment.data.entity.PostComment;
+import com.filmdoms.community.board.post.data.entity.PostComment;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,16 +12,16 @@ public class PostCommentDto {
 
     private Long id;
     private Long postId;
-    private AccountDto account;
+    private PostAccountDto author;
     private String content;
-    private Timestamp dateCreated;
-    private Timestamp dateLastModified;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateLastModified;
 
     public static PostCommentDto from(PostComment entity) {
         return new PostCommentDto(
                 entity.getId(),
-                entity.getPost().getId(),
-                AccountDto.from(entity.getAccount()),
+                entity.getHeader().getId(),
+                PostAccountDto.from(entity.getAuthor()),
                 entity.getContent(),
                 entity.getDateCreated(),
                 entity.getDateLastModified()

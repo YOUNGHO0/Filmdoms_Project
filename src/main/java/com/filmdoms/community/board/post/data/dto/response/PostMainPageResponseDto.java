@@ -1,6 +1,6 @@
-package com.filmdoms.community.post.data.dto.response;
+package com.filmdoms.community.board.post.data.dto.response;
 
-import com.filmdoms.community.post.data.dto.PostBriefDto;
+import com.filmdoms.community.board.post.data.dto.PostBriefDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,7 +16,7 @@ public class PostMainPageResponseDto {
         return new PostMainPageResponseDto(
                 dto.getPostCategory().toString(),
                 dto.getTitle(),
-                dto.getPostCommentsCount()
+                dto.getCommentCount()
         );
     }
 
