@@ -62,9 +62,7 @@ public class MovieReviewService {
         MovieReviewHeader savedHeader = headerRepository.save(header);
 
         //이미지 추가 로직
-        if(imageMultipartFiles != null) {
-            imageFileService.saveImages(imageMultipartFiles, header);
-        }
+        imageFileService.saveImages(imageMultipartFiles, header);
 
         return new MovieReviewCreateResponseDto(savedHeader);
     }

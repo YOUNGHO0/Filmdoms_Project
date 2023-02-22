@@ -22,7 +22,7 @@ public class ImageFileService {
     private final AmazonS3Upload amazonS3Upload;
 
     public Optional<ImageFile> saveImage(MultipartFile multipartFile, BoardHeadCore head) throws IOException {
-        if(multipartFile.isEmpty()) {
+        if(multipartFile == null || multipartFile.isEmpty()) {
             return Optional.empty();
         }
         String uuidFileName = UUID.randomUUID().toString();
@@ -34,6 +34,9 @@ public class ImageFileService {
     }
 
     public List<ImageFile> saveImages(List<MultipartFile> multipartFiles, BoardHeadCore head) throws IOException {
+        if(multipartFiles == null || multipartFiles.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<ImageFile> imageFiles = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             Optional<ImageFile> imageFile = saveImage(multipartFile, head);
