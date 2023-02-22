@@ -2,17 +2,19 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Entity
 @RequiredArgsConstructor
+@Getter
 public class ImageFile extends BaseTimeEntity {
 
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String originalFileName;
     String uuidFileName;
