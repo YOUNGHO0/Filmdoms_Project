@@ -2,7 +2,6 @@ package com.filmdoms.community.board.post.data.dto;
 
 import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.entity.PostHeader;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public class PostDetailDto {
                 PostAccountDto.from(entity.getAuthor()),
                 entity.getCategory(),
                 entity.getTitle(),
-                entity.getContent().getContent(),
+                entity.getBoardContent().getContent(),
                 entity.getView(),
                 entity.getComments().stream()
                         .map(PostCommentDto::from)
