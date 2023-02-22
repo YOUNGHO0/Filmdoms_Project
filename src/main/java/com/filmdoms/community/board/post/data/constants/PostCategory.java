@@ -1,4 +1,4 @@
-package com.filmdoms.community.post.data.constants;
+package com.filmdoms.community.board.post.data.constants;
 
 public enum PostCategory {
     FREE,

@@ -1,9 +1,8 @@
-package com.filmdoms.community.post.data.dto;
+package com.filmdoms.community.board.post.data.dto;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.post.data.entity.Post;
-import com.filmdoms.community.postComment.data.dto.PostCommentDto;
+import com.filmdoms.community.board.post.data.constants.PostCategory;
+import com.filmdoms.community.board.post.data.entity.Post;
 import java.sql.Timestamp;
 import java.util.Set;
 import java.util.stream.Collectors;

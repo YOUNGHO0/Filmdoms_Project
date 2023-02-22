@@ -1,8 +1,7 @@
-package com.filmdoms.community.post.data.entity;
+package com.filmdoms.community.board.post.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.post.data.constants.PostCategory;
-import com.filmdoms.community.postComment.data.entity.PostComment;
+import com.filmdoms.community.board.post.data.constants.PostCategory;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +23,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,13 +31,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
 @Table(name = "post", indexes = {
-        @Index(columnList = "category"),
-        @Index(columnList = "date_created")
+        @Index(columnList = "category")
 })
 public class Post {
 

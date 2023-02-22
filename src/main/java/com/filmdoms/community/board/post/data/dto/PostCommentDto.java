@@ -1,7 +1,7 @@
-package com.filmdoms.community.postComment.data.dto;
+package com.filmdoms.community.board.post.data.dto;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.postComment.data.entity.PostComment;
+import com.filmdoms.community.board.post.data.entity.PostComment;
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

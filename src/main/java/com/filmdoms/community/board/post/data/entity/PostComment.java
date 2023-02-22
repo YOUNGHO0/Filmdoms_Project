@@ -1,7 +1,6 @@
-package com.filmdoms.community.postComment.data.entity;
+package com.filmdoms.community.board.post.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.post.data.entity.Post;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

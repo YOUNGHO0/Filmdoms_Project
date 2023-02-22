@@ -1,10 +1,10 @@
-package com.filmdoms.community.postComment.service;
+package com.filmdoms.community.board.post.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.postComment.data.entity.PostComment;
-import com.filmdoms.community.postComment.repository.PostCommentRepository;
-import com.filmdoms.community.post.repository.PostRepository;
+import com.filmdoms.community.board.post.data.entity.PostComment;
+import com.filmdoms.community.board.post.repository.PostCommentRepository;
+import com.filmdoms.community.board.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
