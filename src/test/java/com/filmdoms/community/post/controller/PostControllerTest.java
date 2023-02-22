@@ -56,10 +56,10 @@ class PostControllerTest {
 
     public List<PostBriefDto> getMockPostBriefDtos() {
         return List.of(
-                PostBriefDto.builder().title("title1").postCategory(PostCategory.FREE).postCommentsCount(5).build(),
-                PostBriefDto.builder().title("title2").postCategory(PostCategory.SHARE).postCommentsCount(10).build(),
-                PostBriefDto.builder().title("title3").postCategory(PostCategory.REVIEW).postCommentsCount(15).build(),
-                PostBriefDto.builder().title("title4").postCategory(PostCategory.FREE).postCommentsCount(20).build()
+                PostBriefDto.builder().title("title1").postCategory(PostCategory.FREE).commentCount(5).build(),
+                PostBriefDto.builder().title("title2").postCategory(PostCategory.SHARE).commentCount(10).build(),
+                PostBriefDto.builder().title("title3").postCategory(PostCategory.REVIEW).commentCount(15).build(),
+                PostBriefDto.builder().title("title4").postCategory(PostCategory.FREE).commentCount(20).build()
         );
     }
 

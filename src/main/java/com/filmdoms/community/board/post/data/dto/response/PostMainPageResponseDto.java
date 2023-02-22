@@ -16,7 +16,7 @@ public class PostMainPageResponseDto {
         return new PostMainPageResponseDto(
                 dto.getPostCategory().toString(),
                 dto.getTitle(),
-                dto.getPostCommentsCount()
+                dto.getCommentCount()
         );
     }
 

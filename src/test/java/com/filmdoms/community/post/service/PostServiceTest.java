@@ -1,16 +1,14 @@
 package com.filmdoms.community.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.dto.PostBriefDto;
-import com.filmdoms.community.board.post.data.entity.PostContent;
 import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
 import com.filmdoms.community.board.post.service.PostService;
@@ -60,25 +58,25 @@ class PostServiceTest {
                         .author(testAccount)
                         .category(PostCategory.FREE)
                         .title("test post4")
-                        .content(PostContent.builder().content("This is a test post.").build())
+                        .content(BoardContent.builder().content("This is a test post.").build())
                         .build(),
                 PostHeader.builder()
                         .author(testAccount)
                         .category(PostCategory.FREE)
                         .title("test post3")
-                        .content(PostContent.builder().content("This is a test post.").build())
+                        .content(BoardContent.builder().content("This is a test post.").build())
                         .build(),
                 PostHeader.builder()
                         .author(testAccount)
                         .category(PostCategory.FREE)
                         .title("test post2")
-                        .content(PostContent.builder().content("This is a test post.").build())
+                        .content(BoardContent.builder().content("This is a test post.").build())
                         .build(),
                 PostHeader.builder()
                         .author(testAccount)
                         .category(PostCategory.FREE)
                         .title("test post1")
-                        .content(PostContent.builder().content("This is a test post.").build())
+                        .content(BoardContent.builder().content("This is a test post.").build())
                         .build()
         );
     }
