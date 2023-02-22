@@ -27,7 +27,7 @@ public class MovieReviewHeader extends BoardHeadCore {
     @OneToMany(mappedBy = "header", cascade = CascadeType.REMOVE)
     private List<MovieReviewComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardHeadCore")
+    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.REMOVE)
     private List<ImageFile> imageFiles = new ArrayList<>();
 
     @Builder
