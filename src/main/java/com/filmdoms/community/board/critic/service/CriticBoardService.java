@@ -34,7 +34,8 @@ public class CriticBoardService {
 
 
 
-        public Response writeMovieReview(CriticBoardPostRequestDto dto, MultipartFile multipartFile) {
+
+        public Response writeCritic(CriticBoardPostRequestDto dto, List<MultipartFile> multipartFileList) {
 
         log.info("영화 작성 시작");
 
@@ -53,22 +54,27 @@ public class CriticBoardService {
 
         String uuidFileName = null;
         String originalFileName = null;
-        if (multipartFile != null) {
-            uuidFileName = UUID.randomUUID().toString();
-            originalFileName = multipartFile.getOriginalFilename();
-            log.info("영화 작성 시작3");
+        List<String> urlList = new ArrayList<>();
+        for(int i=0; i<multipartFileList.size(); i++)
+        {
 
             try {
-                String url =  amazonS3Upload.upload(multipartFile, uuidFileName, originalFileName);
-                ImageFile imageFile = new ImageFile(uuidFileName, originalFileName,url,criticBoardHeader);
-                imageFileRepository.save(imageFile);
-                log.info("이미지업로드완료");
-                return Response.success(url);
+
+                    MultipartFile multipartFile = multipartFileList.get(i);
+                    uuidFileName = UUID.randomUUID().toString();
+                    originalFileName = multipartFile.getOriginalFilename();
+                    log.info("멀티파트리스트 사이즈{}",multipartFileList.size());
+                    String url =  amazonS3Upload.upload(multipartFile, uuidFileName, originalFileName);
+                    ImageFile imageFile = new ImageFile(uuidFileName, originalFileName,url,criticBoardHeader);
+                    imageFileRepository.save(imageFile);
+                    log.info("이미지업로드완료");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
         }
 
+        return Response.success("sucess했음");
 
         log.info("영화 작성 시작4");
 
