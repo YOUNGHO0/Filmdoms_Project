@@ -8,14 +8,15 @@ import com.filmdoms.community.banner.repository.BannerRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3Upload;
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -45,7 +46,7 @@ public class BannerService {
 
         ImageFile bannerImage = ImageFile.builder()
                 .fileUrl(getImageUrl(multipartFile))
-                .header(banner)
+                .boardHeadCore(banner)
                 .build();
         imageFileRepository.save(bannerImage);
     }

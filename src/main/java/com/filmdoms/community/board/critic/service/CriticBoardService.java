@@ -1,6 +1,8 @@
 package com.filmdoms.community.board.critic.service;
 
+import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
@@ -68,7 +70,12 @@ public class CriticBoardService {
                     originalFileName = multipartFile.getOriginalFilename();
                     log.info("멀티파트리스트 사이즈{}",multipartFileList.size());
                     String url =  amazonS3Upload.upload(multipartFile, uuidFileName, originalFileName);
-                    ImageFile imageFile = new ImageFile(uuidFileName, originalFileName,url,criticBoardHeader);
+                    ImageFile imageFile = ImageFile.builder()
+                            .uuidFileName(uuidFileName)
+                            .originalFileName(originalFileName)
+                            .boardHeadCore(criticBoardHeader)
+                            .fileUrl(url)
+                            .build();
                     imageFileRepository.save(imageFile);
                     log.info("이미지업로드완료");
             } catch (IOException e) {
@@ -141,8 +148,8 @@ public class CriticBoardService {
     @PostConstruct
     public void setInitalData()
     {
-        // 초기 데이터 작성
-
+        Account author = Account.of("user1", "1234", AccountRole.USER);
+        accountRepository.save(author);
 
     }
 
