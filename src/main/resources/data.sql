@@ -174,16 +174,16 @@ insert into NOTICE_HEADER  (id, start_date, end_date) values (27, '2022-04-04 15
 insert into NOTICE_HEADER  (id, start_date, end_date) values (28, '2022-06-06 09:21:19', '2023-03-09 01:24:43');
 insert into NOTICE_HEADER  (id, start_date, end_date) values (29, '2022-08-26 00:58:28', '2022-12-21 12:20:55');
 insert into NOTICE_HEADER  (id, start_date, end_date) values (30, '2022-11-08 23:02:47', '2022-07-12 02:28:15');
-insert into BANNER  (id) values (31);
-insert into BANNER  (id) values (32);
-insert into BANNER  (id) values (33);
-insert into BANNER  (id) values (34);
-insert into BANNER  (id) values (35);
-insert into BANNER  (id) values (36);
-insert into BANNER  (id) values (37);
-insert into BANNER  (id) values (38);
-insert into BANNER  (id) values (39);
-insert into BANNER  (id) values (40);
+insert into BANNER_HEADER  (id) values (31);
+insert into BANNER_HEADER  (id) values (32);
+insert into BANNER_HEADER  (id) values (33);
+insert into BANNER_HEADER  (id) values (34);
+insert into BANNER_HEADER  (id) values (35);
+insert into BANNER_HEADER  (id) values (36);
+insert into BANNER_HEADER  (id) values (37);
+insert into BANNER_HEADER  (id) values (38);
+insert into BANNER_HEADER  (id) values (39);
+insert into BANNER_HEADER  (id) values (40);
 
 insert into MOVIE_REVIEW_COMMENT (id, date_created, date_last_modified, content, status, account_id, movie_review_header_id, movie_review_comment_id) values (1, now(), now(), 'Morbi quis tortor id nulla ultrices aliquet.', 'ACTIVE', 10, 17, null);
 insert into MOVIE_REVIEW_COMMENT (id, date_created, date_last_modified, content, status, account_id, movie_review_header_id, movie_review_comment_id) values (2, now(), now(), 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi.', 'ACTIVE', 16, 16, null);

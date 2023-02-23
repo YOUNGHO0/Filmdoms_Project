@@ -1,12 +1,12 @@
-package com.filmdoms.community.banner.data.entity;
+package com.filmdoms.community.board.banner.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -17,16 +17,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "banner")
+@DiscriminatorValue("BannerHeader")
+@Table(name = "banner_header")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Banner extends BoardHeadCore {
+public class BannerHeader extends BoardHeadCore {
 
-    @OneToMany(mappedBy = "header", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ImageFile> imageFiles = new ArrayList<>();
 
     @Builder
-    private Banner(String title, Account author) {
+    private BannerHeader(String title, Account author) {
         super(title, author, null);
     }
 

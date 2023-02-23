@@ -1,6 +1,6 @@
-package com.filmdoms.community.banner.data.dto;
+package com.filmdoms.community.board.banner.data.dto;
 
-import com.filmdoms.community.banner.data.entity.Banner;
+import com.filmdoms.community.board.banner.data.entity.BannerHeader;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ public class BannerDto {
     private String imageUrl;
     private String title;
 
-    public static BannerDto from(Banner entity) {
+    public static BannerDto from(BannerHeader entity) {
         return BannerDto.builder()
                 .id(entity.getId())
                 .imageUrl(entity.getFirstImageUrl())
