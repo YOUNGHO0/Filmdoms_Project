@@ -28,6 +28,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+  sql:
+    init:
+      mode: always
+
 cloud:
   aws:
     credentials:
@@ -78,6 +82,9 @@ spring:
     username: SA
     password:
 
+  sql:
+    init:
+      mode: always
 
 cloud:
   aws:
