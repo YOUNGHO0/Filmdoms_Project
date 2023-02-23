@@ -17,6 +17,7 @@ public final class BoardContent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "content", nullable = false, length = 10000)
     private String content;
 
     @Builder

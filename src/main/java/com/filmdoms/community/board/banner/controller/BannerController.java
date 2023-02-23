@@ -1,8 +1,8 @@
-package com.filmdoms.community.banner.controller;
+package com.filmdoms.community.board.banner.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.banner.data.dto.response.BannerResponseDto;
-import com.filmdoms.community.banner.service.BannerService;
+import com.filmdoms.community.board.banner.data.dto.response.BannerResponseDto;
+import com.filmdoms.community.board.banner.service.BannerService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
