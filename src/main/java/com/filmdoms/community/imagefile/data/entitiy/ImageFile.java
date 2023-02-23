@@ -13,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 public class ImageFile extends BaseTimeEntity {
 
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String originalFileName;
     String uuidFileName;
@@ -21,7 +22,7 @@ public class ImageFile extends BaseTimeEntity {
 
 
     @ManyToOne
-    @JoinColumn(name = "content_id")
+    @JoinColumn(name = "board_head_core_id")
     public BoardHeadCore boardHeadCore;
 
 

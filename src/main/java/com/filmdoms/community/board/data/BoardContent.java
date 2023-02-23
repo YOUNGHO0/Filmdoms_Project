@@ -2,28 +2,25 @@ package com.filmdoms.community.board.data;
 
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
-@NoArgsConstructor
+@Table(name = "board_content")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public final class BoardContent {
 
-public final class BoardContent  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Id @GeneratedValue
-    Long id;
-    String content;
-
+    private String content;
 
     @Builder
-    private BoardContent(String content)
-    {
+    private BoardContent(String content) {
         this.content = content;
     }
-
-
-
-
 }

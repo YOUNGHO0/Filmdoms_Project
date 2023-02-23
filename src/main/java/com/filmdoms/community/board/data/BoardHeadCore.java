@@ -8,11 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "board_head_core")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class BoardHeadCore extends  BaseTimeEntity {
+public class BoardHeadCore extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +25,7 @@ public class BoardHeadCore extends  BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account author;
 
-
     private int view = 0;
-
 
     @Enumerated(EnumType.STRING)
     private PostStatus status = PostStatus.ACTIVE;
@@ -35,12 +34,9 @@ public class BoardHeadCore extends  BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private BoardContent boardContent;
 
-
-
     protected BoardHeadCore(String title, Account author, BoardContent boardContent) {
         this.title = title;
         this.author = author;
         this.boardContent = boardContent;
     }
 }
-
