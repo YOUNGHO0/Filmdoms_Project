@@ -15,10 +15,10 @@ public class BannerDto {
     private String imageUrl;
     private String title;
 
-    public static BannerDto from(BannerHeader entity) {
+    public static BannerDto from(BannerHeader entity, String domain) {
         return BannerDto.builder()
                 .id(entity.getId())
-                .imageUrl(entity.getFirstImageUrl())
+                .imageUrl(entity.getFirstImageUrl(domain))
                 .title(entity.getTitle())
                 .build();
     }

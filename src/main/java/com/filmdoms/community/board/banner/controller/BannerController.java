@@ -33,7 +33,7 @@ public class BannerController {
             @RequestParam(required = false) String title,
             @RequestParam(value = "image", required = false) MultipartFile multipartFile
     ) {
-        bannerService.setInitData(title, multipartFile);
+        bannerService.setData(title, multipartFile);
         return Response.success();
     }
 }

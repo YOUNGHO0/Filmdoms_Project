@@ -14,17 +14,16 @@ import com.filmdoms.community.board.notice.repository.NoticeHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -32,6 +31,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoticeService {
 
+    @Value("${domain}")
+    private String domain;
     private final NoticeHeaderRepository noticeHeaderRepository;
     private final AccountRepository accountRepository;
     private final ImageFileRepository imageFileRepository; //테스트 메서드에 필요 (나중에 삭제)
@@ -40,7 +41,7 @@ public class NoticeService {
     public List<NoticeMainPageDto> getMainPageDtos() {
         return noticeHeaderRepository.findTop4ByOrderByDateCreatedDesc()
                 .stream()
-                .map(NoticeMainPageDto::new)
+                .map(head -> new NoticeMainPageDto(head, domain))
                 .collect(Collectors.toList());
     }
 
@@ -48,9 +49,6 @@ public class NoticeService {
     public void initData() throws InterruptedException {
         Account author = Account.of("noticeUser", "1234", AccountRole.USER);
         accountRepository.save(author);
-
-        //임시 데이터 생성에 필요한 테스트 이미지 url
-        String testImageUrl = "https://filmdomsimage.s3.ap-northeast-2.amazonaws.com/124a71f5-0949-4eb5-b6fc-dacb6a67a010-123123.png";
 
         for (int i = 0; i < 5; i++) {
             BoardContent content = BoardContent.builder()
@@ -66,13 +64,18 @@ public class NoticeService {
                     .build();
 
             noticeHeaderRepository.save(header);
-            imageFileRepository.save(new ImageFile(UUID.randomUUID().toString(), "file" + i + ".png", testImageUrl, header));
+            imageFileRepository.save(ImageFile.builder()
+                    .boardHeadCore(header)
+                    .originalFileName("popcorn-movie-party-entertainment.webp")
+                    .uuidFileName("3554e88f-d683-4f18-b3f4-33fbf6905792.webp")
+                    .build());
 
             Thread.sleep(10);
         }
     }
 
-    public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, MultipartFile mainImageMultipartFile, List<MultipartFile> subImageMultipartFiles) throws IOException {
+    public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, MultipartFile mainImageMultipartFile,
+                                          List<MultipartFile> subImageMultipartFiles) throws IOException {
         //인증 로직 필요
 
         Account author = accountRepository.findById(requestDto.getAccountId())
