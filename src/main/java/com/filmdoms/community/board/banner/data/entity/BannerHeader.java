@@ -2,6 +2,7 @@ package com.filmdoms.community.board.banner.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.BoardHeadCore;
+import com.filmdoms.community.imagefile.data.dto.ImageFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
@@ -31,8 +32,8 @@ public class BannerHeader extends BoardHeadCore {
         super(title, author, null);
     }
 
-    public String getFirstImageUrl() {
-        return imageFiles.get(0).getFileUrl();
+    public String getFirstImageUrl(String domain) {
+        return ImageFileDto.from(imageFiles.get(0), domain).getFileUrl();
     }
 
 }

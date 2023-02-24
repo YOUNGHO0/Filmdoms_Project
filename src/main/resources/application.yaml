@@ -1,9 +1,13 @@
 jwt:
   secret-key: ${JWT_KEY}
+
 server:
   error:
     whitelabel:
       enabled: false
+
+domain: ${DOMAIN}
+
 ---
 
 spring:
@@ -45,7 +49,6 @@ cloud:
 
     stack:
       auto: false
-
 
 ---
 

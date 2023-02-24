@@ -1,49 +1,51 @@
 package com.filmdoms.community.imagefile.service;
 
 import com.filmdoms.community.board.data.BoardHeadCore;
+import com.filmdoms.community.imagefile.data.dto.ImageFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ImageFileService {
-    private final ImageFileRepository imageFileRepository;
-    private final AmazonS3Upload amazonS3Upload;
 
-    public Optional<ImageFile> saveImage(MultipartFile multipartFile, BoardHeadCore head) throws IOException {
-        if(multipartFile == null || multipartFile.isEmpty()) {
+    @Value("${domain}")
+    private String domain;
+    private final ImageFileRepository imageFileRepository;
+    private final AmazonS3UploadService amazonS3UploadService;
+
+    public Optional<ImageFileDto> saveImage(MultipartFile multipartFile, BoardHeadCore head) {
+
+        if (multipartFile == null || multipartFile.isEmpty()) {
             return Optional.empty();
         }
-        String uuidFileName = UUID.randomUUID().toString();
-        String originalFileName = multipartFile.getOriginalFilename();
-        String url =  amazonS3Upload.upload(multipartFile, uuidFileName, originalFileName);
-        ImageFile imageFile = new ImageFile(uuidFileName, originalFileName, url, head);
-        imageFileRepository.save(imageFile);
-        return Optional.of(imageFile);
+
+        // 업로드 하면 UploadedFileDto를 받는데, 이걸 toEntity로 ImageFile 엔티티로 바꿔줌
+        ImageFile imageFile = amazonS3UploadService
+                .upload(multipartFile, multipartFile.getOriginalFilename())
+                .toEntity(head);
+
+        // 저장 후 ImageFileDto로 바꿔서 반환
+        return Optional.of(ImageFileDto.from(imageFileRepository.save(imageFile), domain));
     }
 
-    public List<ImageFile> saveImages(List<MultipartFile> multipartFiles, BoardHeadCore head) throws IOException {
-        if(multipartFiles == null || multipartFiles.isEmpty()) {
+    public List<ImageFileDto> saveImages(List<MultipartFile> multipartFiles, BoardHeadCore head) {
+        if (multipartFiles == null || multipartFiles.isEmpty()) {
             return new ArrayList<>();
         }
-        List<ImageFile> imageFiles = new ArrayList<>();
-        for (MultipartFile multipartFile : multipartFiles) {
-            Optional<ImageFile> imageFile = saveImage(multipartFile, head);
-            if(imageFile.isPresent()) {
-                imageFiles.add(imageFile.get());
-            }
-        }
-        return imageFiles;
+        return multipartFiles.stream()
+                .map(file -> saveImage(file, head))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 }
