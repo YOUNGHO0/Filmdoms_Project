@@ -19,6 +19,7 @@ public class BoardHeadCore extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "title", nullable = false, length = 100)
     private String title;
 
     @JoinColumn(name = "account_id")

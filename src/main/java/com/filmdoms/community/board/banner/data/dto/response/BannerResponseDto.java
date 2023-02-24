@@ -1,6 +1,6 @@
-package com.filmdoms.community.banner.data.dto.response;
+package com.filmdoms.community.board.banner.data.dto.response;
 
-import com.filmdoms.community.banner.data.dto.BannerDto;
+import com.filmdoms.community.board.banner.data.dto.BannerDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

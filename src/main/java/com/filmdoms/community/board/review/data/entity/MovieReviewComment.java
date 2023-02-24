@@ -35,9 +35,10 @@ public class MovieReviewComment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Account author;
 
+    @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
-
+    @Enumerated(EnumType.STRING)
     private CommentStatus status = CommentStatus.ACTIVE;
 
     @Builder

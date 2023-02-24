@@ -1,22 +1,21 @@
-package com.filmdoms.community.banner.service;
+package com.filmdoms.community.board.banner.service;
 
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
-import com.filmdoms.community.banner.data.dto.BannerDto;
-import com.filmdoms.community.banner.data.entity.Banner;
-import com.filmdoms.community.banner.repository.BannerRepository;
+import com.filmdoms.community.board.banner.data.dto.BannerDto;
+import com.filmdoms.community.board.banner.data.entity.BannerHeader;
+import com.filmdoms.community.board.banner.repository.BannerRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3Upload;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -39,14 +38,14 @@ public class BannerService {
     public void setInitData(String title, MultipartFile multipartFile) {
 
         String bannerTitle = title == null ? "임시 타이틀입니다." : title;
-        Banner banner = Banner.builder()
+        BannerHeader bannerHeader = BannerHeader.builder()
                 .title(bannerTitle)
                 .build();
-        bannerRepository.save(banner);
+        bannerRepository.save(bannerHeader);
 
         ImageFile bannerImage = ImageFile.builder()
                 .fileUrl(getImageUrl(multipartFile))
-                .boardHeadCore(banner)
+                .boardHeadCore(bannerHeader)
                 .build();
         imageFileRepository.save(bannerImage);
     }

@@ -8,8 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.filmdoms.community.account.config.SecurityConfig;
-import com.filmdoms.community.banner.data.dto.BannerDto;
-import com.filmdoms.community.banner.service.BannerService;
+import com.filmdoms.community.board.banner.controller.BannerController;
+import com.filmdoms.community.board.banner.data.dto.BannerDto;
+import com.filmdoms.community.board.banner.service.BannerService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
 @DisplayName("컨트롤러 - 배너 서비스")
-class BannerControllerTest {
+class BannerHeaderControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
