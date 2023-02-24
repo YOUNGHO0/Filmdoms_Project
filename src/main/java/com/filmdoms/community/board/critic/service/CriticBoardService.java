@@ -128,13 +128,6 @@ public class CriticBoardService {
         return "";
     }
 
-    @PostConstruct
-    public void setInitalData()
-    {
-        Account author = Account.of("user1", "1234", AccountRole.USER);
-        accountRepository.save(author);
-
-    }
 
     private List<ImageFile> getImageFiles(List<CriticBoardHeader> resultBoard) {
         List<ImageFile> imageFiles = em.createQuery(
@@ -156,7 +149,7 @@ public class CriticBoardService {
         resultBoard.stream().forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(),new ArrayList<>()));
         //이미지 파일 모으기
         imageFiles.stream().forEach(imageFile -> imageFileHashMap.get(imageFile.boardHeadCore.getId()).add(imageFile.getFileUrl()));
-        //list에 add
+        //responseDtoList 리스트에 add
         resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add( CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
     }
 
