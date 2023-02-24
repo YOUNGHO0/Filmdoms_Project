@@ -44,7 +44,7 @@ public class ImageFileService {
         }
         return multipartFiles.stream()
                 .map(file -> saveImage(file, head))
-                .filter(Optional::isEmpty)
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
     }
