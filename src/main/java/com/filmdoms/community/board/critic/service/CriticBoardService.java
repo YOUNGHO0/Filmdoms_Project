@@ -86,7 +86,7 @@ public class CriticBoardService {
         HashMap<Long, List<String>> imageFileHashMap = new HashMap<>();
         List<CriticBoardGetResponseDto> responseDtoList = new ArrayList<>();
 
-        setImageFilesToCriticBoardHeader(resultBoard, imageFiles, imageFileHashMap, responseDtoList);
+     //  setImageFilesToCriticBoardHeader(resultBoard, imageFiles, imageFileHashMap, responseDtoList);
 
         return responseDtoList;
 
@@ -126,13 +126,21 @@ public class CriticBoardService {
         return resultBoard;
     }
 
-    private  void setImageFilesToCriticBoardHeader(List<CriticBoardHeader> resultBoard, List<ImageFile> imageFiles, HashMap<Long, List<String>> imageFileHashMap, List<CriticBoardGetResponseDto> responseDtoList) {
-        //초기 해시맵 셋팅
-        resultBoard.stream().forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(),new ArrayList<>()));
-        //이미지 파일 모으기
-        imageFiles.stream().forEach(imageFile -> imageFileHashMap.get(imageFile.boardHeadCore.getId()).add(imageFile.getFileUrl()));
-        //responseDtoList 리스트에 add
-        resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add( CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
+//    private  void setImageFilesToCriticBoardHeader(List<CriticBoardHeader> resultBoard, List<ImageFile> imageFiles, HashMap<Long, List<String>> imageFileHashMap, List<CriticBoardGetResponseDto> responseDtoList) {
+//        //초기 해시맵 셋팅
+//        resultBoard.stream().forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(),new ArrayList<>()));
+//        //이미지 파일 모으기
+//        imageFiles.stream().forEach(imageFile -> imageFileHashMap.get(imageFile.boardHeadCore.getId()).add(imageFileService.domain+imageFile.getUuidFileName()));
+//        //responseDtoList 리스트에 add
+//        resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add( CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
+//    }
+
+
+    @PostConstruct
+    public void test()
+    {
+        Account author = Account.of("user1", "1234", AccountRole.USER);
+        accountRepository.save(author);
     }
 
 
