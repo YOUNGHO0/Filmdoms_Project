@@ -52,7 +52,7 @@ public class CriticBoardService {
         CriticBoardHeader criticBoardHeader = CriticBoardHeader.builder()
                 .preHeader(dto.getPreHeader())
                 .title(dto.getTitle())
-                .boardContent(BoardContent.builder().content(dto.getContent()).build())
+                .content(BoardContent.builder().content(dto.getContent()).build())
                 .author(accountRepository
                         .findByUsername(dto.getAuthor())
                         .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND)))
@@ -113,14 +113,14 @@ public class CriticBoardService {
 
 
 
-    public Response updateCriticBoard(CriticBoardUpdateRequestDto dto, List<MultipartFile> multipartFiles)
-    {
-        TypedQuery<CriticBoardHeader> query = em.createQuery("SELECT c from CriticBoardHeader c join fetch c.boardContent where c.id =:id", CriticBoardHeader.class);
-        CriticBoardHeader criticBoard = query.setParameter("id", dto.getBoardNumber()).getSingleResult();
-        criticBoard.updateCriticBoard(dto.getTitle(), dto.getContent(), dto.getPreHeader());
-
-        return Response.success(criticBoard);
-    }
+//    public Response updateCriticBoard(CriticBoardUpdateRequestDto dto, List<MultipartFile> multipartFiles)
+//    {
+//        TypedQuery<CriticBoardHeader> query = em.createQuery("SELECT c from CriticBoardHeader c join fetch c.boardContent where c.id =:id", CriticBoardHeader.class);
+//        CriticBoardHeader criticBoard = query.setParameter("id", dto.getBoardNumber()).getSingleResult();
+//        criticBoard.updateCriticBoard(dto.getTitle(), dto.getContent(), dto.getPreHeader());
+//
+//        return Response.success(criticBoard);
+//    }
 
     public String deleteCriticBoard()
     {
