@@ -7,6 +7,7 @@ import com.filmdoms.community.board.data.BoardHeadCore;
 
 import jakarta.persistence.*;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,13 +38,12 @@ public class ImageFile extends BaseTimeEntity {
         this.boardHeadCore = boardHeadCore;
     }
 
-    public static ImageFile from(String uuidFileName , String originalFileName, CriticBoardHeader criticBoardHeader, String url)
+    public static ImageFile from(String uuidFileName , String originalFileName, CriticBoardHeader criticBoardHeader)
     {
         ImageFile imageFile = ImageFile.builder()
             .uuidFileName(uuidFileName)
             .originalFileName(originalFileName)
             .boardHeadCore(criticBoardHeader)
-            .fileUrl(url)
             .build();
         return  imageFile;
     }
