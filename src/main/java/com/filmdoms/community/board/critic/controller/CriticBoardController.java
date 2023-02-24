@@ -2,6 +2,7 @@ package com.filmdoms.community.board.critic.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
+import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardUpdateRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
 import com.filmdoms.community.board.critic.service.CriticBoardService;
 import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
@@ -37,6 +38,16 @@ public class CriticBoardController {
         }
         return Response.success(criticBoardList);
 
+
+    }
+
+
+    @PostMapping("/update")
+    public Response updateCriticBoard(@RequestPart CriticBoardUpdateRequestDto criticBoardUpdateRequestDto, @RequestPart(required = false) List<MultipartFile> multipartFiles )
+    {
+        Response response = criticBoardService.updateCriticBoard(criticBoardUpdateRequestDto, multipartFiles);
+
+        return response;
 
     }
 }

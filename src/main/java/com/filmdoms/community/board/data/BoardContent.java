@@ -23,4 +23,10 @@ public final class BoardContent {
     private BoardContent(String content) {
         this.content = content;
     }
+
+
+    public void updateBoardContent(String content)
+    {
+        this.content = content;
+    }
 }
