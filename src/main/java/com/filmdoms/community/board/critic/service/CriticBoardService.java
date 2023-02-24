@@ -106,10 +106,13 @@ public class CriticBoardService {
         return Response.success();
     }
 
-    public String deleteCriticBoard()
-    {
 
-        return "";
+    public String deleteCriticBoard(CriticBoardDeleteRequestDto dto)
+    {
+        CriticBoardHeader criticBoardHeader = criticBoardHeaderRepository.findById(dto.getBoardNumber()).get();
+
+        criticBoardHeaderRepository.delete(criticBoardHeader);
+        return "sucess";
     }
 
 
@@ -144,7 +147,6 @@ public class CriticBoardService {
         Account author = Account.of("user1", "1234", AccountRole.USER);
         accountRepository.save(author);
     }
-
 
 
 }

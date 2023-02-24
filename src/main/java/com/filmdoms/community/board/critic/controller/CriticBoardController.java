@@ -1,11 +1,11 @@
 package com.filmdoms.community.board.critic.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardDeleteRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardUpdateRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
 import com.filmdoms.community.board.critic.service.CriticBoardService;
-import com.filmdoms.community.board.review.data.dto.request.post.MovieReviewPostDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +49,13 @@ public class CriticBoardController {
 
         return response;
 
+    }
+
+    @PostMapping("/delete")
+    public Response deleteCriticBoard(@RequestBody CriticBoardDeleteRequestDto criticBoardDeleteRequestDto)
+    {
+        criticBoardService.deleteCriticBoard(criticBoardDeleteRequestDto);
+
+        return Response.success();
     }
 }
