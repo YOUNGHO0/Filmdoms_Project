@@ -1,9 +1,11 @@
 package com.filmdoms.community.board.critic.data.dto.response;
 
+import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -24,5 +26,18 @@ public class CriticBoardGetResponseDto {
         this.title = title;
         this.author = author;
         this.imageUrl = imageUrl;
+    }
+
+    public static CriticBoardGetResponseDto from (CriticBoardHeader criticBoardHeader, HashMap<Long, List<String>> hashMap )
+    {
+        CriticBoardGetResponseDto criticBoardGetResponseDto = CriticBoardGetResponseDto.builder()
+                .id(criticBoardHeader.getId())
+                .preHeader(criticBoardHeader.getPreHeader())
+                .title(criticBoardHeader.getTitle())
+                .author(criticBoardHeader.getAuthor().getUsername())
+                .imageUrl(hashMap.get(criticBoardHeader.getId())).build();
+
+        return criticBoardGetResponseDto;
+
     }
 }
