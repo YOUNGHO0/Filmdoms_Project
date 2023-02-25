@@ -38,13 +38,5 @@ public class ImageFile extends BaseTimeEntity {
         this.boardHeadCore = boardHeadCore;
     }
 
-    public static ImageFile from(String uuidFileName , String originalFileName, CriticBoardHeader criticBoardHeader)
-    {
-        ImageFile imageFile = ImageFile.builder()
-            .uuidFileName(uuidFileName)
-            .originalFileName(originalFileName)
-            .boardHeadCore(criticBoardHeader)
-            .build();
-        return  imageFile;
-    }
+
 }

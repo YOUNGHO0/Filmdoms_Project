@@ -25,9 +25,9 @@ public class CriticBoardHeader extends BoardHeadCore {
     String preHeader;
 
     @Builder
-    public CriticBoardHeader(String title, Account author, PostStatus postStatus, BoardContent boardContent,String preHeader)
+    public CriticBoardHeader(String title, Account author, PostStatus postStatus, BoardContent content,String preHeader)
     {
-        super(title,author,boardContent);
+        super(title,author,content);
         this.preHeader =preHeader;
 
     }
