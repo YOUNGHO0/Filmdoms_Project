@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/login", "/join", "/api/**").permitAll()
+                        .requestMatchers("/login", "/join").permitAll()
+                        .requestMatchers("/api/v1/post/create").authenticated()
                         .anyRequest().permitAll())
 
                 // H2 DB 사용을 위해, x-frame-options 동일 출처 허용
