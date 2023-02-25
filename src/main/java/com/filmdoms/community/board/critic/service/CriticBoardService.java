@@ -6,26 +6,25 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
-import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardDeleteRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
-import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardUpdateRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
 import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.critic.repository.CriticBoardHeaderRepository;
 import com.filmdoms.community.board.data.BoardContent;
+import com.filmdoms.community.imagefile.data.dto.ImageFileDto;
 import com.filmdoms.community.imagefile.data.dto.UploadedFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3UploadService;
-import com.filmdoms.community.imagefile.service.ImageFileService;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -36,6 +35,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CriticBoardService {
 
+        @Value("${domain}")
+        private String domain;
         private final AccountRepository accountRepository;
         private final CriticBoardHeaderRepository criticBoardHeaderRepository;
         private final ImageFileRepository imageFileRepository;
@@ -45,20 +46,18 @@ public class CriticBoardService {
         private  final EntityManager em;
 
 
-
-        public Response writeCritic(CriticBoardPostRequestDto dto, List<MultipartFile> multipartFileList) {
+    public Response writeCritic(CriticBoardPostRequestDto dto, List<MultipartFile> multipartFileList) {
 
         log.info("영화 작성 시작");
 
         CriticBoardHeader criticBoardHeader = CriticBoardHeader.builder()
                 .preHeader(dto.getPreHeader())
                 .title(dto.getTitle())
-                .boardContent(BoardContent.builder().content(dto.getContent()).build())
+                .content(BoardContent.builder().content(dto.getContent()).build())
                 .author(accountRepository
                         .findByUsername(dto.getAuthor())
                         .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND)))
                 .build();
-
 
         log.info("영화 작성 시작2");
 
@@ -78,15 +77,14 @@ public class CriticBoardService {
 
     }
 
-    public List<CriticBoardGetResponseDto> getCriticBoardList()
-    {
+    public List<CriticBoardGetResponseDto> getCriticBoardList() {
         List<CriticBoardHeader> resultBoard = getCriticBoardHeaders();
         List<ImageFile> imageFiles = getImageFiles(resultBoard);
 
         HashMap<Long, List<String>> imageFileHashMap = new HashMap<>();
         List<CriticBoardGetResponseDto> responseDtoList = new ArrayList<>();
 
-     //  setImageFilesToCriticBoardHeader(resultBoard, imageFiles, imageFileHashMap, responseDtoList);
+        setImageFilesToCriticBoardHeader(resultBoard, imageFiles, imageFileHashMap, responseDtoList);
 
         return responseDtoList;
 
@@ -131,22 +129,21 @@ public class CriticBoardService {
         return resultBoard;
     }
 
-//    private  void setImageFilesToCriticBoardHeader(List<CriticBoardHeader> resultBoard, List<ImageFile> imageFiles, HashMap<Long, List<String>> imageFileHashMap, List<CriticBoardGetResponseDto> responseDtoList) {
-//        //초기 해시맵 셋팅
-//        resultBoard.stream().forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(),new ArrayList<>()));
-//        //이미지 파일 모으기
-//        imageFiles.stream().forEach(imageFile -> imageFileHashMap.get(imageFile.boardHeadCore.getId()).add(imageFileService.domain+imageFile.getUuidFileName()));
-//        //responseDtoList 리스트에 add
-//        resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add( CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
-//    }
-
-
-    @PostConstruct
-    public void test()
-    {
-        Account author = Account.of("user1", "1234", AccountRole.USER);
-        accountRepository.save(author);
+    private void setImageFilesToCriticBoardHeader(List<CriticBoardHeader> resultBoard, List<ImageFile> imageFiles,
+                                                  HashMap<Long, List<String>> imageFileHashMap,
+                                                  List<CriticBoardGetResponseDto> responseDtoList) {
+        //초기 해시맵 셋팅
+        resultBoard.stream()
+                .forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(), new ArrayList<>()));
+        //이미지 파일 모으기
+        imageFiles.stream()
+                .map(imageFile -> ImageFileDto.from(imageFile, domain))
+                .forEach(dto -> imageFileHashMap.get(dto.getHeaderId()).add(dto.getFileUrl()));
+        //responseDtoList 리스트에 add
+        resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add(
+                CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
     }
+
 
 
 }

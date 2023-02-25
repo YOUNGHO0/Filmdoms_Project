@@ -15,6 +15,7 @@ public class ImageFileDto {
     private Long id;
     private String uuidFileName;
     private String fileUrl;
+    private Long headerId;
 
     public static ImageFileDto from(ImageFile entity, String domain) {
         String fileUrl = domain + "/" + entity.getUuidFileName();
@@ -23,6 +24,7 @@ public class ImageFileDto {
                 .id(entity.getId())
                 .uuidFileName(entity.getUuidFileName())
                 .fileUrl(fileUrl)
+                .headerId(entity.getBoardHeadCore().getId())
                 .build();
     }
 }
