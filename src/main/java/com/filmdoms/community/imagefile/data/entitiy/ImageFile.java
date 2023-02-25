@@ -1,12 +1,16 @@
 package com.filmdoms.community.imagefile.data.entitiy;
 
 
-import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardHeadCore;
-
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,16 +39,5 @@ public class ImageFile extends BaseTimeEntity {
         this.uuidFileName = uuidFileName;
         this.originalFileName = originalFileName;
         this.boardHeadCore = boardHeadCore;
-    }
-
-    public static ImageFile from(String uuidFileName , String originalFileName, CriticBoardHeader criticBoardHeader, String url)
-    {
-        ImageFile imageFile = ImageFile.builder()
-            .uuidFileName(uuidFileName)
-            .originalFileName(originalFileName)
-            .boardHeadCore(criticBoardHeader)
-            .fileUrl(url)
-            .build();
-        return  imageFile;
     }
 }

@@ -1,4 +1,4 @@
-package com.filmdoms.community.post.controller;
+package com.filmdoms.community.board.post.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,6 +52,11 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
                 .andExpect(jsonPath("$[?(@.result.length() == 4)]").exists())
                 .andExpect(jsonPath("$[?(@.result.length() == 3)]").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("메인 페이지에서 게시글 조회시, 최근 게시글 4개를 반환한다.")
+    void givenCreatingPostRequest_whenCreatingPost_thenReturnsCreatedPostId() throws Exception {
     }
 
     public List<PostBriefDto> getMockPostBriefDtos() {

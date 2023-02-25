@@ -1,4 +1,4 @@
-package com.filmdoms.community.post.service;
+package com.filmdoms.community.board.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -6,12 +6,14 @@ import static org.mockito.BDDMockito.given;
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.dto.PostBriefDto;
 import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
 import com.filmdoms.community.board.post.service.PostService;
+import com.filmdoms.community.imagefile.service.ImageFileService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,10 @@ class PostServiceTest {
 
     @MockBean
     PostHeaderRepository postHeaderRepository;
+    @MockBean
+    AccountRepository accountRepository;
+    @MockBean
+    ImageFileService imageFileService;
 
     @Test
     @DisplayName("최근 게시글 조회를 요청하면, 최근 게시글을 4개 반환한다.")
