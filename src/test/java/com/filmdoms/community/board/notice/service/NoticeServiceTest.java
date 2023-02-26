@@ -31,9 +31,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 @DataJpaTest
+@ActiveProfiles("test")
 @DisplayName("공지 서비스-리포지토리 통합 테스트")
 class NoticeServiceTest {
 
