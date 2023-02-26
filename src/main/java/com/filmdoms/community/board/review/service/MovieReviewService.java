@@ -68,7 +68,7 @@ public class MovieReviewService {
     }
 
     public void initData() throws InterruptedException {
-        Account author = Account.of("movieReviewUser", "1234", AccountRole.USER);
+        Account author = Account.builder().username("movieReviewUser").password("1234").role(AccountRole.USER).build();
         accountRepository.save(author);
 
         for (int i = 0; i < 10; i++) {
