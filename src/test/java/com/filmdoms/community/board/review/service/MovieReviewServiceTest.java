@@ -58,7 +58,11 @@ class MovieReviewServiceTest {
     @Test
     public void 이미지_없는_영화리뷰_생성() throws IOException {
         //given
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.USER));
+        Account testUser = accountRepository.save(Account.builder()
+                .username("user1")
+                .password("1234")
+                .role(AccountRole.USER)
+                .build());
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
                 testUser.getId(), "영화 리뷰 내용");
 
@@ -86,7 +90,11 @@ class MovieReviewServiceTest {
                         new byte[10])) //파일 크기가 0이면 저장되지 않으므로 10바이트짜리 파일 생성
                 .collect(Collectors.toList()); //가짜 멀티파트 이미지 5장 생성
 
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.USER));
+        Account testUser = accountRepository.save(Account.builder()
+                .username("user1")
+                .password("1234")
+                .role(AccountRole.USER)
+                .build());
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
                 testUser.getId(), "영화 리뷰 내용");
         Mockito.when(amazonS3UploadService.upload(any(), any()))

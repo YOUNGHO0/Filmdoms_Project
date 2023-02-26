@@ -60,7 +60,7 @@ class NoticeServiceTest {
     @Test
     public void 공지는_메인_이미지_없으면_예외_발생() {
         //given
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
+        Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
 
         //공지 시작일 종료일 설정
         LocalDateTime startDate = LocalDateTime.of(2023, 3, 1, 18, 0, 0);
@@ -86,7 +86,7 @@ class NoticeServiceTest {
         UploadedFileDto uploadedFileDto = UploadedFileDto.builder()
                 .uuidFileName("(randomUuidFileName).png")
                 .build();
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
+        Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
 
         //공지 시작일 종료일 설정
         LocalDateTime startDate = LocalDateTime.of(2023, 3, 1, 18, 0, 0);

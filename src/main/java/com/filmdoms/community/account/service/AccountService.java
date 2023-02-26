@@ -42,10 +42,14 @@ public class AccountService {
     }
 
     // TODO: 회원 가입 비즈니스 로직 구현하기
-    public AccountDto join() {
-        String testUsername = "tester";
-        String testPassword = "password";
-        Account testAccount = Account.of(testUsername, passwordEncoder.encode(testPassword), AccountRole.USER);
+    public AccountDto join(String username, String password) {
+        String testUsername = (username == null) ? "tester" : username;
+        String testPassword = (password == null) ? "password" : password;
+        Account testAccount = Account.builder()
+                .username(testUsername)
+                .password(passwordEncoder.encode(testPassword))
+                .role(AccountRole.USER)
+                .build();
         return AccountDto.from(accountRepository.save(testAccount));
     }
 

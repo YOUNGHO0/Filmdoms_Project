@@ -90,7 +90,11 @@ class AccountServiceTest {
     }
 
     private Account makeMockAccount(String username, String password) {
-        return Account.of(username, password, AccountRole.USER);
+        return Account.builder()
+                .username(username)
+                .password(password)
+                .role(AccountRole.USER)
+                .build();
     }
 
 }
