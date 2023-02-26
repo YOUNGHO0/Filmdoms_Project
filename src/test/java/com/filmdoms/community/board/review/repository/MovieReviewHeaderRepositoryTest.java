@@ -3,7 +3,7 @@ package com.filmdoms.community.board.review.repository;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
-import com.filmdoms.community.annotation.DataJpaTestWithJPAAuditing;
+import com.filmdoms.community.annotation.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
 import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
@@ -12,9 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import org.springframework.test.context.ActiveProfiles;
 
-@DataJpaTestWithJPAAuditing
+@DataJpaTestWithJpaAuditing
 class MovieReviewHeaderRepositoryTest {
 
     @Autowired

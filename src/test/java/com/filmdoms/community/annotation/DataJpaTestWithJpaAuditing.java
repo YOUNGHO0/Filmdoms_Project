@@ -18,5 +18,5 @@ import java.lang.annotation.Target;
         type = FilterType.ASSIGNABLE_TYPE,
         classes = {JpaConfig.class}
 ))
-public @interface DataJpaTestWithJPAAuditing {
+public @interface DataJpaTestWithJpaAuditing {
 }

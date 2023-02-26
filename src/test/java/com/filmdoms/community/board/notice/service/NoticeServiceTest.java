@@ -4,7 +4,7 @@ import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.repository.AccountRepository;
-import com.filmdoms.community.annotation.DataJpaTestWithJPAAuditing;
+import com.filmdoms.community.annotation.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.board.notice.data.dto.request.NoticeCreateRequestDto;
 import com.filmdoms.community.board.notice.data.dto.response.NoticeCreateResponseDto;
 import com.filmdoms.community.board.notice.data.entity.NoticeHeader;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
-@DataJpaTestWithJPAAuditing
+@DataJpaTestWithJpaAuditing
 @DisplayName("공지 서비스-리포지토리 통합 테스트")
 class NoticeServiceTest {
 
