@@ -27,6 +27,7 @@ public class ImageFileService {
     private final ImageFileRepository imageFileRepository;
     private final AmazonS3UploadService amazonS3UploadService;
 
+    //to be deprecated
     public Optional<ImageFileDto> saveImage(MultipartFile multipartFile, BoardHeadCore head) {
 
         if (multipartFile == null || multipartFile.isEmpty()) {
@@ -42,6 +43,7 @@ public class ImageFileService {
         return Optional.of(ImageFileDto.from(imageFileRepository.save(imageFile), domain));
     }
 
+    //to be deprecated
     public List<ImageFileDto> saveImages(List<MultipartFile> multipartFiles, BoardHeadCore head) {
         if (multipartFiles == null || multipartFiles.isEmpty()) {
             return new ArrayList<>();
@@ -54,10 +56,16 @@ public class ImageFileService {
     }
 
     public void setImageHeader(List<Long> imageIds, BoardHeadCore header) {
+        if(imageIds == null) {
+            return;
+        }
         imageIds.stream().forEach(id -> setImageHeader(id, header));
     }
 
     public void setImageHeader(Long imageId, BoardHeadCore header) {
+        if(imageId == null) {
+            return;
+        }
         ImageFile imageFile = imageFileRepository.findById(imageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
         if(imageFile.getBoardHeadCore() != null) {
             log.warn("이미 ImageFile 엔티티에 헤더가 연결되어 있음. ImageFile ID={}, 변경 전 헤더 ID={}, 변경 후 헤더 ID={}",
