@@ -56,9 +56,13 @@ public class AmazonS3UploadService {
 
     public ImageUploadResponseDto uploadAndSaveImages(List<MultipartFile> imageMultipartFiles) {
 
+        if(imageMultipartFiles == null) {
+            throw new ApplicationException(ErrorCode.NO_IMAGE_ERROR); //발생할 가능성 없어 보임
+        }
+
         List<Long> uploadedImageIds = new ArrayList<>();
 
-        for (MultipartFile imageMultipartFile : imageMultipartFiles) {
+        for (MultipartFile imageMultipartFile : imageMultipartFiles) { //null, empty 검사 로직은 넣지 않음 (변경 가능)
             String originalFileName = imageMultipartFile.getOriginalFilename();
             String uuidFileName = getUuidFileName(originalFileName);
             uploadFile(imageMultipartFile, uuidFileName);
