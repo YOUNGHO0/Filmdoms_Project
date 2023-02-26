@@ -1,5 +1,7 @@
 package com.filmdoms.community.imagefile.service;
 
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.imagefile.data.dto.ImageFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
@@ -8,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,5 +51,18 @@ public class ImageFileService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+    }
+
+    public void setImageHeader(List<Long> imageIds, BoardHeadCore header) {
+        imageIds.stream().forEach(id -> setImageHeader(id, header));
+    }
+
+    public void setImageHeader(Long imageId, BoardHeadCore header) {
+        ImageFile imageFile = imageFileRepository.findById(imageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+        if(imageFile.getBoardHeadCore() != null) {
+            log.warn("이미 ImageFile 엔티티에 헤더가 연결되어 있음. ImageFile ID={}, 변경 전 헤더 ID={}, 변경 후 헤더 ID={}",
+                    imageFile.getId(), imageFile.getBoardHeadCore().getId(), header.getId());
+        }
+        imageFile.setBoardHeadCore(header);
     }
 }

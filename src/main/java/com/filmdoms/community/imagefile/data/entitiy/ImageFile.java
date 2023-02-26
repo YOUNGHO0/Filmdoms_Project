@@ -3,13 +3,7 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardHeadCore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +32,10 @@ public class ImageFile extends BaseTimeEntity {
 
         this.uuidFileName = uuidFileName;
         this.originalFileName = originalFileName;
+        this.boardHeadCore = boardHeadCore;
+    }
+
+    public void setBoardHeadCore(BoardHeadCore boardHeadCore) {
         this.boardHeadCore = boardHeadCore;
     }
 }
