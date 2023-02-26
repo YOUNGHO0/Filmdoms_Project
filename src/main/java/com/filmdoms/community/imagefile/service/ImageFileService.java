@@ -68,8 +68,7 @@ public class ImageFileService {
         }
         ImageFile imageFile = imageFileRepository.findById(imageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
         if(imageFile.getBoardHeadCore() != null) {
-            log.warn("이미 ImageFile 엔티티에 헤더가 연결되어 있음. ImageFile ID={}, 변경 전 헤더 ID={}, 변경 후 헤더 ID={}",
-                    imageFile.getId(), imageFile.getBoardHeadCore().getId(), header.getId());
+            throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST); //이미지에 이미 게시글 헤드가 매핑되어 있으면 예외 발생
         }
         imageFile.setBoardHeadCore(header);
     }

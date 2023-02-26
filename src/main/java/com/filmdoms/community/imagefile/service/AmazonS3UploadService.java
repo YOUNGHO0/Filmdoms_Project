@@ -62,7 +62,10 @@ public class AmazonS3UploadService {
 
         List<Long> uploadedImageIds = new ArrayList<>();
 
-        for (MultipartFile imageMultipartFile : imageMultipartFiles) { //null, empty 검사 로직은 넣지 않음 (변경 가능)
+        for (MultipartFile imageMultipartFile : imageMultipartFiles) {
+            if(imageMultipartFile.isEmpty()) {
+                throw new ApplicationException(ErrorCode.EMPTY_FILE_ERROR); //이미지가 비어 있으면 예외 발생
+            }
             String originalFileName = imageMultipartFile.getOriginalFilename();
             String uuidFileName = getUuidFileName(originalFileName);
             uploadFile(imageMultipartFile, uuidFileName);
