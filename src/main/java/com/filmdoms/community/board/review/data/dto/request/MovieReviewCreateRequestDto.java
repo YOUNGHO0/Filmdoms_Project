@@ -1,11 +1,13 @@
 package com.filmdoms.community.board.review.data.dto.request;
 
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor //테스트에 필요
 @NoArgsConstructor
 @Getter
 public class MovieReviewCreateRequestDto {
