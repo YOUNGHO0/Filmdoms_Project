@@ -4,13 +4,13 @@ import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.imagefile.data.dto.response.ImageUploadResponseDto;
 import com.filmdoms.community.imagefile.data.dto.response.UploadedFileResponseDto;
 import com.filmdoms.community.imagefile.service.AmazonS3UploadService;
-import java.io.IOException;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController

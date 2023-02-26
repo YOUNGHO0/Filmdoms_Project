@@ -1,10 +1,8 @@
 package com.filmdoms.community.board.review.data.dto.response;
 
 import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class MovieReviewCreateResponseDto {
 
