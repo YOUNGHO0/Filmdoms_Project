@@ -40,12 +40,4 @@ public class MovieReviewController {
         movieReviewService.initData();
         return Response.success();
     }
-
-    @PostMapping("/test")
-    public Response test(@RequestPart("image") MultipartFile image) {
-        log.info(image.getContentType());
-        log.info(image.getName());
-        log.info(image.getOriginalFilename());
-        return Response.success();
-    }
 }
