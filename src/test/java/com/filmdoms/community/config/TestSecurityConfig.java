@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @Import({SecurityConfig.class, JwtTokenProvider.class, UserDetailsServiceImpl.class})
 @TestPropertySource(properties = {
@@ -31,10 +32,21 @@ public class TestSecurityConfig {
 
     @BeforeTestMethod
     public void securitySetUp() {
-        given(accountRepository.findByUsername("testUser")).willReturn(
-                Optional.of(Account.of(1L, "testUser", "password", AccountRole.USER)));
-        given(accountRepository.findByUsername("testAdmin")).willReturn(
-                Optional.of(Account.of(2L, "testAdmin", "password", AccountRole.ADMIN)));
+        Account mockAdminAccount = Account.builder()
+                .username("testAdmin")
+                .password("password")
+                .role(AccountRole.ADMIN)
+                .build();
+        ReflectionTestUtils.setField(mockAdminAccount, Account.class, "id", 1L, Long.class);
+        given(accountRepository.findByUsername("testAdmin")).willReturn(Optional.of(mockAdminAccount));
+
+        Account mockUserAccount = Account.builder()
+                .username("testUser")
+                .password("password")
+                .role(AccountRole.USER)
+                .build();
+        ReflectionTestUtils.setField(mockUserAccount, Account.class, "id", 2L, Long.class);
+        given(accountRepository.findByUsername("testUser")).willReturn(Optional.of(mockUserAccount));
     }
 
 }

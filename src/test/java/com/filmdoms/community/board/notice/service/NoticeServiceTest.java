@@ -58,8 +58,7 @@ class NoticeServiceTest {
     @Test
     public void 공지는_메인_이미지_없으면_예외_발생() {
         //given
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
-        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
+        Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
 
         //공지 시작일 종료일 설정
         LocalDateTime startDate = LocalDateTime.of(2023, 3, 1, 18, 0, 0);
@@ -80,8 +79,10 @@ class NoticeServiceTest {
     public void 메인이미지_서브이미지_있는_공지_생성() {
 
         //given
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
-        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
+        UploadedFileDto uploadedFileDto = UploadedFileDto.builder()
+                .uuidFileName("(randomUuidFileName).png")
+                .build();
+        Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
 
         //공지 시작일 종료일 설정
         LocalDateTime startDate = LocalDateTime.of(2023, 3, 1, 18, 0, 0);

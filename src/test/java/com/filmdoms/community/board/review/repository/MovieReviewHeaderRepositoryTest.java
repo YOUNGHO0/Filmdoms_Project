@@ -25,8 +25,7 @@ class MovieReviewHeaderRepositoryTest {
     @Test
     void 생성일_내림차순으로_상위_5개_반환() throws InterruptedException {
 
-        //given
-        Account author = Account.of("user1", "1234", AccountRole.USER);
+        Account author = Account.builder().username("user1").role(AccountRole.USER).build();
         accountRepository.save(author);
 
         for (int i = 0; i < 10; i++) {

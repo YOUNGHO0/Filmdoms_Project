@@ -3,13 +3,18 @@ package com.filmdoms.community.board.post.service;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.dto.PostBriefDto;
+import com.filmdoms.community.board.post.data.dto.PostDetailDto;
 import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
+import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
+import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +30,7 @@ public class PostService {
     private final PostHeaderRepository postHeaderRepository;
     private final AccountRepository accountRepository;
     private final ImageFileService imageFileService;
+    private final ImageFileRepository imageFileRepository;
 
     /**
      * 메서드 호출시, 최근 게시글 4개를 카테고리에 상관 없이 반환한다.
@@ -62,16 +68,32 @@ public class PostService {
 
         return PostBriefDto.from(header);
     }
+    @Transactional
+    public PostBriefDto update(AccountDto accountDto, Long postHeaderId, PostUpdateRequestDto requestDto) {
+        // 게시글 호출
+        PostHeader header = postHeaderRepository.findByIdWithAuthorContentImage(postHeaderId);
+        // 작성자 확인
+        if (!AccountDto.from(header.getAuthor()).equals(accountDto)) {
+            throw new ApplicationException(ErrorCode.INVALID_PERMISSION, "게시글의 작성자와 일치하지 않습니다.");
+        }
+        // 게시글 업데이트
+        PostHeader updatedHeader = updateHeader(header, requestDto);
+        // 게시글 저장
+        PostHeader savedHeader = postHeaderRepository.save(updatedHeader);
+        // 게시글 반환 타입으로 변환
+        return PostBriefDto.from(savedHeader);
 
-    // TODO: 게시글 작성 기능 구현 후 삭제
-    public void testPost(String title) {
-        Account testAccount = Account.of(1L, "tester", "testpw", AccountRole.USER);
-        postHeaderRepository.save(
-                PostHeader.builder()
-                        .author(testAccount)
-                        .category(PostCategory.FREE)
-                        .title(title)
-                        .build()
-        );
+    }
+
+    private PostHeader updateHeader(PostHeader header, PostUpdateRequestDto requestDto) {
+        header.updateCategory(requestDto.getCategory());
+        header.updateTitle(requestDto.getTitle());
+        header.getBoardContent().updateContent(requestDto.getContent());
+        header.getImageFiles()
+                .forEach(imageFile -> imageFile.updateBoardHeadCore(null));
+        requestDto.getImageFileIds().stream()
+                .map(imageFileRepository::getReferenceById)
+                .forEach(imageFile -> imageFile.updateBoardHeadCore(header));
+        return header;
     }
 }

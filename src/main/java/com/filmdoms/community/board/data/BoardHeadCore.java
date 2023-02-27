@@ -40,4 +40,8 @@ public class BoardHeadCore extends BaseTimeEntity {
         this.author = author;
         this.boardContent = boardContent;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
 }

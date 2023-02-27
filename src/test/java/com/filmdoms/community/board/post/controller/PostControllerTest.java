@@ -1,25 +1,29 @@
 package com.filmdoms.community.board.post.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.dto.PostBriefDto;
 import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
+import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.service.PostService;
 import com.filmdoms.community.config.TestSecurityConfig;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,7 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -45,78 +48,161 @@ class PostControllerTest {
     @MockBean
     private PostService postService;
 
-    @Test
-    @WithAnonymousUser
-    @DisplayName("메인 페이지에서 게시글 조회시, 최근 게시글 4개를 반환한다.")
-    void givenNothing_whenViewingPostsFromMainPage_thenReturnsFourRecentPosts() throws Exception {
+    @Nested
+    @DisplayName("게시글 조회 요청 테스트")
+    class aboutPostRead {
 
-        // Given
-        given(postService.getMainPagePosts()).willReturn(getMockPostBriefDtos());
+        @Test
+        @WithAnonymousUser
+        @DisplayName("메인 페이지에서 게시글 조회시, 최근 게시글 4개를 반환한다.")
+        void givenNothing_whenViewingPostsFromMainPage_thenReturnsFourRecentPosts() throws Exception {
 
-        // When & Then
-        mockMvc.perform(get("/api/v1/post/main-page"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                .andExpect(jsonPath("$[?(@.result.length() == 4)]").exists())
-                .andExpect(jsonPath("$[?(@.result.length() == 3)]").doesNotExist());
+            // Given
+            given(postService.getMainPagePosts()).willReturn(getMockPostBriefDtos());
+
+            // When & Then
+            mockMvc.perform(get("/api/v1/post/main-page"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
+                    .andExpect(jsonPath("$[?(@.result.length() == 4)]").exists())
+                    .andExpect(jsonPath("$[?(@.result.length() == 3)]").doesNotExist());
+        }
+
+        public List<PostBriefDto> getMockPostBriefDtos() {
+            return List.of(
+                    PostBriefDto.builder().title("title1").postCategory(PostCategory.FREE).commentCount(5).build(),
+                    PostBriefDto.builder().title("title2").postCategory(PostCategory.SHARE).commentCount(10).build(),
+                    PostBriefDto.builder().title("title3").postCategory(PostCategory.REVIEW).commentCount(15).build(),
+                    PostBriefDto.builder().title("title4").postCategory(PostCategory.FREE).commentCount(20).build()
+            );
+        }
     }
 
-    public List<PostBriefDto> getMockPostBriefDtos() {
-        return List.of(
-                PostBriefDto.builder().title("title1").postCategory(PostCategory.FREE).commentCount(5).build(),
-                PostBriefDto.builder().title("title2").postCategory(PostCategory.SHARE).commentCount(10).build(),
-                PostBriefDto.builder().title("title3").postCategory(PostCategory.REVIEW).commentCount(15).build(),
-                PostBriefDto.builder().title("title4").postCategory(PostCategory.FREE).commentCount(20).build()
-        );
+    @Nested
+    @DisplayName("게시글 생성 요청 테스트")
+    class aboutPostCreate {
+
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("게시글 생성 요청시, 정상적인 요청이라면, 생성된 게시글 ID를 반환한다.")
+        void givenCreatingPostRequest_whenCreatingPost_thenReturnsCreatedPostId() throws Exception {
+            // Given
+            PostCreateRequestDto requestDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .build();
+            PostBriefDto dto = PostBriefDto.builder().id(1L).build();
+            given(postService.create(any(), any(), any(), any())).willReturn(dto);
+
+            // When & Then
+            mockMvc.perform(multipart("/api/v1/post/create")
+                            .part(new MockPart("data", mapper.writeValueAsBytes(requestDto)))
+                    )
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
+                    .andExpect(jsonPath("$..result[?(@..id)]").exists());
+        }
+
+        @Test
+        @WithAnonymousUser
+        @DisplayName("게시글 생성 요청시, 로그인 하지 않으면, 인증 에러를 반환한다.")
+        void givenUnauthenticatedUser_whenCreatingPost_thenReturnsUserNotFoundErrorCode() throws Exception {
+            // Given
+            PostCreateRequestDto requestDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .build();
+
+            // When & Then
+            mockMvc.perform(multipart("/api/v1/post/create")
+                            .part(new MockPart("data", mapper.writeValueAsBytes(requestDto)))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists())
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists());
+            then(postService).shouldHaveNoInteractions();
+        }
     }
 
-    @Test
-    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    @DisplayName("게시글 생성 요청시, 정상적인 요청이라면, 생성된 게시글 ID를 반환한다.")
-    void givenCreatingPostRequest_whenCreatingPost_thenReturnsCreatedPostId() throws Exception {
-        // Given
-        PostCreateRequestDto requestDto = PostCreateRequestDto.builder()
-                .category(PostCategory.FREE)
-                .title("title")
-                .content("content")
-                .build();
-        PostBriefDto dto = PostBriefDto.builder().id(1L).build();
-        given(postService.create(any(), any(), any(), any())).willReturn(dto);
+    @Nested
+    @DisplayName("게시글 수정 요청 테스트")
+    class aboutPostUpdate {
 
-        // When & Then
-        mockMvc.perform(multipart("/api/v1/post/create")
-                        .part(new MockPart("data", mapper.writeValueAsBytes(requestDto)))
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                .andExpect(jsonPath("$..result[?(@..id)]").exists());
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("게시글 수정 요청시, 정상적인 요청이라면, 수정된 게시글 ID를 반환한다.")
+        void givenUpdatingPostRequest_whenUpdatingPost_thenReturnsUpdatedPostId() throws Exception {
+            // Given
+            PostUpdateRequestDto requestDto = getMockUpdateRequestDto();
+            PostBriefDto briefDto = PostBriefDto.builder().id(1L).build();
+            given(postService.update(any(), any(), any())).willReturn(briefDto);
+
+            // When & Then
+            mockMvc.perform(put("/api/v1/post/1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto)))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
+                    .andExpect(jsonPath("$..result[?(@..id)]").exists());
+        }
+
+        @Test
+        @WithAnonymousUser
+        @DisplayName("게시글 수정 요청시, 로그인 하지 않으면, 인증 에러를 반환한다.")
+        void givenUnauthenticatedUser_whenUpdatingPost_thenReturnsUserNotFoundErrorCode() throws Exception {
+            // Given
+            PostUpdateRequestDto requestDto = getMockUpdateRequestDto();
+
+            // When & Then
+            mockMvc.perform(put("/api/v1/post/1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto)))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists())
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists());
+            then(postService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("게시글 수정 요청시, 생성자와 다른 유저라면, 인증 에러를 반환한다.")
+        void givenDifferentUser_whenUpdatingPost_thenReturnsInvalidPermissionErrorCode() throws Exception {
+            // Given
+            PostUpdateRequestDto requestDto = getMockUpdateRequestDto();
+            doThrow(new ApplicationException(ErrorCode.INVALID_PERMISSION))
+                    .when(postService).update(any(), any(), any());
+
+            // When & Then
+            mockMvc.perform(put("/api/v1/post/1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto))
+                    )
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'INVALID_PERMISSION')]").exists())
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists());
+        }
+
+        private PostUpdateRequestDto getMockUpdateRequestDto() {
+            return PostUpdateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("changed title")
+                    .content("changed content")
+                    .imageFileIds(List.of(1L, 2L))
+                    .build();
+        }
     }
-
-    @Test
-    @WithAnonymousUser
-    @DisplayName("게시글 생성 요청시, 로그인 하지 않으면, 인증 에러를 반환한다.")
-    void givenUnauthencicatedUser_whenCreatingPost_thenReturnsUserNotFoundErrorCode() throws Exception {
-        // Given
-        PostCreateRequestDto requestDto = PostCreateRequestDto.builder()
-                .category(PostCategory.FREE)
-                .title("title")
-                .content("content")
-                .build();
-
-        // When & Then
-        mockMvc.perform(multipart("/api/v1/post/create")
-                        .part(new MockPart("data", mapper.writeValueAsBytes(requestDto)))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isUnauthorized())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[?(@.result == null)]").exists())
-                .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists());
-        then(postService).shouldHaveNoInteractions();
-    }
-
 }

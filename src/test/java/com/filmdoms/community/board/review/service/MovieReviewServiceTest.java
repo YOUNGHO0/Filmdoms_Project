@@ -64,8 +64,13 @@ class MovieReviewServiceTest {
     @Test
     public void 이미지_없는_영화리뷰_생성() {
         //given
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
-        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
+        Account testUser = accountRepository.save(Account.builder()
+                .username("user1")
+                .password("1234")
+                .role(AccountRole.USER)
+                .build());
+        MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
+                testUser.getId(), "영화 리뷰 내용");
 
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목", "영화 리뷰 내용", Collections.emptyList());
 
@@ -88,11 +93,15 @@ class MovieReviewServiceTest {
         Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
         AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
 
-        //테스트 이미지 생성
-        List<Long> imageIds = new ArrayList<>();
-        for(int i = 0; i < 3; i++) {
-            imageIds.add(createTestImage());
-        }
+        Account testUser = accountRepository.save(Account.builder()
+                .username("user1")
+                .password("1234")
+                .role(AccountRole.USER)
+                .build());
+        MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
+                testUser.getId(), "영화 리뷰 내용");
+        Mockito.when(amazonS3UploadService.upload(any(), any()))
+                .thenReturn(uploadedFileDto); //amazonS3Upload 객체에 가짜 행동 주입
 
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목", "영화 리뷰 내용", imageIds);
 

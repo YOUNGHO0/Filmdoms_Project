@@ -48,7 +48,11 @@ public class NoticeService {
 
     //임시 데이터 생성 메서드 -> 나중에 삭제할 것
     public void initData() throws InterruptedException {
-        Account author = Account.of("noticeUser", "1234", AccountRole.USER);
+        Account author = Account.builder()
+                .username("noticeUser")
+                .password("1234")
+                .role(AccountRole.USER)
+                .build();
         accountRepository.save(author);
 
         for (int i = 0; i < 5; i++) {

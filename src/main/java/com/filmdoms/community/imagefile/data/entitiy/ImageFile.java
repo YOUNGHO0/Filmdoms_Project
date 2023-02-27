@@ -35,6 +35,11 @@ public class ImageFile extends BaseTimeEntity {
         this.boardHeadCore = boardHeadCore;
     }
 
+    public void updateBoardHeadCore(BoardHeadCore boardHeadCore) {
+        this.boardHeadCore = boardHeadCore;
+    }
+}
+
     public void setBoardHeadCore(BoardHeadCore boardHeadCore) {
         this.boardHeadCore = boardHeadCore;
     }

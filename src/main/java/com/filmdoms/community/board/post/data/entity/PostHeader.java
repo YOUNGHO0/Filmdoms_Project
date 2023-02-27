@@ -40,7 +40,7 @@ public class PostHeader extends BoardHeadCore {
     @OneToMany(mappedBy = "header", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<PostComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.ALL, orphanRemoval = true)
     public final List<ImageFile> imageFiles = new ArrayList<>();
 
     @Builder
@@ -48,4 +48,9 @@ public class PostHeader extends BoardHeadCore {
         super(title, author, content);
         this.category = category;
     }
+
+    public void updateCategory(PostCategory category) {
+        this.category = category;
+    }
+
 }
