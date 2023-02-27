@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.notice.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -78,12 +79,12 @@ public class NoticeService {
         }
     }
 
-    public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, MultipartFile mainImageMultipartFile,
-                                          List<MultipartFile> subImageMultipartFiles) throws IOException {
-        //인증 로직 필요
+    public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, AccountDto accountDto) {
 
-        Account author = accountRepository.findById(requestDto.getAccountId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        //나중에 validation 설정하면 삭제
+        if(requestDto.getMainImageId() == null) {
+            throw new ApplicationException(ErrorCode.NO_MAIN_IMAGE_ERROR);
+        }
 
         BoardContent boardContent = BoardContent.builder()
                 .content(requestDto.getContent())
@@ -91,7 +92,7 @@ public class NoticeService {
 
         NoticeHeader header = NoticeHeader.builder()
                 .title(requestDto.getTitle())
-                .author(author)
+                .author(accountRepository.getReferenceById(accountDto.getId()))
                 .boardContent(boardContent)
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
@@ -99,9 +100,8 @@ public class NoticeService {
 
         NoticeHeader savedHeader = noticeHeaderRepository.save(header);
 
-        imageFileService.saveImage(mainImageMultipartFile, header)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_MAIN_IMAGE_ERROR));
-        imageFileService.saveImages(subImageMultipartFiles, header);
+        imageFileService.setImageHeader(requestDto.getMainImageId(), header);
+        imageFileService.setImageHeader(requestDto.getSubImageIds(), header);
 
         return new NoticeCreateResponseDto(savedHeader);
     }

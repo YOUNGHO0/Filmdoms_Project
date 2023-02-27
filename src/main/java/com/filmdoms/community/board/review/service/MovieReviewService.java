@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.review.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -43,10 +44,7 @@ public class MovieReviewService {
                 .collect(Collectors.toList());
     }
 
-    public MovieReviewCreateResponseDto createReview(MovieReviewCreateRequestDto requestDto, List<MultipartFile> imageMultipartFiles) throws IOException {
-        //인증 로직 필요
-
-        Account author = accountRepository.findById(requestDto.getAccountId()).orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+    public MovieReviewCreateResponseDto create(MovieReviewCreateRequestDto requestDto, AccountDto accountDto) {
 
         BoardContent content = BoardContent.builder()
                 .content(requestDto.getContent())
@@ -54,15 +52,14 @@ public class MovieReviewService {
 
         MovieReviewHeader header = MovieReviewHeader.builder()
                 .tag(requestDto.getTag())
-                .author(author)
+                .author(accountRepository.getReferenceById(accountDto.getId()))
                 .title(requestDto.getTitle())
                 .boardContent(content)
                 .build();
 
         MovieReviewHeader savedHeader = headerRepository.save(header);
 
-        //이미지 추가 로직
-        imageFileService.saveImages(imageMultipartFiles, header);
+        imageFileService.setImageHeader(requestDto.getImageIds(), savedHeader);
 
         return new MovieReviewCreateResponseDto(savedHeader);
     }
