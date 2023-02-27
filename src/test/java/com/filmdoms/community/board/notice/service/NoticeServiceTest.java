@@ -23,7 +23,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +82,6 @@ class NoticeServiceTest {
     public void 메인이미지_서브이미지_있는_공지_생성() {
 
         //given
-        UploadedFileDto uploadedFileDto = UploadedFileDto.builder()
-                .uuidFileName("(randomUuidFileName).png")
-                .build();
         Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
         AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
 
@@ -91,14 +90,18 @@ class NoticeServiceTest {
         LocalDateTime endDate = LocalDateTime.of(2023, 4, 1, 0, 0, 0);
 
         //테스트 이미지 생성
-        Long mainImageId = createTestImage();
-        List<Long> subImageIds = new ArrayList<>();
+        Long mainImageId = null;
+        Set<Long> contentImageId = new HashSet<>();
         for (int i = 0; i < 3; i++) {
-            subImageIds.add(createTestImage());
+            Long createdImageId = createTestImage();
+            contentImageId.add(createdImageId);
+            if (i == 0) {
+                mainImageId = createdImageId;
+            }
         }
 
         NoticeCreateRequestDto requestDto = new NoticeCreateRequestDto("공지 제목", "공지 내용", startDate,
-                endDate, mainImageId, subImageIds);
+                endDate, mainImageId, contentImageId);
 
         //when
         NoticeCreateResponseDto responseDto = noticeService.create(requestDto,
@@ -109,7 +112,7 @@ class NoticeServiceTest {
         //then
         NoticeHeader header = headerRepository.findById(responseDto.getPostId())
                 .orElseThrow(() -> new RuntimeException("요청한 포스트 아이디가 존재하지 않음"));
-        assertThat(header.getImageFiles().size()).isEqualTo(1 + subImageIds.size()); //메인이미지 개수 + 서브이미지 개수
+        assertThat(header.getBoardContent().getImageFiles().size()).isEqualTo(contentImageId.size()); //메인이미지 개수 + 서브이미지 개수
         assertThat(header.getTitle()).isEqualTo(requestDto.getTitle()); //request DTO에서 전달된 값들이 저장되었는지 확인
         assertThat(header.getAuthor().getId()).isEqualTo(testUser.getId());
         assertThat(header.getBoardContent().getContent()).isEqualTo(requestDto.getContent());

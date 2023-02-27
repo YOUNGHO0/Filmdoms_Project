@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ class MovieReviewServiceTest {
                 .build());
         AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
-                "영화 리뷰 내용", Collections.emptyList());
+                "영화 리뷰 내용", null, Collections.emptySet());
 
         //when
         MovieReviewCreateResponseDto responseDto = movieReviewService.create(requestDto, testAccountDto);
@@ -71,7 +72,7 @@ class MovieReviewServiceTest {
         //then
         MovieReviewHeader header = headerRepository.findById(responseDto.getPostId())
                 .orElseThrow(() -> new RuntimeException("요청한 포스트 아이디가 존재하지 않음"));
-        assertThat(header.getImageFiles().size()).isEqualTo(0); //이미지 없음
+        assertThat(header.getBoardContent().getImageFiles().size()).isEqualTo(0); //이미지 없음
         assertThat(header.getAuthor().getId()).isEqualTo(testUser.getId()); //request DTO에서 전달된 값들이 저장되었는지 확인
         assertThat(header.getTitle()).isEqualTo(requestDto.getTitle());
         assertThat(header.getTag()).isEqualTo(requestDto.getTag());
@@ -88,13 +89,11 @@ class MovieReviewServiceTest {
         AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
 
         //테스트 이미지 생성
-        List<Long> imageIds = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            imageIds.add(createTestImage());
-        }
+        Long mainImageId = 1L;
+        Set<Long> contentImageIds = Set.of(1L, 2L, 3L);
 
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
-                "영화 리뷰 내용", imageIds);
+                "영화 리뷰 내용", mainImageId, contentImageIds);
     }
 
     private Long createTestImage() { //테스트 이미지 데이터를 생성해서 저장하고 id를 반환

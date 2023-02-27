@@ -2,14 +2,17 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,23 +32,36 @@ public class ImageFile extends BaseTimeEntity {
     @Column(name = "uuid_file_name")
     String uuidFileName;
     @ManyToOne
-    @JoinColumn(name = "board_head_core_id")
-    public BoardHeadCore boardHeadCore;
+    @JoinColumn(name = "board_content_id")
+    public BoardContent boardContent;
 
 
     @Builder
-    private ImageFile(String uuidFileName, String originalFileName, BoardHeadCore boardHeadCore) {
+    private ImageFile(String uuidFileName, String originalFileName, BoardContent boardContent) {
 
         this.uuidFileName = uuidFileName;
         this.originalFileName = originalFileName;
-        this.boardHeadCore = boardHeadCore;
+        this.boardContent = boardContent;
     }
 
-    public void updateBoardHeadCore(BoardHeadCore boardHeadCore) {
-        this.boardHeadCore = boardHeadCore;
+    public void updateBoardContent(BoardContent boardContent) {
+        this.boardContent = boardContent;
     }
 
-    public void setBoardHeadCore(BoardHeadCore boardHeadCore) {
-        this.boardHeadCore = boardHeadCore;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ImageFile imageFile = (ImageFile) o;
+        return Objects.equals(id, imageFile.id) && Objects.equals(uuidFileName, imageFile.uuidFileName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uuidFileName);
     }
 }

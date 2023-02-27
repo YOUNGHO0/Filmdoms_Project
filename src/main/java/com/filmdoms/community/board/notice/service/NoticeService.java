@@ -15,7 +15,6 @@ import com.filmdoms.community.board.notice.repository.NoticeHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -70,7 +68,7 @@ public class NoticeService {
 
             noticeHeaderRepository.save(header);
             imageFileRepository.save(ImageFile.builder()
-                    .boardHeadCore(header)
+                    .boardContent(content)
                     .originalFileName("popcorn-movie-party-entertainment.webp")
                     .uuidFileName("3554e88f-d683-4f18-b3f4-33fbf6905792.webp")
                     .build());
@@ -86,22 +84,21 @@ public class NoticeService {
             throw new ApplicationException(ErrorCode.NO_MAIN_IMAGE_ERROR);
         }
 
-        BoardContent boardContent = BoardContent.builder()
+        BoardContent content = BoardContent.builder()
                 .content(requestDto.getContent())
                 .build();
 
         NoticeHeader header = NoticeHeader.builder()
                 .title(requestDto.getTitle())
                 .author(accountRepository.getReferenceById(accountDto.getId()))
-                .boardContent(boardContent)
+                .boardContent(content)
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
                 .build();
 
         NoticeHeader savedHeader = noticeHeaderRepository.save(header);
 
-        imageFileService.setImageHeader(requestDto.getMainImageId(), header);
-        imageFileService.setImageHeader(requestDto.getSubImageIds(), header);
+        imageFileService.setImageContent(requestDto.getContentImageId(), content);
 
         return new NoticeCreateResponseDto(savedHeader);
     }

@@ -9,6 +9,7 @@ import com.filmdoms.community.board.post.data.constants.PostCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,5 +32,6 @@ public class PostUpdateRequestDto {
     @Size(max = 10000, message = CONTENT_SIZE)
     private String content;
 
-    private List<Long> imageFileIds;
+    private Long mainImageId;
+    private Set<Long> contentImageId;
 }
