@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -22,6 +23,7 @@ import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.service.PostService;
 import com.filmdoms.community.config.TestSecurityConfig;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -93,14 +95,16 @@ class PostControllerTest {
                     .category(PostCategory.FREE)
                     .title("title")
                     .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L, 2L))
                     .build();
             PostBriefDto dto = PostBriefDto.builder().id(1L).build();
-            given(postService.create(any(), any(), any(), any())).willReturn(dto);
+            given(postService.create(any(), any())).willReturn(dto);
 
             // When & Then
-            mockMvc.perform(multipart("/api/v1/post/create")
-                            .part(new MockPart("data", mapper.writeValueAsBytes(requestDto)))
-                    )
+            mockMvc.perform(post("/api/v1/post")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -117,12 +121,14 @@ class PostControllerTest {
                     .category(PostCategory.FREE)
                     .title("title")
                     .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L, 2L))
                     .build();
 
             // When & Then
-            mockMvc.perform(multipart("/api/v1/post/create")
-                            .part(new MockPart("data", mapper.writeValueAsBytes(requestDto)))
-                            .contentType(MediaType.APPLICATION_JSON))
+            mockMvc.perform(post("/api/v1/post")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -201,7 +207,8 @@ class PostControllerTest {
                     .category(PostCategory.FREE)
                     .title("changed title")
                     .content("changed content")
-                    .imageFileIds(List.of(1L, 2L))
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L, 2L))
                     .build();
         }
     }

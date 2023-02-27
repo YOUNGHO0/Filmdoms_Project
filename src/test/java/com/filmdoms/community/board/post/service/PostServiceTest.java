@@ -26,7 +26,10 @@ import com.filmdoms.community.board.post.repository.PostHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,18 +88,19 @@ class PostServiceTest {
                 .category(PostCategory.FREE)
                 .title("title")
                 .content("content")
+                .mainImageId(1L)
+                .contentImageId(Set.of(1L, 2L))
                 .build();
         given(postHeaderRepository.save(any())).willReturn(getMockPost(mockAccount, mockRequestDto));
 
         // When
-        PostBriefDto postBriefDto = postService.create(mockAccountDto, mockRequestDto, null, null);
+        PostBriefDto postBriefDto = postService.create(mockAccountDto, mockRequestDto);
 
         // Then
         assertThat(postBriefDto)
                 .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle())
                 .hasFieldOrPropertyWithValue("author", PostAccountDto.from(mockAccount))
                 .hasFieldOrPropertyWithValue("postCategory", mockRequestDto.getCategory());
-        then(imageFileRepository).shouldHaveNoInteractions();
     }
 
     @Test
@@ -107,7 +111,8 @@ class PostServiceTest {
         PostCategory categoryToUpdate = PostCategory.REVIEW;
         String titleToUpdate = "changed title";
         String contentToUpdate = "changed content";
-        List<Long> imagesToUpdate = List.of(1L, 2L);
+        Long mainImageToUpdate = 2L;
+        Set<Long> contentImageToUpdate = Set.of(2L);
         ImageFile mockImageFile = mock(ImageFile.class);
 
         Account mockAccount = getMockAccount();
@@ -117,13 +122,16 @@ class PostServiceTest {
                 .category(PostCategory.FREE)
                 .title("title")
                 .content("content")
+                .mainImageId(1L)
+                .contentImageId(Set.of(1L))
                 .build();
         // 바꿀 내용
         PostUpdateRequestDto mockRequestDto = PostUpdateRequestDto.builder()
                 .category(categoryToUpdate)
                 .title(titleToUpdate)
                 .content(contentToUpdate)
-                .imageFileIds(imagesToUpdate)
+                .mainImageId(mainImageToUpdate)
+                .contentImageId(contentImageToUpdate)
                 .build();
 
         PostHeader mockPost = getMockPost(mockAccount, createDto);
@@ -149,7 +157,9 @@ class PostServiceTest {
         PostCategory categoryToUpdate = PostCategory.REVIEW;
         String titleToUpdate = "changed title";
         String contentToUpdate = "changed content";
-        List<Long> imagesToUpdate = List.of(1L, 2L);
+        Long mainImageToUpdate = 2L;
+        Set<Long> contentImageToUpdate = Set.of(2L);
+        ImageFile mockImageFile = mock(ImageFile.class);
 
         Account mockOwnerAccount = getMockAccount();
         Account mockRequesterAccount = getAnotherMockAccount();
@@ -159,13 +169,16 @@ class PostServiceTest {
                 .category(PostCategory.FREE)
                 .title("title")
                 .content("content")
+                .mainImageId(1L)
+                .contentImageId(Set.of(1L))
                 .build();
         // 바꿀 내용
         PostUpdateRequestDto mockRequestDto = PostUpdateRequestDto.builder()
                 .category(categoryToUpdate)
                 .title(titleToUpdate)
                 .content(contentToUpdate)
-                .imageFileIds(imagesToUpdate)
+                .mainImageId(mainImageToUpdate)
+                .contentImageId(contentImageToUpdate)
                 .build();
 
         PostHeader mockPost = getMockPost(mockOwnerAccount, createDto);
@@ -213,17 +226,28 @@ class PostServiceTest {
     }
 
     public PostHeader getMockPost(Account author, PostCreateRequestDto requestDto) {
-        PostHeader mockPost = PostHeader.builder()
+        BoardContent mockContent = BoardContent.builder()
+                .content(requestDto.getContent())
+                .build();
+        Set<ImageFile> mockImageFiles = requestDto.getContentImageId().stream()
+                .map(id -> {
+                    ImageFile mockImageFile = ImageFile.builder()
+                            .boardContent(mockContent)
+                            .build();
+                    ReflectionTestUtils.setField(mockImageFile, ImageFile.class, "id", id, Long.class);
+                    return mockImageFile;
+                })
+                .collect(Collectors.toSet());
+        PostHeader mockHeader = PostHeader.builder()
                 .author(author)
                 .category(requestDto.getCategory())
                 .title(requestDto.getTitle())
-                .content(BoardContent.builder().content(requestDto.getContent()).build())
+                .content(mockContent)
+                .mainImage(ImageFile.builder().boardContent(mockContent).build())
                 .build();
-        ImageFile mockImageFile = ImageFile.builder()
-                .boardHeadCore(mockPost)
-                .build();
-        ReflectionTestUtils.setField(mockPost, PostHeader.class, "id", 1L, Long.class);
-        ReflectionTestUtils.setField(mockPost, PostHeader.class, "imageFiles", List.of(mockImageFile), List.class);
-        return mockPost;
+        ReflectionTestUtils.setField(mockHeader, PostHeader.class, "id", 1L, Long.class);
+        ReflectionTestUtils.setField(mockContent, BoardContent.class, "imageFiles",
+                new HashSet<>(mockImageFiles), Set.class);
+        return mockHeader;
     }
 }
