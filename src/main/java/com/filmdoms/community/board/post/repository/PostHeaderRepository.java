@@ -14,7 +14,7 @@ public interface PostHeaderRepository extends JpaRepository<PostHeader, Long> {
             + "FROM PostHeader header "
             + "JOIN FETCH header.author "
             + "JOIN FETCH header.boardContent "
-            + "JOIN FETCH header.imageFiles "
+            + "JOIN FETCH header.boardContent.imageFiles "
             + "WHERE header.id = :headerId")
     PostHeader findByIdWithAuthorContentImage(Long headerId);
 }

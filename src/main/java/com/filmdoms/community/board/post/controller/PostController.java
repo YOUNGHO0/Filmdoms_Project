@@ -41,14 +41,12 @@ public class PostController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping("/create")
-    public Response create(
+    @PostMapping
+    public Response<PostCreateResponseDto> create(
             @AuthenticationPrincipal AccountDto accountDto,
-            @RequestPart(value = "data") @Valid PostCreateRequestDto requestDto,
-            @RequestPart(value = "mainImage", required = false) MultipartFile mainImageFile,
-            @RequestPart(value = "subImage", required = false) List<MultipartFile> subImageFiles) {
+            @RequestBody @Valid PostCreateRequestDto requestDto) {
         return Response.success(PostCreateResponseDto.from(
-                postService.create(accountDto, requestDto, mainImageFile, subImageFiles)
+                postService.create(accountDto, requestDto)
         ));
     }
 
@@ -56,7 +54,7 @@ public class PostController {
     public Response updatePost(
             @AuthenticationPrincipal AccountDto accountDto,
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequestDto requestDto) {
+            @RequestBody @Valid PostUpdateRequestDto requestDto) {
         return Response.success(PostUpdateResponseDto.from(postService.update(accountDto, postId, requestDto)));
     }
 }

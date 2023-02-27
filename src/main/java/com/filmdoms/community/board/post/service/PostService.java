@@ -1,28 +1,29 @@
 package com.filmdoms.community.board.post.service;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.dto.PostBriefDto;
-import com.filmdoms.community.board.post.data.dto.PostDetailDto;
 import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
 import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
+import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -48,9 +49,7 @@ public class PostService {
 
     @Transactional
     public PostBriefDto create(AccountDto accountDto,
-                               PostCreateRequestDto requestDto,
-                               MultipartFile mainImage,
-                               List<MultipartFile> subImages) {
+                               PostCreateRequestDto requestDto) {
 
         BoardContent content = BoardContent.builder()
                 .content(requestDto.getContent())
@@ -61,39 +60,55 @@ public class PostService {
                 .title(requestDto.getTitle())
                 .author(accountRepository.getReferenceById(accountDto.getId()))
                 .content(content)
+                .mainImage(imageFileRepository.getReferenceById(requestDto.getMainImageId()))
                 .build());
 
-        imageFileService.saveImage(mainImage, header);
-        imageFileService.saveImages(subImages, header);
+        imageFileService.setImageContent(requestDto.getContentImageId(), content);
 
         return PostBriefDto.from(header);
     }
+
     @Transactional
     public PostBriefDto update(AccountDto accountDto, Long postHeaderId, PostUpdateRequestDto requestDto) {
-        // 게시글 호출
+        log.info("게시글 호출");
         PostHeader header = postHeaderRepository.findByIdWithAuthorContentImage(postHeaderId);
-        // 작성자 확인
+        log.info("작성자 확인");
         if (!AccountDto.from(header.getAuthor()).equals(accountDto)) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION, "게시글의 작성자와 일치하지 않습니다.");
         }
-        // 게시글 업데이트
+        log.info("게시글 업데이트");
         PostHeader updatedHeader = updateHeader(header, requestDto);
-        // 게시글 저장
+        log.info("게시글 저장");
         PostHeader savedHeader = postHeaderRepository.save(updatedHeader);
-        // 게시글 반환 타입으로 변환
+        log.info("게시글 반환 타입으로 변환");
         return PostBriefDto.from(savedHeader);
 
     }
 
     private PostHeader updateHeader(PostHeader header, PostUpdateRequestDto requestDto) {
+        BoardContent content = header.getBoardContent();
+        Set<ImageFile> originalImageFiles = content.getImageFiles();
+        List<ImageFile> updatingImageFiles = imageFileRepository.findAllById(requestDto.getContentImageId());
+
+        log.info("카테고리 수정");
         header.updateCategory(requestDto.getCategory());
+        log.info("메인 이미지 수정");
+        header.updateMainImage(imageFileRepository.getReferenceById(requestDto.getMainImageId()));
+        log.info("제목 수정");
         header.updateTitle(requestDto.getTitle());
-        header.getBoardContent().updateContent(requestDto.getContent());
-        header.getImageFiles()
-                .forEach(imageFile -> imageFile.updateBoardHeadCore(null));
-        requestDto.getImageFileIds().stream()
-                .map(imageFileRepository::getReferenceById)
-                .forEach(imageFile -> imageFile.updateBoardHeadCore(header));
+        log.info("본문 수정");
+        content.updateContent(requestDto.getContent());
+        log.info("없는 이미지 삭제");
+        originalImageFiles.stream()
+                .filter(imageFile -> !updatingImageFiles.contains(imageFile))
+                .collect(Collectors.toSet()).stream() // 새로운 컬렉션으로 만들지 않으면 ConcurrentModificationException 발생
+                .peek(imageFile -> log.info("삭제할 이미지 ID: {}", imageFile.getId()))
+                .forEach(originalImageFiles::remove);
+        log.info("새로 생긴 이미지 추가");
+        updatingImageFiles.stream()
+                .filter(imageFile -> !originalImageFiles.contains(imageFile))
+                .peek(imageFile -> log.info("추가할 이미지 ID: {}", imageFile.getId()))
+                .forEach(imageFile -> imageFile.updateBoardContent(content));
         return header;
     }
 }
