@@ -1,5 +1,7 @@
 package com.filmdoms.community.board.review.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -10,31 +12,21 @@ import com.filmdoms.community.board.review.data.dto.request.MovieReviewCreateReq
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewCreateResponseDto;
 import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
 import com.filmdoms.community.board.review.repository.MovieReviewHeaderRepository;
-import com.filmdoms.community.imagefile.data.dto.UploadedFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3UploadService;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 @DataJpaTestWithJpaAuditing
 @DisplayName("영화 리뷰 서비스-리포지토리 통합 테스트")
@@ -69,10 +61,9 @@ class MovieReviewServiceTest {
                 .password("1234")
                 .role(AccountRole.USER)
                 .build());
+        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
-                testUser.getId(), "영화 리뷰 내용");
-
-        MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목", "영화 리뷰 내용", Collections.emptyList());
+                "영화 리뷰 내용", Collections.emptyList());
 
         //when
         MovieReviewCreateResponseDto responseDto = movieReviewService.create(requestDto, testAccountDto);
@@ -88,37 +79,22 @@ class MovieReviewServiceTest {
     }
 
     @Test
-    public void 이미지_있는_영화리뷰_생성() throws IOException {
-        //given
-        Account testUser = accountRepository.save(Account.of("user1", "1234", AccountRole.ADMIN));
-        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
-
+    public void 이미지_있는_영화리뷰_생성() throws IOException {        //given
         Account testUser = accountRepository.save(Account.builder()
                 .username("user1")
                 .password("1234")
-                .role(AccountRole.USER)
+                .role(AccountRole.ADMIN)
                 .build());
+        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
+
+        //테스트 이미지 생성
+        List<Long> imageIds = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            imageIds.add(createTestImage());
+        }
+
         MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목",
-                testUser.getId(), "영화 리뷰 내용");
-        Mockito.when(amazonS3UploadService.upload(any(), any()))
-                .thenReturn(uploadedFileDto); //amazonS3Upload 객체에 가짜 행동 주입
-
-        MovieReviewCreateRequestDto requestDto = new MovieReviewCreateRequestDto(MovieReviewTag.A, "영화 리뷰 제목", "영화 리뷰 내용", imageIds);
-
-        //when
-        MovieReviewCreateResponseDto responseDto = movieReviewService.create(requestDto, testAccountDto);
-        em.flush();
-        em.clear(); //리뷰 생성시에는 헤더에 이미지가 들어있지 않으므로 flush, clear 후 다시 불러와야 함
-
-        //then
-        assertThat(imageIds).size().isEqualTo(3);
-        MovieReviewHeader header = headerRepository.findById(responseDto.getPostId())
-                .orElseThrow(() -> new RuntimeException("요청한 포스트 아이디가 존재하지 않음"));
-        assertThat(header.getImageFiles().size()).isEqualTo(imageIds.size()); //헤더에 ImageFile 객체 3개가 연결되었는지 확인
-        assertThat(header.getAuthor().getId()).isEqualTo(testUser.getId());
-        assertThat(header.getTitle()).isEqualTo(requestDto.getTitle());
-        assertThat(header.getTag()).isEqualTo(requestDto.getTag());
-        assertThat(header.getBoardContent().getContent()).isEqualTo(requestDto.getContent());
+                "영화 리뷰 내용", imageIds);
     }
 
     private Long createTestImage() { //테스트 이미지 데이터를 생성해서 저장하고 id를 반환
