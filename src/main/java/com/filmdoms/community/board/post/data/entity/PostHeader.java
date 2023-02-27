@@ -13,7 +13,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -40,17 +42,23 @@ public class PostHeader extends BoardHeadCore {
     @OneToMany(mappedBy = "header", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<PostComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.ALL, orphanRemoval = true)
-    public final List<ImageFile> imageFiles = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "image_file_id")
+    private ImageFile mainImage;
 
     @Builder
-    private PostHeader(PostCategory category, String title, Account author, BoardContent content) {
+    private PostHeader(PostCategory category, String title, Account author, BoardContent content, ImageFile mainImage) {
         super(title, author, content);
         this.category = category;
+        this.mainImage = mainImage;
     }
 
     public void updateCategory(PostCategory category) {
         this.category = category;
+    }
+
+    public void updateMainImage(ImageFile mainImage) {
+        this.mainImage = mainImage;
     }
 
 }

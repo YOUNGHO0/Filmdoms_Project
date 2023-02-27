@@ -1,11 +1,11 @@
 package com.filmdoms.community.board.notice.data.dto.request;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor //테스트에 필요
 @NoArgsConstructor
@@ -17,5 +17,5 @@ public class NoticeCreateRequestDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Long mainImageId;
-    private List<Long> subImageIds;
+    private Set<Long> contentImageId;
 }

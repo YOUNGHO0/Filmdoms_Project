@@ -22,7 +22,7 @@ public class NoticeMainPageDto {
         this.title = noticeHeader.getTitle();
 
         //지연로딩 일어나는 부분 -> 나중에 최적화
-        this.mainImageUrl = ImageFileDto.from(noticeHeader.getImageFiles().get(0), domain).getFileUrl();
+        this.mainImageUrl = ImageFileDto.from(noticeHeader.getMainImage(), domain).getFileUrl();
 
         //메인 페이지에서는 날짜 정보만 출력하므로 시간 정보는 생략
         this.startDate = noticeHeader.getStartDate().format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN));

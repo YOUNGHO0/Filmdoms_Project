@@ -6,8 +6,10 @@ import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_N
 import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_SIZE;
 
 import com.filmdoms.community.board.post.data.constants.PostCategory;
+import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,4 +31,9 @@ public class PostCreateRequestDto {
     @NotBlank(message = CONTENT_NOT_BLANK)
     @Size(max = 10000, message = CONTENT_SIZE)
     private String content;
+
+    private Long mainImageId;
+
+    private Set<Long> contentImageId;
+
 }

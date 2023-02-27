@@ -21,16 +21,18 @@ import java.util.List;
 @Getter
 public class NoticeHeader extends BoardHeadCore {
 
-    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.REMOVE)
-    private List<ImageFile> imageFiles = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "image_file_id")
+    private ImageFile mainImage;
 
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
 
     @Builder
-    private NoticeHeader(String title, Account author, BoardContent boardContent, LocalDateTime startDate, LocalDateTime endDate) {
+    private NoticeHeader(String title, Account author, BoardContent boardContent, ImageFile mainImage, LocalDateTime startDate, LocalDateTime endDate) {
         super(title, author, boardContent);
+        this.mainImage = mainImage;
         this.startDate = startDate;
         this.endDate = endDate;
     }

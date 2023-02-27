@@ -44,11 +44,11 @@ public class CriticBoardService {
     public Response writeCritic(CriticBoardPostRequestDto dto, List<MultipartFile> multipartFileList) {
 
         log.info("영화 작성 시작");
-
+        BoardContent criticBoardContent = BoardContent.builder().content(dto.getContent()).build();
         CriticBoardHeader criticBoardHeader = CriticBoardHeader.builder()
                 .preHeader(dto.getPreHeader())
                 .title(dto.getTitle())
-                .content(BoardContent.builder().content(dto.getContent()).build())
+                .content(criticBoardContent)
                 .author(accountRepository
                         .findByUsername(dto.getAuthor())
                         .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND)))
@@ -71,7 +71,7 @@ public class CriticBoardService {
                 imageFileRepository.save(ImageFile.builder()
                         .uuidFileName(uploadedFileDto.getUuidFileName())
                         .originalFileName(uploadedFileDto.getOriginalFileName())
-                        .boardHeadCore(criticBoardHeader)
+                        .boardContent(criticBoardContent)
                         .build());
                 if (uploadedFileDto.getUrl() != null) {
                     log.info("파일 업로드 성공");
@@ -134,16 +134,16 @@ public class CriticBoardService {
     private void setImageFilesToCriticBoardHeader(List<CriticBoardHeader> resultBoard, List<ImageFile> imageFiles,
                                                   HashMap<Long, List<String>> imageFileHashMap,
                                                   List<CriticBoardGetResponseDto> responseDtoList) {
-        //초기 해시맵 셋팅
-        resultBoard.stream()
-                .forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(), new ArrayList<>()));
-        //이미지 파일 모으기
-        imageFiles.stream()
-                .map(imageFile -> ImageFileDto.from(imageFile, domain))
-                .forEach(dto -> imageFileHashMap.get(dto.getHeaderId()).add(dto.getFileUrl()));
-        //responseDtoList 리스트에 add
-        resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add(
-                CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
+//        //초기 해시맵 셋팅
+//        resultBoard.stream()
+//                .forEach(criticBoardHeader -> imageFileHashMap.put(criticBoardHeader.getId(), new ArrayList<>()));
+//        //이미지 파일 모으기
+//        imageFiles.stream()
+//                .map(imageFile -> ImageFileDto.from(imageFile, domain))
+//                .forEach(dto -> imageFileHashMap.get(dto.getHeaderId()).add(dto.getFileUrl()));
+//        //responseDtoList 리스트에 add
+//        resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add(
+//                CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
     }
 
 

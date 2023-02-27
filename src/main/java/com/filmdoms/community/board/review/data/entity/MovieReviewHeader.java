@@ -21,18 +21,20 @@ import java.util.List;
 @Getter
 public class MovieReviewHeader extends BoardHeadCore {
 
+    @OneToOne
+    @JoinColumn(name = "image_file_id")
+    private ImageFile mainImage;
+
     @Enumerated(EnumType.STRING)
     private MovieReviewTag tag;
 
     @OneToMany(mappedBy = "header", cascade = CascadeType.REMOVE)
     private List<MovieReviewComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.REMOVE)
-    private List<ImageFile> imageFiles = new ArrayList<>();
-
     @Builder
-    private MovieReviewHeader(MovieReviewTag tag, String title, Account author, BoardContent boardContent) {
+    private MovieReviewHeader(String title, Account author, BoardContent boardContent, ImageFile mainImage, MovieReviewTag tag) {
         super(title, author, boardContent);
+        this.mainImage = mainImage;
         this.tag = tag;
     }
 }

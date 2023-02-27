@@ -3,8 +3,6 @@ package com.filmdoms.community.board.review.service;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
@@ -20,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +55,7 @@ public class MovieReviewService {
 
         MovieReviewHeader savedHeader = headerRepository.save(header);
 
-        imageFileService.setImageHeader(requestDto.getImageIds(), savedHeader);
+        imageFileService.setImageContent(requestDto.getContentImageId(), savedHeader.getBoardContent());
 
         return new MovieReviewCreateResponseDto(savedHeader);
     }

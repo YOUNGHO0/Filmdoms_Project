@@ -1,5 +1,6 @@
 package com.filmdoms.community.imagefile.data.dto;
 
+import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import lombok.AccessLevel;
@@ -16,11 +17,11 @@ public class UploadedFileDto {
     String uuidFileName;
     String url;
 
-    public ImageFile toEntity(BoardHeadCore header) {
+    public ImageFile toEntity(BoardContent content) {
         return ImageFile.builder()
                 .originalFileName(originalFileName)
                 .uuidFileName(uuidFileName)
-                .boardHeadCore(header)
+                .boardContent(content)
                 .build();
     }
 }
