@@ -24,4 +24,8 @@ public final class BoardContent {
     private BoardContent(String content) {
         this.content = content;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
