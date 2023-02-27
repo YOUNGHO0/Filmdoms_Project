@@ -1,5 +1,8 @@
 package com.filmdoms.community.board.notice.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -11,24 +14,21 @@ import com.filmdoms.community.board.notice.data.dto.request.NoticeCreateRequestD
 import com.filmdoms.community.board.notice.data.dto.response.NoticeCreateResponseDto;
 import com.filmdoms.community.board.notice.data.entity.NoticeHeader;
 import com.filmdoms.community.board.notice.repository.NoticeHeaderRepository;
+import com.filmdoms.community.imagefile.data.dto.UploadedFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3UploadService;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTestWithJpaAuditing
 @DisplayName("공지 서비스-리포지토리 통합 테스트")
@@ -59,6 +59,7 @@ class NoticeServiceTest {
     public void 공지는_메인_이미지_없으면_예외_발생() {
         //given
         Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
+        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
 
         //공지 시작일 종료일 설정
         LocalDateTime startDate = LocalDateTime.of(2023, 3, 1, 18, 0, 0);
@@ -83,6 +84,7 @@ class NoticeServiceTest {
                 .uuidFileName("(randomUuidFileName).png")
                 .build();
         Account testUser = accountRepository.save(Account.builder().username("user1").role(AccountRole.ADMIN).build());
+        AccountDto testAccountDto = AccountDto.from(testUser); //컨트롤러에서 받은 인증 객체 역할
 
         //공지 시작일 종료일 설정
         LocalDateTime startDate = LocalDateTime.of(2023, 3, 1, 18, 0, 0);
@@ -91,7 +93,7 @@ class NoticeServiceTest {
         //테스트 이미지 생성
         Long mainImageId = createTestImage();
         List<Long> subImageIds = new ArrayList<>();
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             subImageIds.add(createTestImage());
         }
 
@@ -99,7 +101,8 @@ class NoticeServiceTest {
                 endDate, mainImageId, subImageIds);
 
         //when
-        NoticeCreateResponseDto responseDto = noticeService.create(requestDto, testAccountDto);//ApplicationException 발생하지 않아야 함
+        NoticeCreateResponseDto responseDto = noticeService.create(requestDto,
+                testAccountDto);//ApplicationException 발생하지 않아야 함
         em.flush();
         em.clear(); //공지 생성시에는 헤더에 이미지가 들어있지 않으므로 flush, clear 후 다시 불러와야 함
 

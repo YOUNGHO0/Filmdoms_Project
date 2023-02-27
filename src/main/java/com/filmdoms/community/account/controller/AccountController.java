@@ -6,7 +6,11 @@ import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping()
@@ -29,16 +33,14 @@ public class AccountController {
     // TODO: 회원 가입 기능 컨트롤러 작성
     @PostMapping("/join")
     public Response join() {
-        AccountDto accountDto = accountService.join();
+        AccountDto accountDto = accountService.join("testUsername", "testPassword");
         return Response.success();
     }
 
     @GetMapping("/hello")
-    public String test()
-    {
+    public String test() {
         return "테스트에 성공하였습니다";
     }
-
 
 
 }
