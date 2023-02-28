@@ -9,13 +9,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class BannerResponseDto {
+public class BannerMainPageGetResponseDto {
 
     private String imageUrl;
     private String title;
 
-    public static BannerResponseDto from(BannerDto dto) {
-        return BannerResponseDto.builder()
+    public static BannerMainPageGetResponseDto from(BannerDto dto) {
+        return BannerMainPageGetResponseDto.builder()
                 .imageUrl(dto.getImageUrl())
                 .title(dto.getTitle())
                 .build();

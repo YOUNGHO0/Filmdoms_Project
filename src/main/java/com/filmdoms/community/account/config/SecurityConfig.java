@@ -37,6 +37,9 @@ public class SecurityConfig {
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/login", "/join").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/banner/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
                         .anyRequest().permitAll())

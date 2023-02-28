@@ -1,17 +1,22 @@
 package com.filmdoms.community.board.banner.controller;
 
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.board.banner.data.dto.response.BannerResponseDto;
+import com.filmdoms.community.board.banner.data.dto.request.BannerInfoRequestDto;
+import com.filmdoms.community.board.banner.data.dto.response.BannerInfoResponseDto;
+import com.filmdoms.community.board.banner.data.dto.response.BannerMainPageGetResponseDto;
 import com.filmdoms.community.board.banner.service.BannerService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/banner")
@@ -21,19 +26,17 @@ public class BannerController {
     private final BannerService bannerService;
 
     @GetMapping("/main-page")
-    public Response<List<BannerResponseDto>> getMainPageBanner() {
+    public Response<List<BannerMainPageGetResponseDto>> getMainPageBanner() {
         return Response.success(bannerService.getMainPageBanner()
                 .stream()
-                .map(BannerResponseDto::from)
+                .map(BannerMainPageGetResponseDto::from)
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping("/init-data")
-    public Response<Void> setInitData(
-            @RequestParam(required = false) String title,
-            @RequestParam(value = "image", required = false) MultipartFile multipartFile
-    ) {
-        bannerService.setData(title, multipartFile);
-        return Response.success();
+    @PostMapping()
+    public Response<BannerInfoResponseDto> createBanner(
+            @AuthenticationPrincipal AccountDto accountDto,
+            @RequestBody BannerInfoRequestDto requestDto) {
+        return Response.success(BannerInfoResponseDto.from(bannerService.create(accountDto, requestDto)));
     }
 }
