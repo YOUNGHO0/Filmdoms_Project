@@ -1,6 +1,6 @@
 package com.filmdoms.community.board.critic.controller;
 
-import com.filmdoms.community.account.data.dto.AccountDto;
+import com.filmdoms.community.account.data.dto. *;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardDeleteRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
