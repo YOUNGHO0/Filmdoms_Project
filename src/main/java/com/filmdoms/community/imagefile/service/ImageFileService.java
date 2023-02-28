@@ -1,51 +1,40 @@
 package com.filmdoms.community.imagefile.service;
 
-import com.filmdoms.community.board.data.BoardHeadCore;
-import com.filmdoms.community.imagefile.data.dto.ImageFileDto;
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ImageFileService {
 
-    @Value("${domain}")
-    private String domain;
     private final ImageFileRepository imageFileRepository;
-    private final AmazonS3UploadService amazonS3UploadService;
 
-    public Optional<ImageFileDto> saveImage(MultipartFile multipartFile, BoardHeadCore head) {
-
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            return Optional.empty();
+    public void setImageContent(Set<Long> imageIds, BoardContent content) {
+        if (imageIds == null) {
+            return;
         }
-
-        // 업로드 하면 UploadedFileDto를 받는데, 이걸 toEntity로 ImageFile 엔티티로 바꿔줌
-        ImageFile imageFile = amazonS3UploadService
-                .upload(multipartFile, multipartFile.getOriginalFilename())
-                .toEntity(head);
-
-        // 저장 후 ImageFileDto로 바꿔서 반환
-        return Optional.of(ImageFileDto.from(imageFileRepository.save(imageFile), domain));
+        imageIds.forEach(id -> setImageContent(id, content));
     }
 
-    public List<ImageFileDto> saveImages(List<MultipartFile> multipartFiles, BoardHeadCore head) {
-        if (multipartFiles == null || multipartFiles.isEmpty()) {
-            return new ArrayList<>();
+    public void setImageContent(Long imageId, BoardContent content) {
+        if (imageId == null) {
+            return;
         }
-        return multipartFiles.stream()
-                .map(file -> saveImage(file, head))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
+        ImageFile imageFile = imageFileRepository.findById(imageId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+        if (imageFile.getBoardContent() != null) {
+            throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST); //이미지에 이미 게시글 컨텐츠가 매핑되어 있으면 예외 발생
+        }
+        imageFile.updateBoardContent(content);
     }
 }

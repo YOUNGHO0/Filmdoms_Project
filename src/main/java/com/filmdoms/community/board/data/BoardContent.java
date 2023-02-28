@@ -1,7 +1,12 @@
 package com.filmdoms.community.board.data;
 
 
+import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +25,15 @@ public final class BoardContent {
     @Column(name = "content", nullable = false, length = 10000)
     private String content;
 
+    @OneToMany(mappedBy = "boardContent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<ImageFile> imageFiles = new HashSet<>();
+
     @Builder
     private BoardContent(String content) {
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
         this.content = content;
     }
 

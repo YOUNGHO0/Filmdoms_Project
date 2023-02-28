@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.notice.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -14,7 +15,6 @@ import com.filmdoms.community.board.notice.repository.NoticeHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -47,7 +46,11 @@ public class NoticeService {
 
     //임시 데이터 생성 메서드 -> 나중에 삭제할 것
     public void initData() throws InterruptedException {
-        Account author = Account.of("noticeUser", "1234", AccountRole.USER);
+        Account author = Account.builder()
+                .username("noticeUser")
+                .password("1234")
+                .role(AccountRole.USER)
+                .build();
         accountRepository.save(author);
 
         for (int i = 0; i < 5; i++) {
@@ -65,7 +68,7 @@ public class NoticeService {
 
             noticeHeaderRepository.save(header);
             imageFileRepository.save(ImageFile.builder()
-                    .boardHeadCore(header)
+                    .boardContent(content)
                     .originalFileName("popcorn-movie-party-entertainment.webp")
                     .uuidFileName("3554e88f-d683-4f18-b3f4-33fbf6905792.webp")
                     .build());
@@ -74,30 +77,28 @@ public class NoticeService {
         }
     }
 
-    public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, MultipartFile mainImageMultipartFile,
-                                          List<MultipartFile> subImageMultipartFiles) throws IOException {
-        //인증 로직 필요
+    public NoticeCreateResponseDto create(NoticeCreateRequestDto requestDto, AccountDto accountDto) {
 
-        Account author = accountRepository.findById(requestDto.getAccountId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        //나중에 validation 설정하면 삭제
+        if(requestDto.getMainImageId() == null) {
+            throw new ApplicationException(ErrorCode.NO_MAIN_IMAGE_ERROR);
+        }
 
-        BoardContent boardContent = BoardContent.builder()
+        BoardContent content = BoardContent.builder()
                 .content(requestDto.getContent())
                 .build();
 
         NoticeHeader header = NoticeHeader.builder()
                 .title(requestDto.getTitle())
-                .author(author)
-                .boardContent(boardContent)
+                .author(accountRepository.getReferenceById(accountDto.getId()))
+                .boardContent(content)
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
                 .build();
 
         NoticeHeader savedHeader = noticeHeaderRepository.save(header);
 
-        imageFileService.saveImage(mainImageMultipartFile, header)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.NO_MAIN_IMAGE_ERROR));
-        imageFileService.saveImages(subImageMultipartFiles, header);
+        imageFileService.setImageContent(requestDto.getContentImageId(), content);
 
         return new NoticeCreateResponseDto(savedHeader);
     }

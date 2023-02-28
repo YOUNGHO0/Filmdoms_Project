@@ -58,11 +58,11 @@ public class CriticBoardService {
     public Response writeCritic(CriticBoardPostRequestDto dto, List<MultipartFile> multipartFileList) {
 
         log.info("영화 작성 시작");
-
+        BoardContent criticBoardContent = BoardContent.builder().content(dto.getContent()).build();
         CriticBoardHeader criticBoardHeader = CriticBoardHeader.builder()
                 .preHeader(dto.getPreHeader())
                 .title(dto.getTitle())
-                .content(BoardContent.builder().content(dto.getContent()).build())
+                .content(criticBoardContent)
                 .author(accountRepository
                         .findByUsername(dto.getAuthor())
                         .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND)))

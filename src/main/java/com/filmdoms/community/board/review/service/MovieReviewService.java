@@ -1,9 +1,8 @@
 package com.filmdoms.community.board.review.service;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
@@ -19,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +40,7 @@ public class MovieReviewService {
                 .collect(Collectors.toList());
     }
 
-    public MovieReviewCreateResponseDto createReview(MovieReviewCreateRequestDto requestDto, List<MultipartFile> imageMultipartFiles) throws IOException {
-        //인증 로직 필요
-
-        Account author = accountRepository.findById(requestDto.getAccountId()).orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+    public MovieReviewCreateResponseDto create(MovieReviewCreateRequestDto requestDto, AccountDto accountDto) {
 
         BoardContent content = BoardContent.builder()
                 .content(requestDto.getContent())
@@ -54,21 +48,20 @@ public class MovieReviewService {
 
         MovieReviewHeader header = MovieReviewHeader.builder()
                 .tag(requestDto.getTag())
-                .author(author)
+                .author(accountRepository.getReferenceById(accountDto.getId()))
                 .title(requestDto.getTitle())
                 .boardContent(content)
                 .build();
 
         MovieReviewHeader savedHeader = headerRepository.save(header);
 
-        //이미지 추가 로직
-        imageFileService.saveImages(imageMultipartFiles, header);
+        imageFileService.setImageContent(requestDto.getContentImageId(), savedHeader.getBoardContent());
 
         return new MovieReviewCreateResponseDto(savedHeader);
     }
 
     public void initData() throws InterruptedException {
-        Account author = Account.of("movieReviewUser", "1234", AccountRole.USER);
+        Account author = Account.builder().username("movieReviewUser").password("1234").role(AccountRole.USER).build();
         accountRepository.save(author);
 
         for (int i = 0; i < 10; i++) {

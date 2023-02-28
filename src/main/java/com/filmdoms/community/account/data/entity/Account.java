@@ -14,16 +14,20 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
 @Table(name = "account", indexes = {
         @Index(columnList = "username"),
         @Index(columnList = "email")
 })
-@NoArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
     @Id
@@ -44,38 +48,32 @@ public class Account {
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private AccountRole accountRole;
+    private AccountRole accountRole = AccountRole.USER;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private AccountStatus accountStatus;
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
     @Column(name = "date_created")
-    private Timestamp dateCreated;
+    private LocalDateTime dateCreated;
 
     @Column(name = "login_fail_count")
-    private Integer loginFailCount;
+    private int loginFailCount = 0;
 
     @Column(name = "date_locked_till", nullable = true)
-    private Timestamp dateLockedTill;
+    private LocalDateTime dateLockedTill;
 
     @PrePersist
     void dateCreated() {
-        this.dateCreated = Timestamp.from(Instant.now());
+        this.dateCreated = LocalDateTime.now();
     }
 
-    private Account(Long id, String username, String password, AccountRole role) {
-        this.id = id;
+    @Builder
+    private Account(String username, String nickname, String password, AccountRole role, String email) {
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
+        this.email = email;
         this.accountRole = role;
-    }
-
-    public static Account of(String username, String password, AccountRole role) {
-        return new Account(null, username, password, role);
-    }
-
-    public static Account of(Long id, String username, String password, AccountRole role) {
-        return new Account(id, username, password, role);
     }
 }
