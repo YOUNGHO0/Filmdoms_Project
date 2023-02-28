@@ -77,15 +77,15 @@ public class BannerService {
 
     private BannerHeader updateHeader(BannerHeader header, BannerInfoRequestDto requestDto) {
         BoardContent content = header.getBoardContent();
+        ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(
+                () -> new ApplicationException(ErrorCode.NO_IMAGE_ERROR)
+        );
         Set<ImageFile> originalImageFiles = content.getImageFiles();
-        Set<ImageFile> updatingImageFiles = Set.of(
-                imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(
-                        () -> new ApplicationException(ErrorCode.NO_IMAGE_ERROR)
-                ));
+        Set<ImageFile> updatingImageFiles = Set.of(mainImageFile);
         log.info("제목 수정");
         header.updateTitle(requestDto.getTitle());
         log.info("메인 이미지 수정");
-        header.updateMainImage(imageFileRepository.getReferenceById(requestDto.getMainImageId()));
+        header.updateMainImage(mainImageFile);
         originalImageFiles.stream()
                 .filter(imageFile -> !updatingImageFiles.contains(imageFile))
                 .collect(Collectors.toSet()).stream()

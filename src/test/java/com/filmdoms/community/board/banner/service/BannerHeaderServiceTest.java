@@ -25,6 +25,7 @@ import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,11 +38,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@WebMvcTest(
-        controllers = BannerService.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
+@WebMvcTest(controllers = BannerService.class, excludeAutoConfiguration = SecurityAutoConfiguration.class, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
 @DisplayName("비즈니스 로직 - 배너 서비스")
 public class BannerHeaderServiceTest {
 
@@ -67,10 +65,7 @@ public class BannerHeaderServiceTest {
             // Given
             Account mockAdminAccount = getMockAdminAccount();
             AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
-            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder()
-                    .title("title")
-                    .mainImageId(1L)
-                    .build();
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
             BannerHeader mockBanner = getMockBanner(mockAdminAccount, mockRequestDto);
             given(accountRepository.getReferenceById(any())).willReturn(mockAdminAccount);
             given(imageFileRepository.getReferenceById(any())).willReturn(mock(ImageFile.class));
@@ -80,9 +75,7 @@ public class BannerHeaderServiceTest {
             BannerDto bannerDto = bannerService.create(mockAccountDto, mockRequestDto);
 
             // Then
-            assertThat(bannerDto)
-                    .hasFieldOrProperty("id")
-                    .hasFieldOrProperty("imageUrl")
+            assertThat(bannerDto).hasFieldOrProperty("id").hasFieldOrProperty("imageUrl")
                     .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle());
         }
 
@@ -92,16 +85,13 @@ public class BannerHeaderServiceTest {
             // Given
             Account mockAdminAccount = getMockAdminAccount();
             AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
-            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder()
-                    .title("title")
-                    .mainImageId(1L)
-                    .build();
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
             BannerHeader mockBanner = getMockBanner(mockAdminAccount, mockRequestDto);
             given(accountRepository.getReferenceById(any())).willReturn(mockAdminAccount);
             given(imageFileRepository.getReferenceById(any())).willReturn(mock(ImageFile.class));
             given(bannerHeaderRepository.save(any())).willReturn(mockBanner);
-            doThrow(new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST))
-                    .when(imageFileService).setImageContent((Long) any(), any());
+            doThrow(new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST)).when(imageFileService)
+                    .setImageContent((Long) any(), any());
 
             // When & Then
             ApplicationException exception = assertThrows(ApplicationException.class,
@@ -110,29 +100,81 @@ public class BannerHeaderServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("배너 수정 요청 테스트")
+    class aboutBannerUpdate {
+
+        @Test
+        @DisplayName("배너 수정 요청시, 정상적인 요청이라면, 배너 정보를 반환한다.")
+        void givenValidInfo_whenUpdatingBanner_thenUpdatesBanner() {
+            // Given
+            Long requestHeaderId = 1L;
+            String titleToUpdate = "changed title";
+            Long mainImageToUpdate = 2L;
+            ImageFile mockImageFile = mock(ImageFile.class);
+
+            Account mockAdminAccount = getMockAdminAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
+            // 원본 내용
+            BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
+            // 수정 내용
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title(titleToUpdate)
+                    .mainImageId(mainImageToUpdate).build();
+            BannerHeader mockBanner = getMockBanner(mockAdminAccount, createDto);
+
+            given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.of(mockBanner));
+            given(imageFileRepository.findById(mockRequestDto.getMainImageId())).willReturn(Optional.of(mockImageFile));
+            given(bannerHeaderRepository.save(any())).willReturn(mockBanner);
+            given(mockImageFile.getBoardContent()).willReturn(mockBanner.getBoardContent());
+
+            // When
+            BannerDto bannerDto = bannerService.update(mockAccountDto, requestHeaderId, mockRequestDto);
+
+            // Then
+            assertThat(bannerDto).hasFieldOrPropertyWithValue("id", requestHeaderId).hasFieldOrProperty("imageUrl")
+                    .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle());
+        }
+
+        @Test
+        @DisplayName("배너 수정 요청시, 요청 이미지가 없다면, 예외를 발생시킨다.")
+        void givenInvalidImageId_whenUpdatingPost_thenThrowsException() {
+            // Given
+            Long requestHeaderId = 1L;
+            String titleToUpdate = "changed title";
+            Long mainImageToUpdate = 2L;
+
+            Account mockAdminAccount = getMockAdminAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
+            // 원본 내용
+            BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
+            // 수정 내용
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title(titleToUpdate)
+                    .mainImageId(mainImageToUpdate).build();
+            BannerHeader mockBanner = getMockBanner(mockAdminAccount, createDto);
+
+            given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.of(mockBanner));
+            given(imageFileRepository.findById(mockRequestDto.getMainImageId())).willReturn(Optional.empty());
+
+            // When & Then
+            ApplicationException exception = assertThrows(ApplicationException.class,
+                    () -> bannerService.update(mockAccountDto, requestHeaderId, mockRequestDto));
+            assertEquals(ErrorCode.NO_IMAGE_ERROR, exception.getErrorCode());
+        }
+    }
+
     private Account getMockAdminAccount() {
-        Account mockAccount = Account.builder()
-                .username("testAdmin")
-                .password("testpw")
-                .email("tester@email.com")
-                .role(AccountRole.ADMIN)
-                .build();
+        Account mockAccount = Account.builder().username("testAdmin").password("testpw").email("tester@email.com")
+                .role(AccountRole.ADMIN).build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
         return mockAccount;
     }
 
     private BannerHeader getMockBanner(Account author, BannerInfoRequestDto requestDto) {
         BoardContent mockContent = BoardContent.builder().build();
-        ImageFile mockImageFile = ImageFile.builder()
-                .boardContent(mockContent)
-                .build();
+        ImageFile mockImageFile = ImageFile.builder().boardContent(mockContent).build();
         ReflectionTestUtils.setField(mockImageFile, ImageFile.class, "id", requestDto.getMainImageId(), Long.class);
-        BannerHeader mockHeader = BannerHeader.builder()
-                .author(author)
-                .title(requestDto.getTitle())
-                .content(mockContent)
-                .mainImage(mockImageFile)
-                .build();
+        BannerHeader mockHeader = BannerHeader.builder().author(author).title(requestDto.getTitle())
+                .content(mockContent).mainImage(mockImageFile).build();
         ReflectionTestUtils.setField(mockHeader, PostHeader.class, "id", 1L, Long.class);
         ReflectionTestUtils.setField(mockContent, BoardContent.class, "imageFiles",
                 new HashSet<>(Set.of(mockImageFile)), Set.class);
