@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,5 +47,11 @@ public class BannerController {
             @PathVariable Long bannerId,
             @RequestBody BannerInfoRequestDto requestDto) {
         return Response.success(BannerInfoResponseDto.from(bannerService.update(accountDto, bannerId, requestDto)));
+    }
+
+    @DeleteMapping("/{bannerId}")
+    public Response deleteBanner(@PathVariable Long bannerId) {
+        bannerService.delete(bannerId);
+        return Response.success();
     }
 }

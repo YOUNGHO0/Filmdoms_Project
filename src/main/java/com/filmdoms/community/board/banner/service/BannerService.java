@@ -97,4 +97,13 @@ public class BannerService {
                 .forEach(imageFile -> imageFile.updateBoardContent(content));
         return header;
     }
+
+    @Transactional
+    public void delete(Long bannerHeaderId) {
+        log.info("배너 호출");
+        BannerHeader header = bannerHeaderRepository.findById(bannerHeaderId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND));
+        log.info("배너 삭제");
+        bannerHeaderRepository.delete(header);
+    }
 }
