@@ -3,6 +3,7 @@ package com.filmdoms.community.board.banner.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -46,6 +48,7 @@ class BannerHeaderControllerTest {
     @DisplayName("배너 조회 요청 테스트")
     class aboutBannerRead {
         @Test
+        @WithAnonymousUser
         @DisplayName("메인 페이지에서 배너 조회시, 시간 역순으로 배너 정보를 응답으로 반환한다.")
         void givenNothing_whenViewingBannersFromMainPage_thenReturnsRecentBanners() throws Exception {
 
@@ -111,6 +114,25 @@ class BannerHeaderControllerTest {
                     .andExpect(jsonPath("$[?(@.resultCode == 'AUTHORIZATION_ERROR')]").exists());
             then(bannerService).shouldHaveNoInteractions();
         }
+
+        @Test
+        @WithAnonymousUser
+        @DisplayName("배너 생성 요청시, 미인증 유저라면, 인증 에러를 반환한다.")
+        void givenUnauthenticatedUser_whenCreatingBanner_thenReturnsUnauthenticatedErrorCode() throws Exception {
+            // Given
+            BannerInfoRequestDto requestDto = getMockRequestDto();
+
+            // When & Then
+            mockMvc.perform(post("/api/v1/banner")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto)))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists())
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists());
+            then(bannerService).shouldHaveNoInteractions();
+        }
     }
 
 
@@ -159,6 +181,77 @@ class BannerHeaderControllerTest {
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.result == null)]").exists())
                     .andExpect(jsonPath("$[?(@.resultCode == 'AUTHORIZATION_ERROR')]").exists());
+            then(bannerService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @WithAnonymousUser
+        @DisplayName("배너 수정 요청시, 미인증 유저라면, 인증 에러를 반환한다.")
+        void givenUnauthenticatedUser_whenUpdatingBanner_thenReturnsUnauthenticatedErrorCode() throws Exception {
+            // Given
+            BannerInfoRequestDto requestDto = getMockRequestDto();
+
+            // When & Then
+            mockMvc.perform(put("/api/v1/banner")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsBytes(requestDto)))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists())
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists());
+            then(bannerService).shouldHaveNoInteractions();
+        }
+    }
+
+
+    @Nested
+    @DisplayName("배너 삭제 요청 테스트")
+    class aboutBannerDelete {
+        @Test
+        @WithUserDetails(value = "testAdmin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("배너 삭제 요청시, 정상적인 요청이라면, 성공 코드를 반환한다.")
+        void givenDeletingBannerRequest_whenDeletingBanner_thenReturnsSuccessCode() throws Exception {
+            // Given
+
+            // When & Then
+            mockMvc.perform(delete("/api/v1/banner/1"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists())
+                    .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists());
+        }
+
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("배너 삭제 요청시, 관리자가 아니라면, 인가 에러를 반환한다.")
+        void givenUnauthorizedUser_whenDeletingBanner_thenReturnsUnauthorizedErrorCode() throws Exception {
+            // Given
+
+            // When & Then
+            mockMvc.perform(delete("/api/v1/banner/1"))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists())
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHORIZATION_ERROR')]").exists());
+            then(bannerService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @WithAnonymousUser
+        @DisplayName("배너 삭제 요청시, 미인증 유저라면, 인증 에러를 반환한다.")
+        void givenUnauthenticatedUser_whenDeletingBanner_thenReturnsUnauthenticatedErrorCode() throws Exception {
+            // Given
+
+            // When & Then
+            mockMvc.perform(delete("/api/v1/banner/1"))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists())
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists());
             then(bannerService).shouldHaveNoInteractions();
         }
     }

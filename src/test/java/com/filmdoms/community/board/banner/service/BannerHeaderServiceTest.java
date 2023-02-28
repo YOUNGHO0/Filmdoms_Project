@@ -1,12 +1,15 @@
 package com.filmdoms.community.board.banner.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constants.AccountRole;
@@ -92,11 +95,15 @@ public class BannerHeaderServiceTest {
             given(bannerHeaderRepository.save(any())).willReturn(mockBanner);
             doThrow(new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST)).when(imageFileService)
                     .setImageContent((Long) any(), any());
-
-            // When & Then
-            ApplicationException exception = assertThrows(ApplicationException.class,
+            
+            // WHEN
+            Throwable throwable = catchThrowable(
                     () -> bannerService.create(mockAccountDto, mockRequestDto));
-            assertEquals(ErrorCode.IMAGE_BELONG_TO_OTHER_POST, exception.getErrorCode());
+
+            // THEN
+            assertThat(throwable)
+                    .isInstanceOf(ApplicationException.class)
+                    .hasMessage(ErrorCode.IMAGE_BELONG_TO_OTHER_POST.getMessage());
         }
     }
 
@@ -155,10 +162,62 @@ public class BannerHeaderServiceTest {
             given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.of(mockBanner));
             given(imageFileRepository.findById(mockRequestDto.getMainImageId())).willReturn(Optional.empty());
 
-            // When & Then
-            ApplicationException exception = assertThrows(ApplicationException.class,
+            // WHEN
+            Throwable throwable = catchThrowable(
                     () -> bannerService.update(mockAccountDto, requestHeaderId, mockRequestDto));
-            assertEquals(ErrorCode.NO_IMAGE_ERROR, exception.getErrorCode());
+
+            // THEN
+            assertThat(throwable)
+                    .isInstanceOf(ApplicationException.class)
+                    .hasMessage(ErrorCode.NO_IMAGE_ERROR.getMessage());
+            then(bannerHeaderRepository).should().findById(requestHeaderId);
+            then(imageFileRepository).should().findById(mockRequestDto.getMainImageId());
+        }
+    }
+
+    @Nested
+    @DisplayName("배너 삭제 요청 테스트")
+    class aboutBannerDelete {
+
+        @Test
+        @DisplayName("배너 삭제 요청시, 정상적인 요청이라면, 배너를 삭제한다.")
+        void givenValidInfo_whenDeletingBanner_thenDeletesBanner() {
+            // GIVEN
+            Long requestHeaderId = 1L;
+            Account mockAdminAccount = getMockAdminAccount();
+            BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
+            BannerHeader mockBanner = getMockBanner(mockAdminAccount, createDto);
+
+            given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.of(mockBanner));
+
+            // WHEN
+            bannerService.delete(requestHeaderId);
+
+            // THEN
+            then(bannerHeaderRepository)
+                    .should()
+                    .delete(mockBanner);
+        }
+
+        @Test
+        @DisplayName("배너 삭제 요청시, 요청 배너가 없다면, 예외를 발생시킨다.")
+        void givenInvalidBannerId_whenDeletingBanner_thenThrowsException() {
+            // GIVEN
+            Long requestHeaderId = 1L;
+            Account mockAdminAccount = getMockAdminAccount();
+            BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
+            BannerHeader mockBanner = getMockBanner(mockAdminAccount, createDto);
+
+            given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.empty());
+
+            // WHEN
+            Throwable throwable = catchThrowable(() -> bannerService.delete(requestHeaderId));
+
+            // THEN
+            assertThat(throwable)
+                    .isInstanceOf(ApplicationException.class)
+                    .hasMessage(ErrorCode.URI_NOT_FOUND.getMessage());
+            then(bannerHeaderRepository).should().findById(requestHeaderId);
         }
     }
 
