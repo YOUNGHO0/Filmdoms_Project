@@ -8,8 +8,10 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardDeleteRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
+import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardReplyRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardUpdateRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
+import com.filmdoms.community.board.critic.data.entity.CriticBoardComment;
 import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.critic.repository.CriticBoardHeaderRepository;
 import com.filmdoms.community.board.data.BoardContent;
@@ -70,8 +72,6 @@ public class CriticBoardService {
 
         criticBoardHeaderRepository.save(criticBoardHeader);
 
-
-        List<String> urlList = new ArrayList<>();
         if(multipartFileList != null)
         {
             imageFileService.saveImages(multipartFileList,criticBoardHeader);
@@ -85,8 +85,8 @@ public class CriticBoardService {
     }
 
     public List<CriticBoardGetResponseDto> getCriticBoardList() {
-        List<CriticBoardHeader> resultBoard = getCriticBoardHeaders();
-        List<ImageFile> imageFiles = getImageFiles(resultBoard);
+        List<CriticBoardHeader> resultBoard = criticBoardHeaderRepository.getBoardList();
+        List<ImageFile> imageFiles = imageFileRepository.getImageFiles(resultBoard);
 
         HashMap<Long, List<String>> imageFileHashMap = new HashMap<>();
         List<CriticBoardGetResponseDto> responseDtoList = new ArrayList<>();
@@ -100,41 +100,26 @@ public class CriticBoardService {
 
 
 
-    public Response updateCriticBoard(CriticBoardUpdateRequestDto dto, List<MultipartFile> multipartFiles)
+    public Response updateCriticBoard(CriticBoardUpdateRequestDto dto)
     {
-        TypedQuery<CriticBoardHeader> query = em.createQuery("SELECT c from CriticBoardHeader c join fetch c.boardContent where c.id =:id", CriticBoardHeader.class);
-        CriticBoardHeader criticBoard = query.setParameter("id", dto.getBoardNumber()).getSingleResult();
-
-
+        CriticBoardHeader criticBoard = criticBoardHeaderRepository.getCriticBoardHeaderWithBoardContent(dto.getId());
         criticBoard.updateCriticBoard(dto.getTitle(), dto.getContent(), dto.getPreHeader());
 
         return Response.success();
     }
 
 
-    public String deleteCriticBoard(CriticBoardDeleteRequestDto dto)
+    public String deleteCriticBoard(Long id)
     {
-        CriticBoardHeader criticBoardHeader = criticBoardHeaderRepository.findById(dto.getBoardNumber()).get();
-
+        CriticBoardHeader criticBoardHeader = criticBoardHeaderRepository.findById(id).get();
         criticBoardHeaderRepository.delete(criticBoardHeader);
         return "sucess";
     }
 
 
-    private List<ImageFile> getImageFiles(List<CriticBoardHeader> resultBoard) {
-        List<ImageFile> imageFiles = em.createQuery(
-                        "SELECT i FROM ImageFile i WHERE i.boardHeadCore IN (?1)", ImageFile.class)
-                .setParameter(1, resultBoard).getResultList();
-        return imageFiles;
-    }
 
-    private List<CriticBoardHeader> getCriticBoardHeaders() {
-        List<CriticBoardHeader> resultBoard = em.createQuery("SELECT c from CriticBoardHeader c " +
-                "join fetch c.boardContent " +
-                "join fetch c.author " +
-                "order by c.id desc  limit 5", CriticBoardHeader.class).getResultList();
-        return resultBoard;
-    }
+
+
 
     private void setImageFilesToCriticBoardHeader(List<CriticBoardHeader> resultBoard, List<ImageFile> imageFiles,
                                                   HashMap<Long, List<String>> imageFileHashMap,
@@ -151,6 +136,15 @@ public class CriticBoardService {
                 CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
     }
 
+
+
+    @PostConstruct
+    public void test()
+    {
+        Account author = Account.of("user1", "1234", AccountRole.USER);
+        accountRepository.save(author);
+        //저장 되는지 확인
+    }
 
 
 }
