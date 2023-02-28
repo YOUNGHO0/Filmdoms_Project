@@ -50,7 +50,6 @@ public class NoticeController {
 
     @PutMapping("/{noticeId}")
     public Response<NoticeUpdateResponseDto> update(@PathVariable Long noticeId, @RequestBody NoticeUpdateRequestDto requestDto) {
-        log.info("{}", requestDto.getContentImageId());
         NoticeUpdateResponseDto responseDto = noticeService.updateNotice(noticeId, requestDto);
         return Response.success(responseDto);
     }
