@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,10 +29,12 @@ import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -61,136 +64,218 @@ class PostServiceTest {
     @MockBean
     ImageFileRepository imageFileRepository;
 
-    @Test
-    @DisplayName("최근 게시글 조회를 요청하면, 최근 게시글을 4개 반환한다.")
-    void givenNothing_whenSearchingRecentPosts_thenReturnsRecentPosts() {
-        // Given
-        given(postHeaderRepository.findFirst4ByOrderByIdDesc()).willReturn(getMockPosts(getMockAccount()));
+    @Nested
+    @DisplayName("게시글 조회 요청 테스트")
+    class aboutPostRead {
+        @Test
+        @DisplayName("최근 게시글 조회를 요청하면, 최근 게시글을 4개 반환한다.")
+        void givenNothing_whenSearchingRecentPosts_thenReturnsRecentPosts() {
+            // Given
+            given(postHeaderRepository.findFirst4ByOrderByIdDesc()).willReturn(getMockPosts(getMockAccount()));
 
-        // When
-        List<PostBriefDto> postBriefDtos = postService.getMainPagePosts();
+            // When
+            List<PostBriefDto> postBriefDtos = postService.getMainPagePosts();
 
-        // Then
-        assertThat(postBriefDtos).isNotEmpty();
-        assertThat(postBriefDtos.size()).isEqualTo(4);
-        then(accountRepository).shouldHaveNoInteractions();
-        then(imageFileService).shouldHaveNoInteractions();
-        then(imageFileRepository).shouldHaveNoInteractions();
+            // Then
+            assertThat(postBriefDtos).isNotEmpty();
+            assertThat(postBriefDtos.size()).isEqualTo(4);
+            then(accountRepository).shouldHaveNoInteractions();
+            then(imageFileService).shouldHaveNoInteractions();
+            then(imageFileRepository).shouldHaveNoInteractions();
+        }
+
+    }
+    @Nested
+    @DisplayName("게시글 생성 요청 테스트")
+    class aboutPostCreate {
+        @Test
+        @DisplayName("게시글 저장을 요청하면, 게시글 정보를 반환한다.")
+        void givenPostInfo_whenSavingPost_thenSavesPostInfo() {
+            // Given
+            Account mockAccount = getMockAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAccount);
+            PostCreateRequestDto mockRequestDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L, 2L))
+                    .build();
+            given(postHeaderRepository.save(any())).willReturn(getMockPost(mockAccount, mockRequestDto));
+
+            // When
+            PostBriefDto postBriefDto = postService.create(mockAccountDto, mockRequestDto);
+
+            // Then
+            assertThat(postBriefDto)
+                    .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle())
+                    .hasFieldOrPropertyWithValue("author", PostAccountDto.from(mockAccount))
+                    .hasFieldOrPropertyWithValue("postCategory", mockRequestDto.getCategory());
+        }
     }
 
-    @Test
-    @DisplayName("게시글 저장을 요청하면, 게시글 정보를 반환한다.")
-    void givenPostInfo_whenSavingPost_thenSavesPostInfo() {
-        // Given
-        Account mockAccount = getMockAccount();
-        AccountDto mockAccountDto = AccountDto.from(mockAccount);
-        PostCreateRequestDto mockRequestDto = PostCreateRequestDto.builder()
-                .category(PostCategory.FREE)
-                .title("title")
-                .content("content")
-                .mainImageId(1L)
-                .contentImageId(Set.of(1L, 2L))
-                .build();
-        given(postHeaderRepository.save(any())).willReturn(getMockPost(mockAccount, mockRequestDto));
+    @Nested
+    @DisplayName("게시글 수정 요청 테스트")
+    class aboutPostUpdate {
+        @Test
+        @DisplayName("정상적인 요청으로, 게시글 수정을 요청하면, 게시글을 수정한다.")
+        void givenPostInfo_whenUpdatingPost_thenUpdatesPostInfo() {
+            // Given
+            Long requestHeaderId = 1L;
+            PostCategory categoryToUpdate = PostCategory.REVIEW;
+            String titleToUpdate = "changed title";
+            String contentToUpdate = "changed content";
+            Long mainImageToUpdate = 2L;
+            Set<Long> contentImageToUpdate = Set.of(2L);
+            ImageFile mockImageFile = mock(ImageFile.class);
 
-        // When
-        PostBriefDto postBriefDto = postService.create(mockAccountDto, mockRequestDto);
+            Account mockAccount = getMockAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAccount);
+            // 원본 내용
+            PostCreateRequestDto createDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L))
+                    .build();
+            // 바꿀 내용
+            PostUpdateRequestDto mockRequestDto = PostUpdateRequestDto.builder()
+                    .category(categoryToUpdate)
+                    .title(titleToUpdate)
+                    .content(contentToUpdate)
+                    .mainImageId(mainImageToUpdate)
+                    .contentImageId(contentImageToUpdate)
+                    .build();
 
-        // Then
-        assertThat(postBriefDto)
-                .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle())
-                .hasFieldOrPropertyWithValue("author", PostAccountDto.from(mockAccount))
-                .hasFieldOrPropertyWithValue("postCategory", mockRequestDto.getCategory());
+            PostHeader mockPost = getMockPost(mockAccount, createDto);
+            given(postHeaderRepository.findByIdWithAuthorContentImage(requestHeaderId)).willReturn(mockPost);
+            given(imageFileRepository.getReferenceById(any())).willReturn(mockImageFile);
+            given(postHeaderRepository.save(any())).willReturn(mockPost);
+
+            // When
+            PostBriefDto postBriefDto = postService.update(mockAccountDto, requestHeaderId, mockRequestDto);
+
+            // Then
+            assertThat(postBriefDto)
+                    .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle())
+                    .hasFieldOrPropertyWithValue("author", PostAccountDto.from(mockAccount))
+                    .hasFieldOrPropertyWithValue("postCategory", mockRequestDto.getCategory());
+        }
+
+        @Test
+        @DisplayName("작성자와 다른 유저가, 게시글 수정을 요청하면, 예외를 발생시킨다.")
+        void givenAnotherUser_whenUpdatingPost_thenThrowsException() {
+            // Given
+            Long requestHeaderId = 1L;
+            PostCategory categoryToUpdate = PostCategory.REVIEW;
+            String titleToUpdate = "changed title";
+            String contentToUpdate = "changed content";
+            Long mainImageToUpdate = 2L;
+            Set<Long> contentImageToUpdate = Set.of(2L);
+            ImageFile mockImageFile = mock(ImageFile.class);
+
+            Account mockOwnerAccount = getMockAccount();
+            Account mockRequesterAccount = getAnotherMockAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockRequesterAccount);
+            // 원본 내용
+            PostCreateRequestDto createDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L))
+                    .build();
+            // 바꿀 내용
+            PostUpdateRequestDto mockRequestDto = PostUpdateRequestDto.builder()
+                    .category(categoryToUpdate)
+                    .title(titleToUpdate)
+                    .content(contentToUpdate)
+                    .mainImageId(mainImageToUpdate)
+                    .contentImageId(contentImageToUpdate)
+                    .build();
+
+            PostHeader mockPost = getMockPost(mockOwnerAccount, createDto);
+            given(postHeaderRepository.findByIdWithAuthorContentImage(requestHeaderId)).willReturn(mockPost);
+
+            // When & Then
+            ApplicationException exception = assertThrows(ApplicationException.class,
+                    () -> postService.update(mockAccountDto, requestHeaderId, mockRequestDto));
+            assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+        }
     }
 
-    @Test
-    @DisplayName("정상적인 요청으로, 게시글 수정을 요청하면, 게시글을 수정한다.")
-    void givenPostInfo_whenUpdatingPost_thenUpdatesPostInfo() {
-        // Given
-        Long requestHeaderId = 1L;
-        PostCategory categoryToUpdate = PostCategory.REVIEW;
-        String titleToUpdate = "changed title";
-        String contentToUpdate = "changed content";
-        Long mainImageToUpdate = 2L;
-        Set<Long> contentImageToUpdate = Set.of(2L);
-        ImageFile mockImageFile = mock(ImageFile.class);
+    @Nested
+    @DisplayName("게시글 삭제 요청 테스트")
+    class aboutPostDelete {
 
-        Account mockAccount = getMockAccount();
-        AccountDto mockAccountDto = AccountDto.from(mockAccount);
-        // 원본 내용
-        PostCreateRequestDto createDto = PostCreateRequestDto.builder()
-                .category(PostCategory.FREE)
-                .title("title")
-                .content("content")
-                .mainImageId(1L)
-                .contentImageId(Set.of(1L))
-                .build();
-        // 바꿀 내용
-        PostUpdateRequestDto mockRequestDto = PostUpdateRequestDto.builder()
-                .category(categoryToUpdate)
-                .title(titleToUpdate)
-                .content(contentToUpdate)
-                .mainImageId(mainImageToUpdate)
-                .contentImageId(contentImageToUpdate)
-                .build();
+        @Test
+        @DisplayName("정상적인 요청으로, 게시글 삭제를 요청하면, 게시글을 삭제한다.")
+        void givenPostInfo_whenDeletingPost_thenDeletesPost() {
+            // Given
+            Long requestHeaderId = 1L;
 
-        PostHeader mockPost = getMockPost(mockAccount, createDto);
-        given(postHeaderRepository.findByIdWithAuthorContentImage(requestHeaderId)).willReturn(mockPost);
-        given(imageFileRepository.getReferenceById(any())).willReturn(mockImageFile);
-        given(postHeaderRepository.save(any())).willReturn(mockPost);
+            PostCreateRequestDto createDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L))
+                    .build();
+            Account mockAccount = getMockAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAccount);
+            PostHeader mockPost = getMockPost(mockAccount, createDto);
 
-        // When
-        PostBriefDto postBriefDto = postService.update(mockAccountDto, requestHeaderId, mockRequestDto);
+            given(postHeaderRepository.findByIdWithAuthor(requestHeaderId)).willReturn(Optional.of(mockPost));
 
-        // Then
-        assertThat(postBriefDto)
-                .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle())
-                .hasFieldOrPropertyWithValue("author", PostAccountDto.from(mockAccount))
-                .hasFieldOrPropertyWithValue("postCategory", mockRequestDto.getCategory());
+            // When & Then
+            assertDoesNotThrow(() -> postService.delete(mockAccountDto, requestHeaderId));
+        }
+        @Test
+        @DisplayName("작성자와 다른 유저가, 게시글 삭제를 요청하면, 예외를 발생시킨다.")
+        void givenAnotherUser_whenDeletingPost_thenThrowsException() {
+            // Given
+            Long requestHeaderId = 1L;
+
+            PostCreateRequestDto createDto = PostCreateRequestDto.builder()
+                    .category(PostCategory.FREE)
+                    .title("title")
+                    .content("content")
+                    .mainImageId(1L)
+                    .contentImageId(Set.of(1L))
+                    .build();
+            Account mockOwnerAccount = getMockAccount();
+            Account mockRequesterAccount = getAnotherMockAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockRequesterAccount);
+            PostHeader mockPost = getMockPost(mockOwnerAccount, createDto);
+
+            given(postHeaderRepository.findByIdWithAuthor(requestHeaderId)).willReturn(Optional.of(mockPost));
+
+            // When & Then
+            ApplicationException exception = assertThrows(ApplicationException.class,
+                    () -> postService.delete(mockAccountDto, requestHeaderId));
+            assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 게시글 ID로, 게시글 삭제를 요청하면, 예외를 발생시킨다.")
+        void givenInvalidPostId_whenDeletingPost_thenThrowsException() {
+            // Given
+            Long requestHeaderId = 1L;
+            Account mockAccount = getMockAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAccount);
+
+            given(postHeaderRepository.findByIdWithAuthor(requestHeaderId)).willReturn(Optional.empty());
+
+            // When & Then
+            ApplicationException exception = assertThrows(ApplicationException.class,
+                    () -> postService.delete(mockAccountDto, requestHeaderId));
+            assertEquals(ErrorCode.URI_NOT_FOUND, exception.getErrorCode());
+        }
     }
 
-    @Test
-    @DisplayName("작성자와 다른 유저가, 게시글 수정을 요청하면, 예외를 발생시킨다.")
-    void givenAnotherUser_whenUpdatingPost_thenThrowsException() {
-        // Given
-        Long requestHeaderId = 1L;
-        PostCategory categoryToUpdate = PostCategory.REVIEW;
-        String titleToUpdate = "changed title";
-        String contentToUpdate = "changed content";
-        Long mainImageToUpdate = 2L;
-        Set<Long> contentImageToUpdate = Set.of(2L);
-        ImageFile mockImageFile = mock(ImageFile.class);
 
-        Account mockOwnerAccount = getMockAccount();
-        Account mockRequesterAccount = getAnotherMockAccount();
-        AccountDto mockAccountDto = AccountDto.from(mockRequesterAccount);
-        // 원본 내용
-        PostCreateRequestDto createDto = PostCreateRequestDto.builder()
-                .category(PostCategory.FREE)
-                .title("title")
-                .content("content")
-                .mainImageId(1L)
-                .contentImageId(Set.of(1L))
-                .build();
-        // 바꿀 내용
-        PostUpdateRequestDto mockRequestDto = PostUpdateRequestDto.builder()
-                .category(categoryToUpdate)
-                .title(titleToUpdate)
-                .content(contentToUpdate)
-                .mainImageId(mainImageToUpdate)
-                .contentImageId(contentImageToUpdate)
-                .build();
-
-        PostHeader mockPost = getMockPost(mockOwnerAccount, createDto);
-        given(postHeaderRepository.findByIdWithAuthorContentImage(requestHeaderId)).willReturn(mockPost);
-
-        // When & Then
-        ApplicationException exception = assertThrows(ApplicationException.class,
-                () -> postService.update(mockAccountDto, requestHeaderId, mockRequestDto));
-        assertEquals(ErrorCode.INVALID_PERMISSION, exception.getErrorCode());
-    }
-
-    public Account getMockAccount() {
+    private Account getMockAccount() {
         Account mockAccount = Account.builder()
                 .username("tester")
                 .password("testpw")
@@ -201,7 +286,7 @@ class PostServiceTest {
         return mockAccount;
     }
 
-    public Account getAnotherMockAccount() {
+    private Account getAnotherMockAccount() {
         Account mockAccount = Account.builder()
                 .username("anotherUser")
                 .password("anotherPw")
@@ -212,7 +297,7 @@ class PostServiceTest {
         return mockAccount;
     }
 
-    public List<PostHeader> getMockPosts(Account author) {
+    private List<PostHeader> getMockPosts(Account author) {
         return IntStream.range(1, 5)
                 .mapToObj(number -> {
                     return PostHeader.builder()
@@ -225,7 +310,7 @@ class PostServiceTest {
                 .toList();
     }
 
-    public PostHeader getMockPost(Account author, PostCreateRequestDto requestDto) {
+    private PostHeader getMockPost(Account author, PostCreateRequestDto requestDto) {
         BoardContent mockContent = BoardContent.builder()
                 .content(requestDto.getContent())
                 .build();
