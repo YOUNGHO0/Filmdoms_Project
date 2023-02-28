@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/join").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
                         .anyRequest().permitAll())
 
                 // H2 DB 사용을 위해, x-frame-options 동일 출처 허용
