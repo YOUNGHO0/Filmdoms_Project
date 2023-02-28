@@ -2,6 +2,7 @@ package com.filmdoms.community.account.config;
 
 import com.filmdoms.community.account.config.jwt.JwtAuthenticationFilter;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.exception.CustomAccessDeniedHandler;
 import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,7 @@ public class SecurityConfig {
                 // 예외 핸들러 등록
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
 
                 // JWT 인증필터 등록
