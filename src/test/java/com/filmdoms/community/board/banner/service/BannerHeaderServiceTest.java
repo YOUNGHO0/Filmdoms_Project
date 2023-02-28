@@ -95,7 +95,7 @@ public class BannerHeaderServiceTest {
             given(bannerHeaderRepository.save(any())).willReturn(mockBanner);
             doThrow(new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST)).when(imageFileService)
                     .setImageContent((Long) any(), any());
-            
+
             // WHEN
             Throwable throwable = catchThrowable(
                     () -> bannerService.create(mockAccountDto, mockRequestDto));
@@ -143,7 +143,7 @@ public class BannerHeaderServiceTest {
         }
 
         @Test
-        @DisplayName("배너 수정 요청시, 요청 이미지가 없다면, 예외를 발생시킨다.")
+        @DisplayName("배너 수정 요청시, 요청 이미지가 존재하지 않는다면, 예외를 발생시킨다.")
         void givenInvalidImageId_whenUpdatingPost_thenThrowsException() {
             // Given
             Long requestHeaderId = 1L;
@@ -169,7 +169,7 @@ public class BannerHeaderServiceTest {
             // THEN
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
-                    .hasMessage(ErrorCode.NO_IMAGE_ERROR.getMessage());
+                    .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
             then(bannerHeaderRepository).should().findById(requestHeaderId);
             then(imageFileRepository).should().findById(mockRequestDto.getMainImageId());
         }

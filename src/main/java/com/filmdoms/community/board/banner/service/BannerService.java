@@ -78,7 +78,7 @@ public class BannerService {
     private BannerHeader updateHeader(BannerHeader header, BannerInfoRequestDto requestDto) {
         BoardContent content = header.getBoardContent();
         ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(
-                () -> new ApplicationException(ErrorCode.NO_IMAGE_ERROR)
+                () -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID)
         );
         Set<ImageFile> originalImageFiles = content.getImageFiles();
         Set<ImageFile> updatingImageFiles = Set.of(mainImageFile);
