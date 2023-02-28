@@ -1,8 +1,5 @@
 package com.filmdoms.community.board.notice.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -14,23 +11,24 @@ import com.filmdoms.community.board.notice.data.dto.request.NoticeCreateRequestD
 import com.filmdoms.community.board.notice.data.dto.response.NoticeCreateResponseDto;
 import com.filmdoms.community.board.notice.data.entity.NoticeHeader;
 import com.filmdoms.community.board.notice.repository.NoticeHeaderRepository;
-import com.filmdoms.community.imagefile.data.dto.UploadedFileDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.imagefile.service.AmazonS3UploadService;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTestWithJpaAuditing
 @DisplayName("공지 서비스-리포지토리 통합 테스트")
@@ -115,6 +113,7 @@ class NoticeServiceTest {
         assertThat(header.getBoardContent().getImageFiles().size()).isEqualTo(contentImageId.size()); //메인이미지 개수 + 서브이미지 개수
         assertThat(header.getTitle()).isEqualTo(requestDto.getTitle()); //request DTO에서 전달된 값들이 저장되었는지 확인
         assertThat(header.getAuthor().getId()).isEqualTo(testUser.getId());
+        assertThat(header.getMainImage().getId()).isEqualTo(mainImageId);
         assertThat(header.getBoardContent().getContent()).isEqualTo(requestDto.getContent());
         assertThat(header.getStartDate()).isEqualTo(requestDto.getStartDate());
         assertThat(header.getEndDate()).isEqualTo(requestDto.getEndDate());

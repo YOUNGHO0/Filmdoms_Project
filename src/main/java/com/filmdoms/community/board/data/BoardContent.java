@@ -25,7 +25,7 @@ public final class BoardContent {
     @Column(name = "content", nullable = false, length = 10000)
     private String content;
 
-    @OneToMany(mappedBy = "boardContent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardContent", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private final Set<ImageFile> imageFiles = new HashSet<>();
 
     @Builder
