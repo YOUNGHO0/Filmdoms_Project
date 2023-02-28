@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CriticBoardUpdateRequestDto {
 
-    Long boardNumber;
+    Long id;
     String preHeader;
     String title;
     String content;
