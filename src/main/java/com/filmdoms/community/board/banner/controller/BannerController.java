@@ -39,4 +39,12 @@ public class BannerController {
             @RequestBody BannerInfoRequestDto requestDto) {
         return Response.success(BannerInfoResponseDto.from(bannerService.create(accountDto, requestDto)));
     }
+
+    @PutMapping("/{bannerId}")
+    public Response<BannerInfoResponseDto> updateBanner(
+            @AuthenticationPrincipal AccountDto accountDto,
+            @PathVariable Long bannerId,
+            @RequestBody BannerInfoRequestDto requestDto) {
+        return Response.success(BannerInfoResponseDto.from(bannerService.update(accountDto, bannerId, requestDto)));
+    }
 }
