@@ -12,14 +12,10 @@ import lombok.Getter;
 public class BannerInfoResponseDto {
 
     private Long id;
-    private String imageUrl;
-    private String title;
 
     public static BannerInfoResponseDto from(BannerDto dto) {
         return BannerInfoResponseDto.builder()
                 .id(dto.getId())
-                .imageUrl(dto.getImageUrl())
-                .title(dto.getTitle())
                 .build();
     }
 }
