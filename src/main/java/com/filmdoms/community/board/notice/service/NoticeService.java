@@ -8,8 +8,11 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.notice.data.dto.request.NoticeCreateRequestDto;
+import com.filmdoms.community.board.notice.data.dto.request.NoticeUpdateRequestDto;
 import com.filmdoms.community.board.notice.data.dto.response.NoticeCreateResponseDto;
+import com.filmdoms.community.board.notice.data.dto.response.NoticeDetailResponseDto;
 import com.filmdoms.community.board.notice.data.dto.response.NoticeMainPageDto;
+import com.filmdoms.community.board.notice.data.dto.response.NoticeUpdateResponseDto;
 import com.filmdoms.community.board.notice.data.entity.NoticeHeader;
 import com.filmdoms.community.board.notice.repository.NoticeHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
@@ -34,7 +37,7 @@ public class NoticeService {
     private String domain;
     private final NoticeHeaderRepository noticeHeaderRepository;
     private final AccountRepository accountRepository;
-    private final ImageFileRepository imageFileRepository; //테스트 메서드에 필요 (나중에 삭제)
+    private final ImageFileRepository imageFileRepository;
     private final ImageFileService imageFileService;
 
     public List<NoticeMainPageDto> getMainPageDtos() {
@@ -84,6 +87,13 @@ public class NoticeService {
             throw new ApplicationException(ErrorCode.NO_MAIN_IMAGE_ERROR);
         }
 
+        if(requestDto.getContentImageId() == null || !requestDto.getContentImageId().contains(requestDto.getMainImageId())) {
+            //메인 이미지는 전체 이미지 리스트에 포함되어야 함
+            throw new ApplicationException(ErrorCode.MAIN_IMAGE_ID_NOT_IN_CONTENT_IMAGE_ID_LIST);
+        }
+
+        ImageFile mainImage = imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+
         BoardContent content = BoardContent.builder()
                 .content(requestDto.getContent())
                 .build();
@@ -94,6 +104,7 @@ public class NoticeService {
                 .boardContent(content)
                 .startDate(requestDto.getStartDate())
                 .endDate(requestDto.getEndDate())
+                .mainImage(mainImage)
                 .build();
 
         NoticeHeader savedHeader = noticeHeaderRepository.save(header);
@@ -101,5 +112,29 @@ public class NoticeService {
         imageFileService.setImageContent(requestDto.getContentImageId(), content);
 
         return new NoticeCreateResponseDto(savedHeader);
+    }
+
+    public NoticeDetailResponseDto getDetail(Long noticeId) {
+        NoticeHeader noticeHeader = noticeHeaderRepository.findById(noticeId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID)); //최적화가 필요한 부분(comment가 구현되면 수정 필요)
+        return new NoticeDetailResponseDto(noticeHeader);
+    }
+
+    public void deleteNotice(Long noticeId) {
+        NoticeHeader noticeHeader = noticeHeaderRepository.findById(noticeId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID)); //deleteById를 사용하는 경우 없는 id로 요청했을 때 예외가 발생하지 않으므로 엔티티를 일단 찾고 삭제하는 로직으로 구현
+        noticeHeaderRepository.delete(noticeHeader);
+    }
+
+    public NoticeUpdateResponseDto updateNotice(Long noticeId, NoticeUpdateRequestDto requestDto) {
+        //권한 확인은 security config 설정으로 대체
+        if(requestDto.getContentImageId() == null || !requestDto.getContentImageId().contains(requestDto.getMainImageId())) {
+            //메인 이미지는 전체 이미지 리스트에 포함되어야 함
+            throw new ApplicationException(ErrorCode.MAIN_IMAGE_ID_NOT_IN_CONTENT_IMAGE_ID_LIST);
+        }
+        NoticeHeader noticeHeader = noticeHeaderRepository.findById(noticeId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID));
+        ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+        noticeHeader.update(requestDto.getTitle(), requestDto.getContent(), mainImageFile, requestDto.getStartDate(), requestDto.getEndDate());
+        //이미지 변경
+        imageFileService.updateImageContent(requestDto.getContentImageId(), noticeHeader.getBoardContent());
+        return new NoticeUpdateResponseDto(noticeHeader);
     }
 }

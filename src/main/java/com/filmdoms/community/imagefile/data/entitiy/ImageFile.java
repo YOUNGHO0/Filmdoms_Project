@@ -31,7 +31,7 @@ public class ImageFile extends BaseTimeEntity {
     String originalFileName;
     @Column(name = "uuid_file_name")
     String uuidFileName;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_content_id")
     public BoardContent boardContent;
 

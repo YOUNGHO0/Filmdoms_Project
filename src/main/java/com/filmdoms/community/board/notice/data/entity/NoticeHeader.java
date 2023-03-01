@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 public class NoticeHeader extends BoardHeadCore {
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "image_file_id")
     private ImageFile mainImage;
 
@@ -33,6 +33,15 @@ public class NoticeHeader extends BoardHeadCore {
     private NoticeHeader(String title, Account author, BoardContent boardContent, ImageFile mainImage, LocalDateTime startDate, LocalDateTime endDate) {
         super(title, author, boardContent);
         this.mainImage = mainImage;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void update(String title, String content, ImageFile mainImageFile, LocalDateTime startDate, LocalDateTime endDate) {
+        //업데이트 방법 정해지면 수정
+        updateTitle(title);
+        getBoardContent().updateContent(content);
+        this.mainImage = mainImageFile;
         this.startDate = startDate;
         this.endDate = endDate;
     }
