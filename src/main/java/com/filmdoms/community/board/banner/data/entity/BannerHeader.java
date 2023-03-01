@@ -38,11 +38,11 @@ public class BannerHeader extends BoardHeadCore {
         this.mainImage = mainImage;
     }
 
-    public String getFirstImageUrl(String domain) {
-        return ImageFileDto.from(mainImage, domain).getFileUrl();
+    public void update(String title, ImageFile mainImage) {
+        updateBoardHeadCore(title, null);
     }
 
-    public void updateMainImage(ImageFile mainImage) {
-        this.mainImage = mainImage;
+    public String getMainImageUrl(String domain) {
+        return mainImage.getFileUrl(domain);
     }
 }
