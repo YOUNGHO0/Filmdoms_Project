@@ -18,7 +18,7 @@ public class BannerDto {
     public static BannerDto from(BannerHeader entity, String domain) {
         return BannerDto.builder()
                 .id(entity.getId())
-                .imageUrl(entity.getFirstImageUrl(domain))
+                .imageUrl(entity.getMainImageUrl(domain))
                 .title(entity.getTitle())
                 .build();
     }

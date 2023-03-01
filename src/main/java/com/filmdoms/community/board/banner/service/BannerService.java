@@ -63,39 +63,19 @@ public class BannerService {
     }
 
     @Transactional
-    public BannerDto update(AccountDto adminAccount, Long bannerHeaderId, BannerInfoRequestDto requestDto) {
+    public BannerDto update(Long bannerHeaderId, BannerInfoRequestDto requestDto) {
         log.info("배너 호출");
         BannerHeader header = bannerHeaderRepository.findById(bannerHeaderId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID));
+        log.info("메인 이미지 호출");
+        ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
         log.info("배너 업데이트");
-        BannerHeader updatedHeader = updateHeader(header, requestDto);
-        log.info("배너 저장");
-        BannerHeader savedHeader = bannerHeaderRepository.save(updatedHeader);
+        header.update(requestDto.getTitle(), mainImageFile);
+        log.info("이미지 매핑");
+        imageFileService.updateImageContent(Set.of(requestDto.getMainImageId()), header.getBoardContent());
         log.info("반환 타입으로 변환");
-        return BannerDto.from(savedHeader, domain);
-    }
-
-    private BannerHeader updateHeader(BannerHeader header, BannerInfoRequestDto requestDto) {
-        BoardContent content = header.getBoardContent();
-        ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(
-                () -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID)
-        );
-        Set<ImageFile> originalImageFiles = content.getImageFiles();
-        Set<ImageFile> updatingImageFiles = Set.of(mainImageFile);
-        log.info("제목 수정");
-        header.updateTitle(requestDto.getTitle());
-        log.info("메인 이미지 수정");
-        header.updateMainImage(mainImageFile);
-        originalImageFiles.stream()
-                .filter(imageFile -> !updatingImageFiles.contains(imageFile))
-                .collect(Collectors.toSet()).stream()
-                .peek(imageFile -> log.info("삭제할 이미지 ID: {}", imageFile.getId()))
-                .forEach(originalImageFiles::remove);
-        updatingImageFiles.stream()
-                .filter(imageFile -> !originalImageFiles.contains(imageFile))
-                .peek(imageFile -> log.info("추가할 이미지 ID: {}", imageFile.getId()))
-                .forEach(imageFile -> imageFile.updateBoardContent(content));
-        return header;
+        return BannerDto.from(header, domain);
     }
 
     @Transactional

@@ -61,8 +61,8 @@ class BannerHeaderControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                    .andExpect(jsonPath("$..result[?(@..title)]").exists())
-                    .andExpect(jsonPath("$..result[?(@..imageUrl)]").exists());
+                    .andExpect(jsonPath("$..result..title").exists())
+                    .andExpect(jsonPath("$..result..imageUrl").exists());
         }
     }
 
@@ -91,9 +91,7 @@ class BannerHeaderControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                    .andExpect(jsonPath("$..result[?(@..id)]").exists())
-                    .andExpect(jsonPath("$..result[?(@..title)]").exists())
-                    .andExpect(jsonPath("$..result[?(@..imageUrl)]").exists());
+                    .andExpect(jsonPath("$..result.id").exists());
         }
 
         @Test
@@ -150,7 +148,7 @@ class BannerHeaderControllerTest {
                     .id(1L)
                     .title("changed title")
                     .imageUrl("imageUrl.png").build();
-            given(bannerService.update(any(), any(), any())).willReturn(dto);
+            given(bannerService.update(any(), any())).willReturn(dto);
 
             // When & Then
             mockMvc.perform(put("/api/v1/banner/1")
@@ -160,9 +158,7 @@ class BannerHeaderControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                    .andExpect(jsonPath("$..result[?(@..id)]").exists())
-                    .andExpect(jsonPath("$..result[?(@..title)]").exists())
-                    .andExpect(jsonPath("$..result[?(@..imageUrl)]").exists());
+                    .andExpect(jsonPath("$..result.id").exists());
         }
 
         @Test

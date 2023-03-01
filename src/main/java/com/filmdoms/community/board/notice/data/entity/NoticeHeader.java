@@ -39,8 +39,7 @@ public class NoticeHeader extends BoardHeadCore {
 
     public void update(String title, String content, ImageFile mainImageFile, LocalDateTime startDate, LocalDateTime endDate) {
         //업데이트 방법 정해지면 수정
-        updateTitle(title);
-        getBoardContent().updateContent(content);
+        updateBoardHeadCore(title, content);
         this.mainImage = mainImageFile;
         this.startDate = startDate;
         this.endDate = endDate;
