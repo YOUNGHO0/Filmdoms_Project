@@ -1,17 +1,12 @@
 package com.filmdoms.community.board.review.service;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.board.data.constant.MovieReviewTag;
 import com.filmdoms.community.board.review.data.dto.request.MovieReviewCreateRequestDto;
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewCreateResponseDto;
 import com.filmdoms.community.board.review.data.dto.response.MovieReviewMainPageDto;
-import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
 import com.filmdoms.community.board.review.data.entity.MovieReviewHeader;
-import com.filmdoms.community.board.review.repository.MovieReviewCommentRepository;
 import com.filmdoms.community.board.review.repository.MovieReviewHeaderRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +24,6 @@ import java.util.stream.Collectors;
 public class MovieReviewService {
 
     private final MovieReviewHeaderRepository headerRepository;
-    private final MovieReviewCommentRepository commentRepository;
     private final AccountRepository accountRepository;
     private final ImageFileService imageFileService;
 
@@ -58,36 +52,5 @@ public class MovieReviewService {
         imageFileService.setImageContent(requestDto.getContentImageId(), savedHeader.getBoardContent());
 
         return new MovieReviewCreateResponseDto(savedHeader);
-    }
-
-    public void initData() throws InterruptedException {
-        Account author = Account.builder().username("movieReviewUser").password("1234").role(AccountRole.USER).build();
-        accountRepository.save(author);
-
-        for (int i = 0; i < 10; i++) {
-            BoardContent content = BoardContent.builder()
-                    .content("test content")
-                    .build();
-
-            MovieReviewHeader header = MovieReviewHeader.builder()
-                    .tag(MovieReviewTag.A)
-                    .title("review " + i)
-                    .author(author)
-                    .boardContent(content)
-                    .build();
-
-            headerRepository.save(header);
-            Thread.sleep(10);
-
-            //임시 데이터 10개 모두에 댓글 달리도록 수정
-            for (int j = 0; j < i % 2 + 1; j++) {
-                MovieReviewComment comment = MovieReviewComment.builder()
-                        .header(header)
-                        .author(author)
-                        .content("test comment")
-                        .build();
-                commentRepository.save(comment);
-            }
-        }
     }
 }

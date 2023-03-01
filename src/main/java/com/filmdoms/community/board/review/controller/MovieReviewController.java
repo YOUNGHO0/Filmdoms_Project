@@ -34,10 +34,4 @@ public class MovieReviewController {
         MovieReviewCreateResponseDto responseDto = movieReviewService.create(requestDto, accountDto);
         return Response.success(responseDto);
     }
-
-    @PostMapping("/init-data")
-    public Response initData() throws InterruptedException {
-        movieReviewService.initData();
-        return Response.success();
-    }
 }

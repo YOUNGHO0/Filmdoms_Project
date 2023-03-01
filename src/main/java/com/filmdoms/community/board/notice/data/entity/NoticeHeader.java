@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.notice.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.board.comment.data.entity.Comment;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
@@ -29,6 +30,9 @@ public class NoticeHeader extends BoardHeadCore {
 
     private LocalDateTime endDate;
 
+    @OneToMany(mappedBy = "header")
+    private List<Comment> comments = new ArrayList<>();
+
     @Builder
     private NoticeHeader(String title, Account author, BoardContent boardContent, ImageFile mainImage, LocalDateTime startDate, LocalDateTime endDate) {
         super(title, author, boardContent);
@@ -39,8 +43,7 @@ public class NoticeHeader extends BoardHeadCore {
 
     public void update(String title, String content, ImageFile mainImageFile, LocalDateTime startDate, LocalDateTime endDate) {
         //업데이트 방법 정해지면 수정
-        updateTitle(title);
-        getBoardContent().updateContent(content);
+        updateBoardHeadCore(title, content);
         this.mainImage = mainImageFile;
         this.startDate = startDate;
         this.endDate = endDate;
