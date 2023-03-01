@@ -15,7 +15,7 @@ public class CustomAuthenticationEntryPoint implements
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        log.debug(authException.getMessage());
+        log.info(authException.getMessage());
         response.setContentType("application/json");
         response.setStatus(ErrorCode.AUTHENTICATION_ERROR.getStatus().value());
         response.getWriter().write(Response.error(ErrorCode.AUTHENTICATION_ERROR.name()).toStream());

@@ -2,6 +2,7 @@ package com.filmdoms.community.account.config;
 
 import com.filmdoms.community.account.config.jwt.JwtAuthenticationFilter;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.exception.CustomAccessDeniedHandler;
 import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,8 +37,12 @@ public class SecurityConfig {
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/login", "/join").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/banner/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
                         .anyRequest().permitAll())
 
                 // H2 DB 사용을 위해, x-frame-options 동일 출처 허용
@@ -46,6 +51,7 @@ public class SecurityConfig {
                 // 예외 핸들러 등록
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
 
                 // JWT 인증필터 등록

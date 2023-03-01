@@ -82,7 +82,6 @@ public class PostService {
         PostHeader savedHeader = postHeaderRepository.save(updatedHeader);
         log.info("게시글 반환 타입으로 변환");
         return PostBriefDto.from(savedHeader);
-
     }
 
     private PostHeader updateHeader(PostHeader header, PostUpdateRequestDto requestDto) {
@@ -110,5 +109,16 @@ public class PostService {
                 .peek(imageFile -> log.info("추가할 이미지 ID: {}", imageFile.getId()))
                 .forEach(imageFile -> imageFile.updateBoardContent(content));
         return header;
+    }
+
+    public void delete(AccountDto accountDto, Long postHeaderId) {
+        PostHeader header = postHeaderRepository.findByIdWithAuthor(postHeaderId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND));
+        log.info("작성자 확인");
+        if (!AccountDto.from(header.getAuthor()).equals(accountDto)) {
+            throw new ApplicationException(ErrorCode.INVALID_PERMISSION, "게시글의 작성자와 일치하지 않습니다.");
+        }
+        log.info("게시글 삭제");
+        postHeaderRepository.delete(header);
     }
 }

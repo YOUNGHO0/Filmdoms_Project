@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +43,7 @@ public class PostController {
     }
 
     @PostMapping
-    public Response<PostCreateResponseDto> create(
+    public Response<PostCreateResponseDto> createPost(
             @AuthenticationPrincipal AccountDto accountDto,
             @RequestBody @Valid PostCreateRequestDto requestDto) {
         return Response.success(PostCreateResponseDto.from(
@@ -56,5 +57,13 @@ public class PostController {
             @PathVariable Long postId,
             @RequestBody @Valid PostUpdateRequestDto requestDto) {
         return Response.success(PostUpdateResponseDto.from(postService.update(accountDto, postId, requestDto)));
+    }
+
+    @DeleteMapping("/{postId}")
+    public Response deletePost(
+            @AuthenticationPrincipal AccountDto accountDto,
+            @PathVariable Long postId) {
+        postService.delete(accountDto, postId);
+        return Response.success();
     }
 }
