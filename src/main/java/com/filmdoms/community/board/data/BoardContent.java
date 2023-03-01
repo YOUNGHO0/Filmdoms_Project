@@ -38,7 +38,7 @@ public final class BoardContent {
         this.content = content;
     }
 
-    public void updateContent(String content) {
+    void updateBoardContent(String content) {
         this.content = content;
     }
 
