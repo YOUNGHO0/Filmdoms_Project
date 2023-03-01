@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -210,6 +211,72 @@ class PostControllerTest {
                     .mainImageId(1L)
                     .contentImageId(Set.of(1L, 2L))
                     .build();
+        }
+    }
+
+    @Nested
+    @DisplayName("게시글 삭제 요청 테스트")
+    class aboutPostDelete {
+
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("게시글 삭제 요청시, 정상적인 요청이라면, 성공 코드를 반환한다.")
+        void givenNothing_whenViewingPostsFromMainPage_thenReturnsFourRecentPosts() throws Exception {
+            // Given
+            // When & Then
+            mockMvc.perform(delete("/api/v1/post/1"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists());
+        }
+
+        @Test
+        @WithAnonymousUser
+        @DisplayName("게시글 삭제 요청시, 로그인 안된 유저라면, 인증 에러를 반환한다.")
+        void givenAnonymousUser_whenDeletingPost_thenReturnsAuthenticationErrorCode() throws Exception {
+            // Given
+            // When & Then
+            mockMvc.perform(delete("/api/v1/post/1"))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'AUTHENTICATION_ERROR')]").exists())
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists());
+        }
+
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("게시글 삭제 요청시, 생성자와 다른 유저라면, 권한 에러를 반환한다.")
+        void givenDifferentUser_whenDeletingPost_thenReturnsInvalidPermissionErrorCode() throws Exception {
+            // Given
+            doThrow(new ApplicationException(ErrorCode.INVALID_PERMISSION))
+                    .when(postService).delete(any(), any());
+
+            // When & Then
+            mockMvc.perform(delete("/api/v1/post/1"))
+                    .andDo(print())
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'INVALID_PERMISSION')]").exists())
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists());
+        }
+
+        @Test
+        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @DisplayName("게시글 삭제 요청시, 존재하지 않는 게시글이라면, 에러를 반환한다.")
+        void givenInvalidPostId_whenDeletingPost_thenReturnsUriNotFoundErrorCode() throws Exception {
+            // Given
+            doThrow(new ApplicationException(ErrorCode.URI_NOT_FOUND))
+                    .when(postService).delete(any(), any());
+
+            // When & Then
+            mockMvc.perform(delete("/api/v1/post/1"))
+                    .andDo(print())
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[?(@.resultCode == 'URI_NOT_FOUND')]").exists())
+                    .andExpect(jsonPath("$[?(@.result == null)]").exists());
         }
     }
 }
