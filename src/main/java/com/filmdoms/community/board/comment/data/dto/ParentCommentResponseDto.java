@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class ParentCommentResponseDto extends CommentResponseDto {
+public class ParentCommentResponseDto extends CommentResponseDto { //부모 댓글용 응답 DTO
 
     private List<CommentResponseDto> childComments;
 

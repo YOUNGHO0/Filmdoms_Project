@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CommentResponseDto {
+public class CommentResponseDto { //자식 댓글용 응답 DTO
 
     private Long id;
     private CommentAuthorResponseDto author;
