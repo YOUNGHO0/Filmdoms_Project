@@ -32,8 +32,6 @@ public class CriticBoardHeader extends BoardHeadCore {
 
     }
 
-    @OneToMany(mappedBy = "boardHeadCore", cascade = CascadeType.ALL)
-    List<ImageFile> imageFileList = new ArrayList<>();
 
     public void updateCriticBoard(String title, String content,String preHeader)
     {

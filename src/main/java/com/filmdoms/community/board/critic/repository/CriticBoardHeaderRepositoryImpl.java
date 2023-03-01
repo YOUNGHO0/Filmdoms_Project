@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CriticBoardRepositoryImpl implements CriticBoardHeaderCustom {
+public class CriticBoardHeaderRepositoryImpl implements CriticBoardHeaderCustom {
 
     private  final EntityManager em;
     @Override

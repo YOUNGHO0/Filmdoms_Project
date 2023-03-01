@@ -74,7 +74,7 @@ public class CriticBoardService {
 
         if(multipartFileList != null)
         {
-            imageFileService.saveImages(multipartFileList,criticBoardHeader);
+           // imageFileService.saveImages(multipartFileList,criticBoardHeader);
 
         }
 
@@ -130,7 +130,7 @@ public class CriticBoardService {
         //이미지 파일 모으기
         imageFiles.stream()
                 .map(imageFile -> ImageFileDto.from(imageFile, domain))
-                .forEach(dto -> imageFileHashMap.get(dto.getHeaderId()).add(dto.getFileUrl()));
+                .forEach(dto -> imageFileHashMap.get(dto.getId()).add(dto.getFileUrl()));
         //responseDtoList 리스트에 add
         resultBoard.stream().forEach(criticBoardHeader -> responseDtoList.add(
                 CriticBoardGetResponseDto.from(criticBoardHeader, imageFileHashMap)));
@@ -141,7 +141,8 @@ public class CriticBoardService {
     @PostConstruct
     public void test()
     {
-        Account author = Account.of("user1", "1234", AccountRole.USER);
+        Account author = Account.builder()
+                .username("user1").password("123456").role(AccountRole.USER).build();
         accountRepository.save(author);
         //저장 되는지 확인
     }

@@ -53,7 +53,6 @@ public class ImageFile extends BaseTimeEntity {
     }
 
 
-}
 
     @Override
     public boolean equals(Object o) {
