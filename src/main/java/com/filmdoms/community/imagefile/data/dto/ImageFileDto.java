@@ -18,12 +18,11 @@ public class ImageFileDto {
     private Long contentId;
 
     public static ImageFileDto from(ImageFile entity, String domain) {
-        String fileUrl = domain + "/" + entity.getUuidFileName();
 
         return ImageFileDto.builder()
                 .id(entity.getId())
                 .uuidFileName(entity.getUuidFileName())
-                .fileUrl(fileUrl)
+                .fileUrl(entity.getFileUrl(domain))
                 .contentId(entity.getBoardContent().getId())
                 .build();
     }

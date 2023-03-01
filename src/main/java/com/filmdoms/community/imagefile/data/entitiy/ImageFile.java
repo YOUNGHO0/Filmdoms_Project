@@ -4,10 +4,6 @@ package com.filmdoms.community.imagefile.data.entitiy;
 import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.board.data.BoardHeadCore;
-
-import jakarta.persistence.*;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,7 +48,9 @@ public class ImageFile extends BaseTimeEntity {
         this.boardContent = boardContent;
     }
 
-
+    public String getFileUrl(String domain) {
+        return domain + "/" + uuidFileName;
+    }
 
     @Override
     public boolean equals(Object o) {
