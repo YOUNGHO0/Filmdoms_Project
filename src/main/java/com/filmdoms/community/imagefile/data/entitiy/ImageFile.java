@@ -3,7 +3,6 @@ package com.filmdoms.community.imagefile.data.entitiy;
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.board.data.BoardHeadCore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -46,6 +45,10 @@ public class ImageFile extends BaseTimeEntity {
 
     public void updateBoardContent(BoardContent boardContent) {
         this.boardContent = boardContent;
+    }
+
+    public String getFileUrl(String domain) {
+        return domain + "/" + uuidFileName;
     }
 
     @Override
