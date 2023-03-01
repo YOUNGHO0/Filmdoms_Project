@@ -71,7 +71,8 @@ public class PostService {
     @Transactional
     public PostBriefDto update(AccountDto accountDto, Long postHeaderId, PostUpdateRequestDto requestDto) {
         log.info("게시글 호출");
-        PostHeader header = postHeaderRepository.findByIdWithAuthorContentImage(postHeaderId);
+        PostHeader header = postHeaderRepository.findByIdWithAuthorContentImage(postHeaderId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID));
         log.info("작성자 확인");
         if (!AccountDto.from(header.getAuthor()).equals(accountDto)) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION, "게시글의 작성자와 일치하지 않습니다.");
