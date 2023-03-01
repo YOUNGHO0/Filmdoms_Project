@@ -2,14 +2,11 @@ package com.filmdoms.community.board.banner.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constants.AccountRole;
@@ -83,7 +80,31 @@ public class BannerHeaderServiceTest {
         }
 
         @Test
-        @DisplayName("배너 생성 요청시, 이미 매핑된 이미지ID를 받으면, 예외를 발생시킨다.")
+        @DisplayName("배너 생성 요청시, 요청 이미지가 존재하지 않는다면, 예외를 발생시킨다.")
+        void givenInvalidImageId_whenCreatingBanner_thenThrowsException() {
+            // Given
+            Account mockAdminAccount = getMockAdminAccount();
+            AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
+            BannerHeader mockBanner = getMockBanner(mockAdminAccount, mockRequestDto);
+            given(accountRepository.getReferenceById(any())).willReturn(mockAdminAccount);
+            given(imageFileRepository.getReferenceById(any())).willReturn(mock(ImageFile.class));
+            given(bannerHeaderRepository.save(any())).willReturn(mockBanner);
+            doThrow(new ApplicationException(ErrorCode.INVALID_IMAGE_ID)).when(imageFileService)
+                    .setImageContent((Long) any(), any());
+
+            // WHEN
+            Throwable throwable = catchThrowable(
+                    () -> bannerService.create(mockAccountDto, mockRequestDto));
+
+            // THEN
+            assertThat(throwable)
+                    .isInstanceOf(ApplicationException.class)
+                    .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
+        }
+
+        @Test
+        @DisplayName("배너 생성 요청시, 요청 이미지가 이미 매핑 되어있다면, 예외를 발생시킨다.")
         void givenAlreadyMappedImageId_whenCreatingBanner_thenThrowsException() {
             // Given
             Account mockAdminAccount = getMockAdminAccount();
@@ -119,9 +140,7 @@ public class BannerHeaderServiceTest {
             String titleToUpdate = "changed title";
             Long mainImageToUpdate = 2L;
             ImageFile mockImageFile = mock(ImageFile.class);
-
             Account mockAdminAccount = getMockAdminAccount();
-            AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
             // 원본 내용
             BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
             // 수정 내용
@@ -131,15 +150,41 @@ public class BannerHeaderServiceTest {
 
             given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.of(mockBanner));
             given(imageFileRepository.findById(mockRequestDto.getMainImageId())).willReturn(Optional.of(mockImageFile));
-            given(bannerHeaderRepository.save(any())).willReturn(mockBanner);
             given(mockImageFile.getBoardContent()).willReturn(mockBanner.getBoardContent());
 
             // When
-            BannerDto bannerDto = bannerService.update(mockAccountDto, requestHeaderId, mockRequestDto);
+            BannerDto bannerDto = bannerService.update(requestHeaderId, mockRequestDto);
 
             // Then
-            assertThat(bannerDto).hasFieldOrPropertyWithValue("id", requestHeaderId).hasFieldOrProperty("imageUrl")
+            assertThat(bannerDto).hasFieldOrPropertyWithValue("id", requestHeaderId)
+                    .hasFieldOrProperty("imageUrl")
                     .hasFieldOrPropertyWithValue("title", mockRequestDto.getTitle());
+        }
+
+        @Test
+        @DisplayName("배너 수정 요청시, 요청 배너가 존재하지 않는다면, 예외를 발생시킨다.")
+        void givenInvalidBannerId_whenUpdatingPost_thenThrowsException() {
+            // Given
+            Long requestHeaderId = 1L;
+            String titleToUpdate = "changed title";
+            Long mainImageToUpdate = 2L;
+            ImageFile mockImageFile = mock(ImageFile.class);
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title(titleToUpdate)
+                    .mainImageId(mainImageToUpdate).build();
+
+            given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.empty());
+            given(imageFileRepository.findById(mockRequestDto.getMainImageId())).willReturn(Optional.of(mockImageFile));
+
+            // WHEN
+            Throwable throwable = catchThrowable(
+                    () -> bannerService.update(requestHeaderId, mockRequestDto));
+
+            // THEN
+            assertThat(throwable)
+                    .isInstanceOf(ApplicationException.class)
+                    .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
+            then(bannerHeaderRepository).should().findById(requestHeaderId);
+            then(imageFileRepository).shouldHaveNoInteractions();
         }
 
         @Test
@@ -149,9 +194,7 @@ public class BannerHeaderServiceTest {
             Long requestHeaderId = 1L;
             String titleToUpdate = "changed title";
             Long mainImageToUpdate = 2L;
-
             Account mockAdminAccount = getMockAdminAccount();
-            AccountDto mockAccountDto = AccountDto.from(mockAdminAccount);
             // 원본 내용
             BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
             // 수정 내용
@@ -164,12 +207,46 @@ public class BannerHeaderServiceTest {
 
             // WHEN
             Throwable throwable = catchThrowable(
-                    () -> bannerService.update(mockAccountDto, requestHeaderId, mockRequestDto));
+                    () -> bannerService.update(requestHeaderId, mockRequestDto));
 
             // THEN
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
                     .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
+            then(bannerHeaderRepository).should().findById(requestHeaderId);
+            then(imageFileRepository).should().findById(mockRequestDto.getMainImageId());
+        }
+
+        @Test
+        @DisplayName("배너 수정 요청시, 요청 이미지가 이미 매핑 되어있다면, 예외를 발생시킨다.")
+        void givenAlreadyMappedImageId_whenUpdatingPost_thenThrowsException() {
+            // Given
+            Long requestHeaderId = 1L;
+            String titleToUpdate = "changed title";
+            Long mainImageToUpdate = 2L;
+            ImageFile mockImageFile = mock(ImageFile.class);
+            Account mockAdminAccount = getMockAdminAccount();
+            // 원본 내용
+            BannerInfoRequestDto createDto = BannerInfoRequestDto.builder().title("title").mainImageId(1L).build();
+            // 수정 내용
+            BannerInfoRequestDto mockRequestDto = BannerInfoRequestDto.builder().title(titleToUpdate)
+                    .mainImageId(mainImageToUpdate).build();
+            BannerHeader mockBanner = getMockBanner(mockAdminAccount, createDto);
+
+            given(bannerHeaderRepository.findById(requestHeaderId)).willReturn(Optional.of(mockBanner));
+            given(imageFileRepository.findById(mockRequestDto.getMainImageId())).willReturn(Optional.of(mockImageFile));
+            given(mockImageFile.getBoardContent()).willReturn(mockBanner.getBoardContent());
+            doThrow(new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST)).when(imageFileService)
+                    .updateImageContent(any(), any());
+
+            // WHEN
+            Throwable throwable = catchThrowable(
+                    () -> bannerService.update(requestHeaderId, mockRequestDto));
+
+            // THEN
+            assertThat(throwable)
+                    .isInstanceOf(ApplicationException.class)
+                    .hasMessage(ErrorCode.IMAGE_BELONG_TO_OTHER_POST.getMessage());
             then(bannerHeaderRepository).should().findById(requestHeaderId);
             then(imageFileRepository).should().findById(mockRequestDto.getMainImageId());
         }
