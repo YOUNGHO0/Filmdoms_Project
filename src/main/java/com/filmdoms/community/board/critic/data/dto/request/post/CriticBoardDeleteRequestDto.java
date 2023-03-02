@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CriticBoardDeleteRequestDto {
 
-    Long boardNumber;
+    private Long id;
 
 
 }
