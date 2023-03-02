@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.notice.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.board.comment.data.entity.Comment;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
@@ -28,6 +29,9 @@ public class NoticeHeader extends BoardHeadCore {
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
+
+    @OneToMany(mappedBy = "header")
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     private NoticeHeader(String title, Account author, BoardContent boardContent, ImageFile mainImage, LocalDateTime startDate, LocalDateTime endDate) {

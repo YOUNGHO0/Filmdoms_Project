@@ -1,6 +1,7 @@
 package com.filmdoms.community.board.review.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.board.comment.data.entity.Comment;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.board.data.constant.MovieReviewTag;
@@ -29,7 +30,7 @@ public class MovieReviewHeader extends BoardHeadCore {
     private MovieReviewTag tag;
 
     @OneToMany(mappedBy = "header", cascade = CascadeType.REMOVE)
-    private List<MovieReviewComment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     private MovieReviewHeader(String title, Account author, BoardContent boardContent, ImageFile mainImage, MovieReviewTag tag) {
