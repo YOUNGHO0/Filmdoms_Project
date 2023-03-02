@@ -7,6 +7,7 @@ import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPost
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardReplyRequestDto;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardUpdateRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
+import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.critic.service.CriticBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,13 @@ public class CriticBoardController {
 
     private final CriticBoardService criticBoardService;
 
-    @PostMapping("/write")
-    public Response<String> writeCritic(@RequestPart CriticBoardPostRequestDto criticBoardPostRequestDto, @RequestPart(required = false) List<MultipartFile> multipartFile) {
+    @PostMapping
+    public Response<String> writeCritic( @AuthenticationPrincipal AccountDto accountDto, @RequestBody CriticBoardPostRequestDto requestDto) {
 
-        return criticBoardService.writeCritic(criticBoardPostRequestDto, multipartFile);
+        return criticBoardService.writeCritic(requestDto);
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public Response getCriticBoardList() {
         List<CriticBoardGetResponseDto> criticBoardList = criticBoardService.getCriticBoardList();
 
@@ -42,9 +43,9 @@ public class CriticBoardController {
 
     }
 
-    @PutMapping("/update")
+
+    @PutMapping
     public Response updateCriticBoard( @AuthenticationPrincipal AccountDto accountDto,
-                                       @PathVariable Long postId,
                                        @RequestBody CriticBoardUpdateRequestDto requestDto)
     {
         Response response = criticBoardService.updateCriticBoard(requestDto);
@@ -53,11 +54,10 @@ public class CriticBoardController {
 
     }
 
-    @DeleteMapping("/delete")
-    public Response deleteCriticBoard( @AuthenticationPrincipal AccountDto accountDto, @PathVariable Long postId)
+    @DeleteMapping
+    public Response deleteCriticBoard( @AuthenticationPrincipal AccountDto accountDto, @RequestBody CriticBoardDeleteRequestDto dto)
     {
-        criticBoardService.deleteCriticBoard(postId);
-
+        criticBoardService.deleteCriticBoard(dto.getId());
         return Response.success();
     }
 
