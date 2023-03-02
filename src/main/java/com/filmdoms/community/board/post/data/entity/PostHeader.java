@@ -53,12 +53,9 @@ public class PostHeader extends BoardHeadCore {
         this.mainImage = mainImage;
     }
 
-    public void updateCategory(PostCategory category) {
+    public void update(PostCategory category, String title, String content, ImageFile mainImage) {
+        updateBoardHeadCore(title, content);
         this.category = category;
-    }
-
-    public void updateMainImage(ImageFile mainImage) {
         this.mainImage = mainImage;
     }
-
 }
