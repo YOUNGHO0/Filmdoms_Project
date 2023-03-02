@@ -116,7 +116,6 @@ public class CriticBoardService {
         //이미지 파일 업데이트 코드(헤더쪽)
         criticBoard.updateCriticBoard(dto.getTitle(), dto.getContent(), dto.getPreHeader(),mainImageFile);
         //이미지 파일 업데이트 코드 (이미지 파일쪽)
-        imageFileService.setImageContent(dto.getMainImageId(), criticBoard.getBoardContent());
         imageFileService.updateImageContent(dto.getContentImageId(),criticBoard.getBoardContent());
         
         return Response.success();
