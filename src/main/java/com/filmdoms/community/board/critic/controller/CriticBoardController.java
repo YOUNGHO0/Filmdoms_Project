@@ -37,6 +37,13 @@ public class CriticBoardController {
 
     }
 
+    @GetMapping("/{id}")
+    public Response getSinglePage( @PathVariable("id") Long id)
+    {
+        CriticBoardSinglePageResponseDto singleCriticBoardPage = criticBoardService.getSingleCriticBoardPage(id);
+
+        return Response.success(singleCriticBoardPage);
+    }
 
 
     @PutMapping("/{id}")
