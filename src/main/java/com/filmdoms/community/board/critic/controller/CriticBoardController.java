@@ -1,13 +1,16 @@
 package com.filmdoms.community.board.critic.controller;
 
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardPostRequestDto;
+import com.filmdoms.community.board.critic.data.dto.request.post.CriticBoardUpdateRequestDto;
 import com.filmdoms.community.board.critic.data.dto.response.CriticBoardGetResponseDto;
+import com.filmdoms.community.board.critic.data.dto.response.CriticBoardSinglePageResponseDto;
 import com.filmdoms.community.board.critic.service.CriticBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,21 +22,49 @@ public class CriticBoardController {
 
     private final CriticBoardService criticBoardService;
 
-    @PostMapping("/write")
-    public Response<String> writeCritic(@RequestPart CriticBoardPostRequestDto criticBoardPostRequestDto, @RequestPart(required = false) List<MultipartFile> multipartFile) {
+    @PostMapping
+    public Response<String> writeCritic( @AuthenticationPrincipal AccountDto accountDto, @RequestBody CriticBoardPostRequestDto requestDto) {
 
-        return criticBoardService.writeCritic(criticBoardPostRequestDto, multipartFile);
+        return criticBoardService.writeCritic(requestDto);
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public Response getCriticBoardList() {
-        List<CriticBoardGetResponseDto> criticBoardList = criticBoardService.getCriticBoardList();
+        List<CriticBoardGetResponseDto> criticBoardList = criticBoardService.getCriticBoardLists();
 
-        for (int i = 0; i < criticBoardList.size(); i++) {
-            log.info("게시글 목록{}", criticBoardList.get(i).getTitle());
-        }
         return Response.success(criticBoardList);
 
 
     }
+
+    @GetMapping("/{id}")
+    public Response getSinglePage( @PathVariable("id") Long id)
+    {
+        CriticBoardSinglePageResponseDto singleCriticBoardPage = criticBoardService.getSingleCriticBoardPage(id);
+
+        return Response.success(singleCriticBoardPage);
+    }
+
+
+    @PutMapping("/{id}")
+    public Response updateCriticBoard( @AuthenticationPrincipal AccountDto accountDto,
+                                       @RequestBody CriticBoardUpdateRequestDto requestDto, @PathVariable("id") Long id)
+    {
+        requestDto.setId(id);
+
+        Response response = criticBoardService.updateCriticBoard(requestDto);
+
+        return response;
+
+    }
+
+    @DeleteMapping("/{id}")
+    public Response deleteCriticBoard( @AuthenticationPrincipal AccountDto accountDto ,@PathVariable("id") Long id)
+    {
+        criticBoardService.deleteCriticBoard(id);
+        return Response.success();
+    }
+
+
+
 }

@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
-import java.util.List;
-
 @Data
 @RequiredArgsConstructor
 public class CriticBoardGetResponseDto {
@@ -16,11 +13,11 @@ public class CriticBoardGetResponseDto {
     String preHeader;
     String title;
     String author;
-    List<String> imageUrl;
+    String imageUrl;
 
 
     @Builder
-    public CriticBoardGetResponseDto(Long id,String preHeader,String title,String author,List<String> imageUrl){
+    public CriticBoardGetResponseDto(Long id,String preHeader,String title,String author,String imageUrl){
         this.id = id;
         this.preHeader = preHeader;
         this.title = title;
@@ -28,16 +25,18 @@ public class CriticBoardGetResponseDto {
         this.imageUrl = imageUrl;
     }
 
-    public static CriticBoardGetResponseDto from (CriticBoardHeader criticBoardHeader, HashMap<Long, List<String>> hashMap )
+    public static CriticBoardGetResponseDto from (CriticBoardHeader criticBoardHeader, String domain)
     {
         CriticBoardGetResponseDto criticBoardGetResponseDto = CriticBoardGetResponseDto.builder()
                 .id(criticBoardHeader.getId())
                 .preHeader(criticBoardHeader.getPreHeader())
                 .title(criticBoardHeader.getTitle())
-                .author(criticBoardHeader.getAuthor().getUsername())
-                .imageUrl(hashMap.get(criticBoardHeader.getId())).build();
+                .author(criticBoardHeader.getAuthor().getUsername().toString())
+                .imageUrl(criticBoardHeader.getMainImage().getFileUrl(domain))
+                .build();
 
         return criticBoardGetResponseDto;
+
 
     }
 }

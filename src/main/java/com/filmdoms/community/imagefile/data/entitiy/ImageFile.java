@@ -1,6 +1,7 @@
 package com.filmdoms.community.imagefile.data.entitiy;
 
 
+import com.filmdoms.community.board.critic.data.entity.CriticBoardHeader;
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardContent;
 import jakarta.persistence.Column;

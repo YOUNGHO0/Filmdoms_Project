@@ -41,4 +41,5 @@ public final class BoardContent {
     void updateBoardContent(String content) {
         this.content = content;
     }
+
 }
