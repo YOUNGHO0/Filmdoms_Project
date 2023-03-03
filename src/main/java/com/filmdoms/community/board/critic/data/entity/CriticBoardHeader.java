@@ -5,14 +5,14 @@ import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +22,7 @@ public class CriticBoardHeader extends BoardHeadCore {
 
     String preHeader;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_file_id")
     private ImageFile mainImage;
 
