@@ -6,6 +6,8 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.board.comment.data.entity.Comment;
+import com.filmdoms.community.board.comment.repository.CommentRepository;
 import com.filmdoms.community.board.data.BoardContent;
 import com.filmdoms.community.board.notice.data.dto.request.NoticeCreateRequestDto;
 import com.filmdoms.community.board.notice.data.dto.request.NoticeUpdateRequestDto;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +43,10 @@ public class NoticeService {
     private final AccountRepository accountRepository;
     private final ImageFileRepository imageFileRepository;
     private final ImageFileService imageFileService;
+    private final CommentRepository commentRepository;
 
     public List<NoticeMainPageDto> getMainPageDtos() {
-        return noticeHeaderRepository.findTop4ByOrderByDateCreatedDesc()
+        return noticeHeaderRepository.findTopWithMainImage(PageRequest.of(0, 4, Sort.Direction.DESC, "dateCreated"))
                 .stream()
                 .map(head -> new NoticeMainPageDto(head, domain))
                 .collect(Collectors.toList());
@@ -115,8 +120,9 @@ public class NoticeService {
     }
 
     public NoticeDetailResponseDto getDetail(Long noticeId) {
-        NoticeHeader noticeHeader = noticeHeaderRepository.findById(noticeId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID)); //최적화가 필요한 부분(comment가 구현되면 수정 필요)
-        return new NoticeDetailResponseDto(noticeHeader);
+        NoticeHeader noticeHeader = noticeHeaderRepository.findByIdWithAuthorBoardContentMainImageContentImages(noticeId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID));
+        List<Comment> comments = commentRepository.findByHeaderIdWithAuthor(noticeId);
+        return new NoticeDetailResponseDto(noticeHeader, comments);
     }
 
     public void deleteNotice(Long noticeId) {
