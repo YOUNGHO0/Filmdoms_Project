@@ -41,6 +41,10 @@ public class AccountService {
         return jwtTokenProvider.createToken(accountDto.getUsername(), accountDto.getAuthorities());
     }
 
+    public boolean isUsernameDuplicate(String username) {
+        return accountRepository.existsByUsername(username);
+    }
+
     // TODO: 회원 가입 비즈니스 로직 구현하기
     public AccountDto join(String username, String password) {
         String testUsername = (username == null) ? "tester" : username;
