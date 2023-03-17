@@ -63,17 +63,25 @@ public class Account {
     @Column(name = "date_locked_till", nullable = true)
     private LocalDateTime dateLockedTill;
 
+    @Column(name = "social_login")
+    private boolean isSocialLogin = false;
+
     @PrePersist
     void dateCreated() {
         this.dateCreated = LocalDateTime.now();
     }
 
     @Builder
-    private Account(String username, String nickname, String password, AccountRole role, String email) {
+    private Account(String username, String nickname, String password, AccountRole role, String email, boolean isSocialLogin) {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
-        this.accountRole = role;
+        if(role != null) {
+            this.accountRole = role;
+        } else {
+            this.accountRole = AccountRole.USER;
+        }
+        this.isSocialLogin = isSocialLogin;
     }
 }

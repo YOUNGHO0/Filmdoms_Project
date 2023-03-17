@@ -19,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ToString
 public class AccountDto implements UserDetails {
 
-
     private Long id;
     private String username;
     private String nickname;
@@ -30,6 +29,7 @@ public class AccountDto implements UserDetails {
     private LocalDateTime dateCreated;
     private Integer loginFailCount;
     private LocalDateTime dateLockedTill;
+    private boolean isSocialLogin;
 
     public static AccountDto from(Account entity) {
         return new AccountDto(
@@ -42,7 +42,8 @@ public class AccountDto implements UserDetails {
                 entity.getAccountStatus(),
                 entity.getDateCreated(),
                 entity.getLoginFailCount(),
-                entity.getDateLockedTill()
+                entity.getDateLockedTill(),
+                entity.isSocialLogin()
         );
     }
 
