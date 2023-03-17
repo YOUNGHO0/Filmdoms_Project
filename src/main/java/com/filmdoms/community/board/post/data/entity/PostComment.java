@@ -4,23 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.constant.CommentStatus;
-import com.filmdoms.community.board.review.data.entity.MovieReviewComment;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "post_comment")
@@ -50,7 +38,7 @@ public class PostComment extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private CommentStatus status = CommentStatus.ACTIVE;
-    
+
     @Builder
     private PostComment(Account author, PostHeader header, PostComment parentComment, String content) {
         this.author = author;
