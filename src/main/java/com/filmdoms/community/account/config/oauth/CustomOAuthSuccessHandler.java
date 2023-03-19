@@ -42,7 +42,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         if (response.isCommitted()) {
             super.logger.debug("Response has already been committed.");
-            throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
+            return;
         }
 
         String registrationId = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
