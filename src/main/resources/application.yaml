@@ -120,14 +120,24 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    # JDBC URL을 jdbc:h2:mem:account 로 설정후 Connect를 누르면 DB에 접근 가능
-    url: jdbc:h2:mem:account;MODE=MySQL;
+    # JDBC URL을 jdbc:h2:mem:filmdoms 로 설정후 Connect를 누르면 DB에 접근 가능
+    url: jdbc:h2:mem:filmdoms;MODE=MySQL;
     username: SA
     password:
 
   sql:
     init:
       mode: always
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
+            scope: email
+            redirect-uri: "{baseUrl}/front/oauth2/google"
 
 cloud:
   aws:

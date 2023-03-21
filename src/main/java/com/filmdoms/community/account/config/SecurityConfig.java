@@ -2,6 +2,7 @@ package com.filmdoms.community.account.config;
 
 import com.filmdoms.community.account.config.jwt.JwtAuthenticationFilter;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
 import com.filmdoms.community.account.exception.CustomAccessDeniedHandler;
 import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomOAuthSuccessHandler customOAuthSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -56,8 +59,11 @@ public class SecurityConfig {
 
                 // JWT 인증필터 등록
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class)
-        ;
+                        OAuth2LoginAuthenticationFilter.class)
+
+                //oauth 관련 설정
+                .oauth2Login()
+                .successHandler(customOAuthSuccessHandler);
 
         return http.build();
     }
