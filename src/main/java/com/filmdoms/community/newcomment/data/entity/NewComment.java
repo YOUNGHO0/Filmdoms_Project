@@ -45,7 +45,7 @@ public class NewComment extends BaseTimeEntity {
     private boolean isManagerComment = false;
 
     @Builder
-    public NewComment(Article article, NewComment parentComment, Account author, String content, boolean isManagerComment) {
+    private NewComment(Article article, NewComment parentComment, Account author, String content, boolean isManagerComment) {
         this.article = article;
         this.parentComment = parentComment;
         this.author = author;

@@ -47,7 +47,7 @@ public class Article extends BaseTimeEntity {
     private boolean containsImage = false;
 
     @Builder
-    protected Article(String title, Category category, Tag tag, Account author, String content) {
+    private Article(String title, Category category, Tag tag, Account author, String content) {
         this.title = title;
         this.category = category;
         this.tag = tag;

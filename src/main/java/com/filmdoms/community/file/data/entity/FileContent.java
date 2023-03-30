@@ -25,7 +25,7 @@ public class FileContent {
     private Content content;
 
     @Builder
-    public FileContent(File file, Content content) {
+    private FileContent(File file, Content content) {
         this.file = file;
         this.content = content;
     }
