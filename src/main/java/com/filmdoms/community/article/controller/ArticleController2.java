@@ -20,10 +20,15 @@ public class ArticleController2 {
     private final ArticleService articleService;
     private final InitService initService;
 
-    @GetMapping("/{category}/main-page")
+    @GetMapping("/{category}/main")
     public Response<List<? extends MainPageResponseDto>> readMain(@PathVariable Category category, @RequestParam(defaultValue = "5") int limit) {
         List<? extends MainPageResponseDto> dtoList = articleService.getMainPageDtoList(category, limit);
         return Response.success(dtoList);
+    }
+
+    @GetMapping("/recent/main")
+    public Response readMain(@RequestParam(defaultValue = "5") int limit) {
+        return Response.success();
     }
 
     @GetMapping("/init-data")
