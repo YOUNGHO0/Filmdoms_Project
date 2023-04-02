@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public final class Content {
+public class Content {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
