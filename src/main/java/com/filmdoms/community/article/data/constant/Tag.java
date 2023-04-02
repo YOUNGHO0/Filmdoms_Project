@@ -13,10 +13,11 @@ public enum Tag {
     GOODS(Category.MOVIE, "굿즈"),
     OUTSIDE_ACTIVITY(Category.FILM_UNIVERSE, "대외활동"),
     COMPETITION(Category.FILM_UNIVERSE, "공모전"),
+    CLUB(Category.FILM_UNIVERSE, "동아리"),
     CRITIC_ACTOR(Category.CRITIC, "배우비평"),
     CRITIC_DIRECTOR(Category.CRITIC, "감독비평"),
     CRITIC_MOVIE(Category.CRITIC, "영화비평");
-
+    //에디터 태그를 만들어야 하는지 논의 필요
 
     private final Category category;
     private final String description;
