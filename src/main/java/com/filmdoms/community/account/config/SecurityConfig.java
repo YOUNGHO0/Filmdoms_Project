@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -39,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/login", "/join").permitAll()
+                        .requestMatchers("/api/v1/login", "/api/v1/join").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/banner/**").hasRole("ADMIN")

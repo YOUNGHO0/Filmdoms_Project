@@ -3,6 +3,7 @@ package com.filmdoms.community.article.data.entity;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
+import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import jakarta.persistence.*;
@@ -53,5 +54,16 @@ public class Article extends BaseTimeEntity {
         this.tag = tag;
         this.author = author;
         this.content = new Content(content);
+    }
+
+    public static Article from(ArticleControllerToServiceDto dto)
+    {
+        return Article.builder()
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .author(dto.getAuthor())
+                .category(dto.getCategory())
+                .tag(dto.getTag())
+                .build();
     }
 }
