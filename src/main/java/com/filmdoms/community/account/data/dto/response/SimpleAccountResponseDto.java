@@ -4,7 +4,7 @@ import com.filmdoms.community.account.data.entity.Account;
 import lombok.Getter;
 
 @Getter
-public class SimpleAccountResponseDto { //게시물 상세 조회 시 작성자 정보를 주는 DTO
+public class SimpleAccountResponseDto {
 
     private Long id;
     private String username;
