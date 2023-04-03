@@ -7,11 +7,11 @@ import lombok.Getter;
 
 @Getter
 public class ArticleMainPageResponseDto extends MainPageResponseDto { //recent, movie 메인페이지
-    private int commentNum;
+    private int commentCount;
 
-    private ArticleMainPageResponseDto(Long id, Category category, Tag tag, String title, int commentNum) {
+    private ArticleMainPageResponseDto(Long id, Category category, Tag tag, String title, int commentCount) {
         super(id, category, tag, title);
-        this.commentNum = commentNum;
+        this.commentCount = commentCount;
     }
 
     public static ArticleMainPageResponseDto from(Article article) {

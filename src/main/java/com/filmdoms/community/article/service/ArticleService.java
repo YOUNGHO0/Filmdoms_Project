@@ -51,22 +51,24 @@ public class ArticleService {
 
     public List<? extends MainPageResponseDto> getMainPageDtoList(Category category, int limit) {
 
+        Sort sortById = Sort.by(Sort.Direction.DESC, "id");
+
         if(category == Category.MOVIE) {
-            List<Article> articles = articleRepository.findByCategory(category, PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"))); //Article의 id로 정렬
+            List<Article> articles = articleRepository.findByCategory(category, PageRequest.of(0, limit, sortById)); //Article의 id로 정렬
 
             return articles.stream()
                     .map(ArticleMainPageResponseDto::from)
                     .toList(); //commentNum은 batch_size를 이용하여 쿼리 1번으로 구해짐
 
         } else if(category == Category.FILM_UNIVERSE) {
-            List<Notice> notices = noticeRepository.findAllWithArticleAuthorMainImage(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"))); //category 정보 필요x, Notice의 id로 정렬
+            List<Notice> notices = noticeRepository.findAllWithArticleAuthorMainImage(PageRequest.of(0, limit, sortById)); //category 정보 필요x, Notice의 id로 정렬
 
             return notices.stream()
                     .map(NoticeMainPageResponseDto::from)
                     .toList();
 
         } else if(category == Category.CRITIC) {
-            List<Critic> critics = criticRepository.findAllWithArticleAuthorMainImageContent(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id")));//category 정보 필요x, Critic의 id로 정렬
+            List<Critic> critics = criticRepository.findAllWithArticleAuthorMainImageContent(PageRequest.of(0, limit, sortById));//category 정보 필요x, Critic의 id로 정렬
 
             return critics.stream()
                     .map(CriticMainPageResponseDto::from)
