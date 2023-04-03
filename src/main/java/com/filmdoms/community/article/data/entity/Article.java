@@ -6,11 +6,14 @@ import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.board.data.constant.PostStatus;
+import com.filmdoms.community.newcomment.data.entity.NewComment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,6 +43,9 @@ public class Article extends BaseTimeEntity {
     @JoinColumn(name = "content_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Content content;
+
+    @OneToMany(mappedBy = "article")
+    private List<NewComment> comments;
 
     private int view = 0;
 

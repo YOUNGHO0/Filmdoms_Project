@@ -42,7 +42,9 @@ public class NewComment extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommentStatus status = CommentStatus.ACTIVE;
 
-    private boolean isManagerComment = false;
+    private int voteCount = 0;
+
+    private boolean isManagerComment;
 
     @Builder
     private NewComment(Article article, NewComment parentComment, Account author, String content, boolean isManagerComment) {

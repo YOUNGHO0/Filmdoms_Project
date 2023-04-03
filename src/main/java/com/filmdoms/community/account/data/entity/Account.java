@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,7 +50,7 @@ public class Account {
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private AccountRole accountRole = AccountRole.USER;
+    private AccountRole accountRole;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -64,7 +66,7 @@ public class Account {
     private LocalDateTime dateLockedTill;
 
     @Column(name = "social_login")
-    private boolean isSocialLogin = false;
+    private boolean isSocialLogin;
 
     @PrePersist
     void dateCreated() {
@@ -77,11 +79,7 @@ public class Account {
         this.nickname = nickname;
         this.password = password;
         this.email = email;
-        if(role != null) {
-            this.accountRole = role;
-        } else {
-            this.accountRole = AccountRole.USER;
-        }
+        this.accountRole = Optional.ofNullable(role).orElse(AccountRole.USER);
         this.isSocialLogin = isSocialLogin;
     }
 }

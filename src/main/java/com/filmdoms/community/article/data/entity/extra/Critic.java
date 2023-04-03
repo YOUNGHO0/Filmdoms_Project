@@ -3,15 +3,17 @@ package com.filmdoms.community.article.data.entity.extra;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notice {
+public class Critic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,23 +27,9 @@ public class Notice {
     @OneToOne(fetch = FetchType.LAZY)
     private File mainImage;
 
-    private LocalDateTime startDate;
-
-    private LocalDateTime endDate;
-
     @Builder
-    private Notice(Article article, File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
+    private Critic(Article article, File mainImage) {
         this.article = article;
         this.mainImage = mainImage;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-    public static Notice from(Article article, LocalDateTime startDate, LocalDateTime endDate) {
-        return  Notice.builder()
-                .article(article)
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
     }
 }
