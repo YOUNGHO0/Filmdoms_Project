@@ -66,4 +66,12 @@ public class Article extends BaseTimeEntity {
                 .tag(dto.getTag())
                 .build();
     }
+
+    public int addVote() {
+        return ++voteCount;
+    }
+
+    public int removeVote() {
+        return --voteCount;
+    }
 }
