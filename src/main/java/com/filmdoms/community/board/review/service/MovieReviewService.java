@@ -49,7 +49,7 @@ public class MovieReviewService {
 
         MovieReviewHeader savedHeader = headerRepository.save(header);
 
-        imageFileService.setImageContent(requestDto.getContentImageId(), savedHeader.getBoardContent());
+       // imageFileService.setImageContent(requestDto.getContentImageId(), savedHeader.getBoardContent());
 
         return new MovieReviewCreateResponseDto(savedHeader);
     }
