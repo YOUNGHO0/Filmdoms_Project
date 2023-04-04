@@ -1,7 +1,6 @@
 package com.filmdoms.community.file.data.entity;
 
 import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.BoardContent;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,8 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +24,7 @@ public class File extends BaseTimeEntity {
     private String uuidFileName;
 
     @Builder
-    private File(String uuidFileName, String originalFileName, BoardContent boardContent) {
+    private File(String uuidFileName, String originalFileName) {
         this.uuidFileName = uuidFileName;
         this.originalFileName = originalFileName;
     }
