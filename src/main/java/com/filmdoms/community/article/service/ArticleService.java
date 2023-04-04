@@ -33,11 +33,13 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final FilmUniverseRepository filmUniverseRepository;
     private final CriticRepository criticRepository;
+    private final ImageFileService imageFileService;
 
     public Response createDefaultArticle(ArticleControllerToServiceDto dto)
     {
             Article userArticle = Article.from(dto);
             Article savedArticle = articleRepository.save(userArticle);
+            imageFileService.setImageContent(dto.getContentImageId(),savedArticle.getContent());
             return Response.success(savedArticle.getId());
     }
 
