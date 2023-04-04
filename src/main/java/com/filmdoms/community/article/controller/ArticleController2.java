@@ -2,7 +2,9 @@ package com.filmdoms.community.article.controller;
 
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.article.data.constant.Category;
-import com.filmdoms.community.article.data.dto.response.MainPageResponseDto;
+import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
+import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
+import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
 import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +23,21 @@ public class ArticleController2 {
     private final InitService initService;
 
     @GetMapping("/{category}/main")
-    public Response<List<? extends MainPageResponseDto>> readMain(@PathVariable Category category, @RequestParam(defaultValue = "5") int limit) {
-        List<? extends MainPageResponseDto> dtoList = articleService.getMainPageDtoList(category, limit);
+    public Response<List<? extends ParentMainPageResponseDto>> readMain(@PathVariable Category category, @RequestParam(defaultValue = "5") int limit) {
+        List<? extends ParentMainPageResponseDto> dtoList = articleService.getMainPageDtoList(category, limit);
         return Response.success(dtoList);
     }
 
     @GetMapping("/recent/main")
-    public Response readMain(@RequestParam(defaultValue = "5") int limit) {
-        return Response.success();
+    public Response<List<MovieAndRecentMainPageResponseDto>> readMain(@RequestParam(defaultValue = "5") int limit) {
+        List<MovieAndRecentMainPageResponseDto> dtoList = articleService.getRecentMainPageDtoList(limit);
+        return Response.success(dtoList);
+    }
+
+    @GetMapping("/{category}/{articleId}")
+    public Response<ArticleDetailResponseDto> readDetail(@PathVariable Category category, @PathVariable Long articleId) {
+        ArticleDetailResponseDto dto = articleService.getDetail(category, articleId);
+        return Response.success(dto);
     }
 
     @GetMapping("/init-data")
