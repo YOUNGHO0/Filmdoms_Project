@@ -5,23 +5,24 @@ import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
-import com.filmdoms.community.article.data.dto.notice.NoticeControllerToServiceDto;
+import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
-import com.filmdoms.community.article.data.dto.response.detail.NoticeDetailResponseDto;
+import com.filmdoms.community.article.data.dto.response.detail.FilmUniverseDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.CriticMainPageResponseDto;
+import com.filmdoms.community.article.data.dto.response.mainpage.FilmUniverseMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
-import com.filmdoms.community.article.data.dto.response.mainpage.NoticeMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
-import com.filmdoms.community.article.data.entity.extra.Notice;
+import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
-import com.filmdoms.community.article.repository.NoticeRepository;
+import com.filmdoms.community.article.repository.FilmUniverseRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.newcomment.data.entity.NewComment;
 import com.filmdoms.community.newcomment.repository.NewCommentRepository;
+import com.filmdoms.community.imagefile.service.ImageFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,23 +37,28 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final NoticeRepository noticeRepository;
+    private final FilmUniverseRepository filmUniverseRepository;
     private final CriticRepository criticRepository;
     private final FileRepository fileRepository;
     private final NewCommentRepository newCommentRepository;
+    private final ImageFileService imageFileService;
 
     public Response createDefaultArticle(ArticleControllerToServiceDto dto) {
         Article userArticle = Article.from(dto);
         Article savedArticle = articleRepository.save(userArticle);
+        imageFileService.setImageContent(dto.getContentImageId(),savedArticle.getContent());
         return Response.success(savedArticle.getId());
     }
 
-    public Response createNoticeArticle(NoticeControllerToServiceDto dto) {
+    public Response createFilmUniverseArticle(FilmUniverseControllerToServiceDto dto) {
         Article userArticle = Article.from((ArticleControllerToServiceDto) dto);
         articleRepository.save(userArticle);
-        Notice notice = Notice.from(userArticle, dto.getStartDate(), dto.getEndDate());
-        Notice savedNotice = noticeRepository.save(notice);
+        imageFileService.setImageContent(dto.getContentImageId(),userArticle.getContent());
+        FilmUniverse notice = FilmUniverse.from(userArticle, dto.getStartDate(), dto.getEndDate());
+        FilmUniverse savedNotice = filmUniverseRepository.save(notice);
         return Response.success(savedNotice.getId());
+
+
     }
 
     public List<MovieAndRecentMainPageResponseDto> getRecentMainPageDtoList(int limit) {
@@ -78,10 +84,10 @@ public class ArticleService {
                     .toList(); //commentNum은 batch_size를 이용하여 쿼리 1번으로 구해짐
 
         } else if (category == Category.FILM_UNIVERSE) {
-            List<Notice> notices = noticeRepository.findAllWithArticleAuthorMainImage(pageRequest); //category 정보 필요x, Notice의 id로 역정렬
+            List<FilmUniverse> filmUniverses = filmUniverseRepository.findAllWithArticleAuthorMainImage(pageRequest); //category 정보 필요x, Notice의 id로 역정렬
 
-            return notices.stream()
-                    .map(NoticeMainPageResponseDto::from)
+            return filmUniverses.stream()
+                    .map(FilmUniverseMainPageResponseDto::from)
                     .toList();
 
         } else if (category == Category.CRITIC) {
@@ -107,11 +113,11 @@ public class ArticleService {
             return ArticleDetailResponseDto.from(article, images, comments);
 
         } else if (category == Category.FILM_UNIVERSE) { //총 3번의 쿼리가 나감
-            Notice notice = noticeRepository.findByArticleIdWithArticleAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            FilmUniverse notice = filmUniverseRepository.findByArticleIdWithArticleAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
 
             List<File> images = fileRepository.findByArticleId(articleId);
             List<NewComment> comments = newCommentRepository.findByArticleIdWithAuthorProfileImage(articleId);
-            return NoticeDetailResponseDto.from(notice, images, comments);
+            return FilmUniverseDetailResponseDto.from(notice, images, comments);
         }
 
         throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND);

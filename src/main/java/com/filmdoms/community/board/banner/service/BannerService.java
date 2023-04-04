@@ -55,7 +55,7 @@ public class BannerService {
                 .content(content)
                 .build();
         log.info("이미지 매핑");
-        imageFileService.setImageContent(requestDto.getMainImageId(), content);
+//        imageFileService.setImageContent(requestDto.getMainImageId(), content);
         log.info("배너 저장");
         BannerHeader savedHeader = bannerHeaderRepository.save(bannerHeader);
         log.info("반환 타입으로 변환");
@@ -73,7 +73,7 @@ public class BannerService {
         log.info("배너 업데이트");
         header.update(requestDto.getTitle(), mainImageFile);
         log.info("이미지 매핑");
-        imageFileService.updateImageContent(Set.of(requestDto.getMainImageId()), header.getBoardContent());
+        //imageFileService.updateImageContent(Set.of(requestDto.getMainImageId()), header.getBoardContent());
         log.info("반환 타입으로 변환");
         return BannerDto.from(header, domain);
     }

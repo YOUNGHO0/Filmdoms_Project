@@ -114,7 +114,7 @@ public class NoticeService {
 
         NoticeHeader savedHeader = noticeHeaderRepository.save(header);
 
-        imageFileService.setImageContent(requestDto.getContentImageId(), content);
+        //imageFileService.setImageContent(requestDto.getContentImageId(), content);
 
         return new NoticeCreateResponseDto(savedHeader);
     }
@@ -140,7 +140,7 @@ public class NoticeService {
         ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId()).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
         noticeHeader.update(requestDto.getTitle(), requestDto.getContent(), mainImageFile, requestDto.getStartDate(), requestDto.getEndDate());
         //이미지 변경
-        imageFileService.updateImageContent(requestDto.getContentImageId(), noticeHeader.getBoardContent());
+        //imageFileService.updateImageContent(requestDto.getContentImageId(), noticeHeader.getBoardContent());
         return new NoticeUpdateResponseDto(noticeHeader);
     }
 }

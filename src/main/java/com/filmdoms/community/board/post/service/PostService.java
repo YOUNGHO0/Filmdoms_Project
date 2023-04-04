@@ -61,7 +61,7 @@ public class PostService {
                 .mainImage(imageFileRepository.getReferenceById(requestDto.getMainImageId()))
                 .build());
         log.info("이미지 매핑");
-        imageFileService.setImageContent(requestDto.getContentImageId(), content);
+        //imageFileService.setImageContent(requestDto.getContentImageId(), content);
         log.info("게시글 저장");
         PostHeader savedHeader = postHeaderRepository.save(header);
 
@@ -83,7 +83,7 @@ public class PostService {
         log.info("게시글 업데이트");
         header.update(requestDto.getCategory(), requestDto.getTitle(), requestDto.getContent(), mainImageFile);
         log.info("이미지 매핑");
-        imageFileService.updateImageContent(requestDto.getContentImageId(), header.getBoardContent());
+        //imageFileService.updateImageContent(requestDto.getContentImageId(), header.getBoardContent());
         log.info("게시글 반환 타입으로 변환");
         return PostBriefDto.from(header);
     }

@@ -2,9 +2,12 @@ package com.filmdoms.community.imagefile.service;
 
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
-import com.filmdoms.community.board.data.BoardContent;
-import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
-import com.filmdoms.community.imagefile.repository.ImageFileRepository;
+import com.filmdoms.community.article.data.entity.Content;
+
+import com.filmdoms.community.file.data.entity.File;
+import com.filmdoms.community.file.data.entity.FileContent;
+import com.filmdoms.community.file.repository.FileContentRepository;
+import com.filmdoms.community.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,32 +23,38 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ImageFileService {
 
-    private final ImageFileRepository imageFileRepository;
+    private final FileRepository imageFileRepository;
+    private final FileContentRepository fileContentRepository;
 
-    public void setImageContent(Set<Long> imageIds, BoardContent content) {
+    public void setImageContent(Set<Long> imageIds, Content content) {
         if (imageIds == null) {
             return;
         }
         imageIds.forEach(id -> setImageContent(id, content));
     }
 
-    public void setImageContent(Long imageId, BoardContent content) {
+    public void setImageContent(Long imageId, Content content) {
         if (imageId == null) {
             return;
         }
-        ImageFile imageFile = imageFileRepository.findById(imageId)
+        File imageFile = imageFileRepository.findById(imageId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
-        if (imageFile.getBoardContent() != null) {
+        FileContent fileContent = FileContent.builder()
+                            .content(content)
+                            .file(imageFile)
+                            .build();
+        if(fileContentRepository.findByFile(imageFile).isPresent())
+        {
             throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST); //이미지에 이미 게시글 컨텐츠가 매핑되어 있으면 예외 발생
         }
-        imageFile.updateBoardContent(content);
+        fileContentRepository.save(fileContent);
     }
 
-    public void updateImageContent(Set<Long> updateImageIds, BoardContent boardContent) {
+    public void updateImageContent(Set<Long> updateImageIds, Content boardContent) {
         if (updateImageIds == null) {
             return;
         }
-        Set<ImageFile> updateImageFiles;
+        Set<File> updateImageFiles;
 
         //업데이트할 ImageFile 엔티티들을 불러오고, 유효하지 않은 이미지 ID라면 예외를 발생시킴
         try {
@@ -57,19 +66,26 @@ public class ImageFileService {
         }
 
         //원래 가지고 있던 이미지 중 업데이트 목록에 없는 것들은 삭제
-        Set<ImageFile> originalImageFiles = boardContent.getImageFiles();
+        Set<FileContent> originalImageFiles = boardContent.getFileContents();
         originalImageFiles.stream()
                 .filter(image -> !updateImageFiles.contains(image))
-                .forEach(image -> imageFileRepository.delete(image));
+                .forEach(image -> fileContentRepository.delete(image));
 
         //업데이트 목록에 있는 이미지 중 원래 목록에 없는 것들은 헤더 설정
         updateImageFiles.stream()
                 .filter(image -> !originalImageFiles.contains(image))
                 .forEach(image -> {
-                    if(image.getBoardContent() != null) {
-                        throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST);
+
+                    FileContent fileContent = FileContent.builder()
+                            .content(boardContent)
+                            .file(image)
+                            .build();
+                    if(fileContentRepository.findByFile(image).isPresent())
+                    {
+                        throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST); //이미지에 이미 게시글 컨텐츠가 매핑되어 있으면 예외 발생
                     }
-                    image.updateBoardContent(boardContent);
+                    fileContentRepository.save(fileContent);
+
                 });
     }
 }

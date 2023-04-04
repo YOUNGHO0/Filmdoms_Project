@@ -10,8 +10,8 @@ import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.ArticleRequestDto;
 import com.filmdoms.community.article.data.dto.ParentRequestDto;
-import com.filmdoms.community.article.data.dto.notice.NoticeControllerToServiceDto;
-import com.filmdoms.community.article.data.dto.notice.NoticeRequestDto;
+import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
+import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseRequestDto;
 import com.filmdoms.community.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +40,13 @@ public class ArticleController {
             articleService.createDefaultArticle(articleDto);
         }
 
-        if(parentRequestDto instanceof NoticeRequestDto)
+        if(parentRequestDto instanceof FilmUniverseRequestDto)
         {
-            NoticeRequestDto requestNoticeDto =(NoticeRequestDto) parentRequestDto;
+            FilmUniverseRequestDto requestNoticeDto =(FilmUniverseRequestDto) parentRequestDto;
             Account userAccount = accountRepository.findByUsername(accountDto.getUsername()).orElseThrow(
                     ()-> (new ApplicationException(ErrorCode.USER_NOT_FOUND,"사용자가 존재하지 않습니다")));
-            NoticeControllerToServiceDto noticeDto = NoticeControllerToServiceDto.from(requestNoticeDto,category,tag,userAccount);
-            articleService.createNoticeArticle(noticeDto);
+            FilmUniverseControllerToServiceDto noticeDto = FilmUniverseControllerToServiceDto.from(requestNoticeDto,category,tag,userAccount);
+            articleService.createFilmUniverseArticle(noticeDto);
         }
 
 

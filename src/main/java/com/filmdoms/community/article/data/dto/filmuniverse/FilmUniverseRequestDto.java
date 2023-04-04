@@ -1,4 +1,4 @@
-package com.filmdoms.community.article.data.dto.notice;
+package com.filmdoms.community.article.data.dto.filmuniverse;
 
 import com.filmdoms.community.article.data.dto.ParentRequestDto;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Getter
-public class NoticeRequestDto extends ParentRequestDto {
+public class FilmUniverseRequestDto extends ParentRequestDto {
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;

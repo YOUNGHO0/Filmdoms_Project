@@ -7,10 +7,10 @@ import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
-import com.filmdoms.community.article.data.entity.extra.Notice;
+import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
-import com.filmdoms.community.article.repository.NoticeRepository;
+import com.filmdoms.community.article.repository.FilmUniverseRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.data.entity.FileContent;
 import com.filmdoms.community.file.repository.FileContentRepository;
@@ -32,7 +32,7 @@ public class InitService {
 
     private final AccountRepository accountRepository;
     private final ArticleRepository articleRepository;
-    private final NoticeRepository noticeRepository;
+    private final FilmUniverseRepository filmUniverseRepository;
     private final CriticRepository criticRepository;
     private final FileRepository fileRepository;
     private final FileContentRepository fileContentRepository;
@@ -118,13 +118,13 @@ public class InitService {
                     .content("File Universe 게시판 " + i + "번째 글 내용\nFile Universe 게시판 " + i + "번째 글 내용")
                     .build();
 
-            Notice notice = Notice.builder()
+            FilmUniverse filmUniverse = FilmUniverse.builder()
                     .mainImage(defaultImage)
                     .article(article)
                     .startDate(LocalDateTime.of(2023, 4, 1, 0, 0, 0).plusDays(i - 1))
                     .endDate(LocalDateTime.of(2023, 5, 1, 0, 0, 0).plusDays(i - 1))
                     .build();
-            noticeRepository.save(notice);
+            filmUniverseRepository.save(filmUniverse);
 
             FileContent fileContent = FileContent.builder()
                     .file(defaultImage)
