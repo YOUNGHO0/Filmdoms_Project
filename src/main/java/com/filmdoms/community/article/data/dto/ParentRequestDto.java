@@ -18,15 +18,16 @@ import static com.filmdoms.community.account.exception.ValidationMessage.*;
         property = "articleType",
         visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(name = "DEFAULT", value =ArticleRequestDto.class),
-        @JsonSubTypes.Type(name = "NOTICE", value = NoticeRequestDto.class)
+        @JsonSubTypes.Type(name = "MOVIE", value =ArticleRequestDto.class),
+        @JsonSubTypes.Type(name = "FILM_UNIVERSE", value = FilmUniverseRequestDto.class)
+
 
 })
 @RequiredArgsConstructor
 @Getter
 public abstract class ParentRequestDto {
 
-    private ArticleType articleType;
+    private Category articleType;
 
     @NotBlank(message = TITLE_NOT_BLANK)
     @Size(max = 100, message = TITLE_SIZE)
