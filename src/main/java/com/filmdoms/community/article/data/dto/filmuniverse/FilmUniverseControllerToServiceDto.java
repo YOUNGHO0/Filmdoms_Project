@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @SuperBuilder
@@ -36,6 +37,7 @@ public class FilmUniverseControllerToServiceDto extends ArticleControllerToServi
                 .content(dto.getContent())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
+                .contentImageId(dto.getContentImageId())
                 .build();
     }
 }
