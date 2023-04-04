@@ -4,20 +4,21 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.file.data.entity.File;
+import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.imagefile.data.dto.UploadedFileDto;
 import com.filmdoms.community.imagefile.data.dto.response.ImageUploadResponseDto;
-import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
-import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class AmazonS3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
-    public final ImageFileRepository imageFileRepository;
+    public final FileRepository fileRepository;
 
     //to be deprecated
     public UploadedFileDto upload(MultipartFile multipartFile, String originalFileName) {
@@ -69,12 +70,11 @@ public class AmazonS3UploadService {
             String uuidFileName = getUuidFileName(originalFileName);
             uploadFile(imageMultipartFile, uuidFileName);
 
-            ImageFile imageFile = ImageFile.builder()
-                    .originalFileName(originalFileName)
+            File imageFile = File.builder().originalFileName(originalFileName)
                     .uuidFileName(uuidFileName)
                     .build();
 
-            uploadedImageIds.add(imageFileRepository.save(imageFile).getId());
+            uploadedImageIds.add(fileRepository.save(imageFile).getId());
         }
 
         return new ImageUploadResponseDto(uploadedImageIds);
@@ -100,7 +100,7 @@ public class AmazonS3UploadService {
     public void createTestImage() {
         String originalFileName = "popcorn-movie-party-entertainment.webp";
         String uuidFileName = "3554e88f-d683-4f18-b3f4-33fbf6905792.webp";
-        imageFileRepository.save(ImageFile.builder()
+        fileRepository.save(File.builder()
                 .originalFileName(originalFileName)
                 .uuidFileName(uuidFileName)
                 .build());
