@@ -2,7 +2,8 @@ package com.filmdoms.community.article.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.filmdoms.community.article.data.dto.notice.NoticeRequestDto;
+import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
