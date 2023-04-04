@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ public class File extends BaseTimeEntity {
     private String uuidFileName;
 
     @Builder
-    private File(String uuidFileName, String originalFileName, BoardContent boardContent) {
+    private File(String uuidFileName, String originalFileName) {
         this.uuidFileName = uuidFileName;
         this.originalFileName = originalFileName;
     }

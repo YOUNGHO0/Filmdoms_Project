@@ -9,7 +9,7 @@ public class SimpleAccountResponseDto {
     private Long id;
     private String username;
 
-    public SimpleAccountResponseDto(Account account) {
+    public SimpleAccountResponseDto(Account account) { //리팩토링 후 삭제 예정
         this.id = account.getId();
         this.username = account.getUsername();
     }

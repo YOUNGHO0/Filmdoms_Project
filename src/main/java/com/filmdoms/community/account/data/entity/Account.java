@@ -2,16 +2,10 @@ package com.filmdoms.community.account.data.entity;
 
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.constants.AccountStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.file.data.entity.File;
+import jakarta.persistence.*;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -30,7 +24,7 @@ import lombok.NoArgsConstructor;
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class Account extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,18 +62,18 @@ public class Account {
     @Column(name = "social_login")
     private boolean isSocialLogin;
 
-    @PrePersist
-    void dateCreated() {
-        this.dateCreated = LocalDateTime.now();
-    }
+    @JoinColumn(name = "file_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private File profileImage;
 
     @Builder
-    private Account(String username, String nickname, String password, AccountRole role, String email, boolean isSocialLogin) {
+    private Account(String username, String nickname, String password, AccountRole role, String email, boolean isSocialLogin, File profileImage) {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.accountRole = Optional.ofNullable(role).orElse(AccountRole.USER);
         this.isSocialLogin = isSocialLogin;
+        this.profileImage = profileImage;
     }
 }
