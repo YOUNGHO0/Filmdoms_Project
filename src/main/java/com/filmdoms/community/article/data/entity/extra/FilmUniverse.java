@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notice {
+public class FilmUniverse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,15 +30,15 @@ public class Notice {
     private LocalDateTime endDate;
 
     @Builder
-    private Notice(Article article, File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
+    private FilmUniverse(Article article, File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
         this.article = article;
         this.mainImage = mainImage;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public static Notice from(Article article, LocalDateTime startDate, LocalDateTime endDate) {
-        return  Notice.builder()
+    public static FilmUniverse from(Article article, LocalDateTime startDate, LocalDateTime endDate) {
+        return  FilmUniverse.builder()
                 .article(article)
                 .startDate(startDate)
                 .endDate(endDate)
