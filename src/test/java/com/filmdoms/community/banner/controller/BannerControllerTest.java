@@ -1,4 +1,4 @@
-package com.filmdoms.community.board.banner.controller;
+package com.filmdoms.community.banner.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -13,10 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.board.banner.data.dto.BannerDto;
-import com.filmdoms.community.board.banner.data.dto.request.BannerInfoRequestDto;
-import com.filmdoms.community.board.banner.service.BannerService;
+import com.filmdoms.community.banner.data.dto.request.BannerRequestDto;
+import com.filmdoms.community.banner.data.dto.response.BannerResponseDto;
+import com.filmdoms.community.banner.service.BannerService;
 import com.filmdoms.community.config.TestSecurityConfig;
+import com.filmdoms.community.file.data.dto.response.FileResponseDto;
+import com.filmdoms.community.file.data.entity.File;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -34,7 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(BannerController.class)
 @Import(TestSecurityConfig.class)
 @DisplayName("컨트롤러 - 배너 서비스")
-class BannerHeaderControllerTest {
+class BannerControllerTest {
 
     @Autowired
     private ObjectMapper mapper;
@@ -56,13 +58,13 @@ class BannerHeaderControllerTest {
             given(bannerService.getMainPageBanner()).willReturn(getMockBannerDtos());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/banner/main-page"))
+            mockMvc.perform(get("/api/v1/article/banner/main"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
                     .andExpect(jsonPath("$..result..title").exists())
-                    .andExpect(jsonPath("$..result..imageUrl").exists());
+                    .andExpect(jsonPath("$..result..file").exists());
         }
     }
 
@@ -76,22 +78,24 @@ class BannerHeaderControllerTest {
         @DisplayName("배너 생성 요청시, 정상적인 요청이라면, 생성된 배너 정보를 반환한다.")
         void givenCreatingBannerRequest_whenCreatingBanner_thenReturnsCreatedBannerInfo() throws Exception {
             // Given
-            BannerInfoRequestDto requestDto = getMockRequestDto();
-            BannerDto dto = BannerDto.builder()
+            BannerRequestDto requestDto = getMockRequestDto();
+            BannerResponseDto responseDto = BannerResponseDto.builder()
                     .id(1L)
                     .title("title")
-                    .imageUrl("imageUrl.png").build();
-            given(bannerService.create(any(), any())).willReturn(dto);
+                    .file(getMockFileResponseDto())
+                    .build();
+            given(bannerService.create(any(), any())).willReturn(responseDto);
 
             // When & Then
-            mockMvc.perform(post("/api/v1/banner")
+            mockMvc.perform(post("/api/v1/article/banner")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                    .andExpect(jsonPath("$..result.id").exists());
+                    .andExpect(jsonPath("$..result..title").exists())
+                    .andExpect(jsonPath("$..result..file").exists());
         }
 
         @Test
@@ -99,10 +103,10 @@ class BannerHeaderControllerTest {
         @DisplayName("배너 생성 요청시, 관리자가 아니라면, 인가 에러를 반환한다.")
         void givenUnauthorizedUser_whenCreatingBanner_thenReturnsUnauthorizedErrorCode() throws Exception {
             // Given
-            BannerInfoRequestDto requestDto = getMockRequestDto();
+            BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(post("/api/v1/banner")
+            mockMvc.perform(post("/api/v1/article/banner")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -118,10 +122,10 @@ class BannerHeaderControllerTest {
         @DisplayName("배너 생성 요청시, 미인증 유저라면, 인증 에러를 반환한다.")
         void givenUnauthenticatedUser_whenCreatingBanner_thenReturnsUnauthenticatedErrorCode() throws Exception {
             // Given
-            BannerInfoRequestDto requestDto = getMockRequestDto();
+            BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(post("/api/v1/banner")
+            mockMvc.perform(post("/api/v1/article/banner")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -143,22 +147,24 @@ class BannerHeaderControllerTest {
         @DisplayName("배너 수정 요청시, 정상적인 요청이라면, 수정된 배너 정보를 반환한다.")
         void givenUpdatingBannerRequest_whenUpdatingBanner_thenReturnsUpdatedBannerInfo() throws Exception {
             // Given
-            BannerInfoRequestDto requestDto = getMockRequestDto();
-            BannerDto dto = BannerDto.builder()
+            BannerRequestDto requestDto = getMockRequestDto();
+            BannerResponseDto responseDto = BannerResponseDto.builder()
                     .id(1L)
                     .title("changed title")
-                    .imageUrl("imageUrl.png").build();
-            given(bannerService.update(any(), any())).willReturn(dto);
+                    .file(getMockFileResponseDto())
+                    .build();
+            given(bannerService.update(any(), any())).willReturn(responseDto);
 
             // When & Then
-            mockMvc.perform(put("/api/v1/banner/1")
+            mockMvc.perform(put("/api/v1/article/banner/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$[?(@.resultCode == 'SUCCESS')]").exists())
-                    .andExpect(jsonPath("$..result.id").exists());
+                    .andExpect(jsonPath("$..result..title").exists())
+                    .andExpect(jsonPath("$..result..file").exists());
         }
 
         @Test
@@ -166,10 +172,10 @@ class BannerHeaderControllerTest {
         @DisplayName("배너 수정 요청시, 관리자가 아니라면, 인가 에러를 반환한다.")
         void givenUnauthorizedUser_whenUpdatingBanner_thenReturnsUnauthorizedErrorCode() throws Exception {
             // Given
-            BannerInfoRequestDto requestDto = getMockRequestDto();
+            BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(put("/api/v1/banner")
+            mockMvc.perform(put("/api/v1/article/banner/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -185,10 +191,10 @@ class BannerHeaderControllerTest {
         @DisplayName("배너 수정 요청시, 미인증 유저라면, 인증 에러를 반환한다.")
         void givenUnauthenticatedUser_whenUpdatingBanner_thenReturnsUnauthenticatedErrorCode() throws Exception {
             // Given
-            BannerInfoRequestDto requestDto = getMockRequestDto();
+            BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(put("/api/v1/banner")
+            mockMvc.perform(put("/api/v1/article/banner/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -211,7 +217,7 @@ class BannerHeaderControllerTest {
             // Given
 
             // When & Then
-            mockMvc.perform(delete("/api/v1/banner/1"))
+            mockMvc.perform(delete("/api/v1/article/banner/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -226,7 +232,7 @@ class BannerHeaderControllerTest {
             // Given
 
             // When & Then
-            mockMvc.perform(delete("/api/v1/banner/1"))
+            mockMvc.perform(delete("/api/v1/article/banner/1"))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -242,7 +248,7 @@ class BannerHeaderControllerTest {
             // Given
 
             // When & Then
-            mockMvc.perform(delete("/api/v1/banner/1"))
+            mockMvc.perform(delete("/api/v1/article/banner/1"))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -252,18 +258,25 @@ class BannerHeaderControllerTest {
         }
     }
 
-    private BannerInfoRequestDto getMockRequestDto() {
-        return BannerInfoRequestDto.builder()
-                .mainImageId(1L)
+    private BannerRequestDto getMockRequestDto() {
+        return BannerRequestDto.builder()
+                .fileId(1L)
                 .title("title")
                 .build();
     }
 
-    private List<BannerDto> getMockBannerDtos() {
+    private FileResponseDto getMockFileResponseDto() {
+        return FileResponseDto.from(File.builder()
+                .originalFileName("filename")
+                .uuidFileName("random-uuid-filename")
+                .build());
+    }
+
+    private List<BannerResponseDto> getMockBannerDtos() {
         return List.of(
-                BannerDto.builder().id(3L).title("title3").imageUrl("http://this.is.mock.url3").build(),
-                BannerDto.builder().id(2L).title("title2").imageUrl("http://this.is.mock.url2").build(),
-                BannerDto.builder().id(1L).title("title1").imageUrl("http://this.is.mock.url1").build()
+                BannerResponseDto.builder().id(3L).title("title3").file(getMockFileResponseDto()).build(),
+                BannerResponseDto.builder().id(2L).title("title2").file(getMockFileResponseDto()).build(),
+                BannerResponseDto.builder().id(1L).title("title1").file(getMockFileResponseDto()).build()
         );
     }
 
