@@ -117,7 +117,7 @@ public class BannerServiceTest {
                     .fileId(changedFileId).build();
             Banner mockBanner = getMockBanner(mockAdminAccount, createDto);
 
-            given(bannerRepository.findById(requestBannerId)).willReturn(Optional.of(mockBanner));
+            given(bannerRepository.findByIdWithFile(requestBannerId)).willReturn(Optional.of(mockBanner));
             given(fileRepository.findById(any())).willReturn(Optional.of(mockFile));
             given(mockFile.getId()).willReturn(1L);
 
@@ -142,7 +142,7 @@ public class BannerServiceTest {
             BannerRequestDto mockRequestDto = BannerRequestDto.builder().title(changedTitle)
                     .fileId(changedFileId).build();
 
-            given(bannerRepository.findById(requestBannerId)).willReturn(Optional.empty());
+            given(bannerRepository.findByIdWithFile(requestBannerId)).willReturn(Optional.empty());
             given(fileRepository.findById(any())).willReturn(Optional.of(mockFile));
 
             // WHEN
@@ -153,7 +153,7 @@ public class BannerServiceTest {
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
                     .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
-            then(bannerRepository).should().findById(requestBannerId);
+            then(bannerRepository).should().findByIdWithFile(requestBannerId);
             then(fileRepository).shouldHaveNoInteractions();
         }
 
@@ -172,7 +172,7 @@ public class BannerServiceTest {
                     .fileId(changedFileId).build();
             Banner mockBanner = getMockBanner(mockAdminAccount, createDto);
 
-            given(bannerRepository.findById(requestBannerId)).willReturn(Optional.of(mockBanner));
+            given(bannerRepository.findByIdWithFile(requestBannerId)).willReturn(Optional.of(mockBanner));
             given(fileRepository.findById(any())).willReturn(Optional.empty());
 
             // WHEN
@@ -183,7 +183,7 @@ public class BannerServiceTest {
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
                     .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
-            then(bannerRepository).should().findById(requestBannerId);
+            then(bannerRepository).should().findByIdWithFile(requestBannerId);
             then(fileRepository).should().findById(mockRequestDto.getFileId());
         }
     }
