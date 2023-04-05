@@ -17,13 +17,13 @@ public class FilmUniverseDetailResponseDto extends ArticleDetailResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private FilmUniverseDetailResponseDto(FilmUniverse filmUniverse, List<File> images, List<NewComment> comments) {
-        super(filmUniverse.getArticle(), images, comments);
+    private FilmUniverseDetailResponseDto(FilmUniverse filmUniverse, List<File> images, List<NewComment> comments, boolean isVoted) {
+        super(filmUniverse.getArticle(), images, comments, isVoted);
         this.startDate = filmUniverse.getStartDate();
         this.endDate = filmUniverse.getEndDate();
     }
 
-    public static FilmUniverseDetailResponseDto from(FilmUniverse filmUniverse, List<File> images, List<NewComment> comments) {
-        return new FilmUniverseDetailResponseDto(filmUniverse, images, comments);
+    public static FilmUniverseDetailResponseDto from(FilmUniverse filmUniverse, List<File> images, List<NewComment> comments, boolean isVoted) {
+        return new FilmUniverseDetailResponseDto(filmUniverse, images, comments, isVoted);
     }
 }

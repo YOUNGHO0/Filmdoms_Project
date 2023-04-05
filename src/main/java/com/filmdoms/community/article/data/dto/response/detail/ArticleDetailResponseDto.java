@@ -29,6 +29,7 @@ public class ArticleDetailResponseDto {
     private int view;
     private int vote_count;
     private int commentCount;
+    private boolean isVoted;
     private String content;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
@@ -36,7 +37,7 @@ public class ArticleDetailResponseDto {
     private List<FileResponseDto> images;
     private List<ParentNewCommentResponseDto> comments;
 
-    protected ArticleDetailResponseDto(Article article, List<File> images, List<NewComment> comments) {
+    protected ArticleDetailResponseDto(Article article, List<File> images, List<NewComment> comments, boolean isVoted) {
         this.id = article.getId();
         this.category = article.getCategory();
         this.tag = article.getTag();
@@ -45,6 +46,7 @@ public class ArticleDetailResponseDto {
         this.view = article.getView();
         this.vote_count = article.getVoteCount();
         this.commentCount = comments.size();
+        this.isVoted = isVoted;
         this.content = article.getContent().getContent();
         this.dateCreated = article.getDateCreated();
         this.dateLastModified = article.getDateLastModified();
@@ -53,7 +55,7 @@ public class ArticleDetailResponseDto {
         this.comments = ParentNewCommentResponseDto.convert(comments);
     }
 
-    public static ArticleDetailResponseDto from(Article article, List<File> images, List<NewComment> comments) {
-        return new ArticleDetailResponseDto(article, images, comments);
+    public static ArticleDetailResponseDto from(Article article, List<File> images, List<NewComment> comments, boolean isVoted) {
+        return new ArticleDetailResponseDto(article, images, comments, isVoted);
     }
 }
