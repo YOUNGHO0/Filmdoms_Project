@@ -1,11 +1,10 @@
-package com.filmdoms.community.board.banner.controller;
+package com.filmdoms.community.banner.controller;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.board.banner.data.dto.request.BannerInfoRequestDto;
-import com.filmdoms.community.board.banner.data.dto.response.BannerInfoResponseDto;
-import com.filmdoms.community.board.banner.data.dto.response.BannerMainPageGetResponseDto;
-import com.filmdoms.community.board.banner.service.BannerService;
+import com.filmdoms.community.banner.data.dto.request.BannerRequestDto;
+import com.filmdoms.community.banner.service.BannerService;
+import com.filmdoms.community.banner.data.dto.response.BannerResponseDto;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -20,32 +19,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/banner")
+@RequestMapping("/api/v1/article/banner")
 @RequiredArgsConstructor
 public class BannerController {
 
     private final BannerService bannerService;
 
-    @GetMapping("/main-page")
-    public Response<List<BannerMainPageGetResponseDto>> getMainPageBanner() {
-        return Response.success(bannerService.getMainPageBanner()
-                .stream()
-                .map(BannerMainPageGetResponseDto::from)
-                .collect(Collectors.toList()));
+    @GetMapping("/main")
+    public Response<List<BannerResponseDto>> getMainPageBanner() {
+        return Response.success(bannerService.getMainPageBanner());
     }
 
     @PostMapping()
-    public Response<BannerInfoResponseDto> createBanner(
+    public Response<BannerResponseDto> createBanner(
             @AuthenticationPrincipal AccountDto accountDto,
-            @RequestBody BannerInfoRequestDto requestDto) {
-        return Response.success(BannerInfoResponseDto.from(bannerService.create(accountDto, requestDto)));
+            @RequestBody BannerRequestDto requestDto) {
+        return Response.success(bannerService.create(accountDto, requestDto));
     }
 
     @PutMapping("/{bannerId}")
-    public Response<BannerInfoResponseDto> updateBanner(
+    public Response<BannerResponseDto> updateBanner(
             @PathVariable Long bannerId,
-            @RequestBody BannerInfoRequestDto requestDto) {
-        return Response.success(BannerInfoResponseDto.from(bannerService.update(bannerId, requestDto)));
+            @RequestBody BannerRequestDto requestDto) {
+        return Response.success(bannerService.update(bannerId, requestDto));
     }
 
     @DeleteMapping("/{bannerId}")
