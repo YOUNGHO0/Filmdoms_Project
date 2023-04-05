@@ -1,4 +1,4 @@
-package com.filmdoms.community.board.banner.data.dto.request;
+package com.filmdoms.community.banner.data.dto.request;
 
 import static com.filmdoms.community.account.exception.ValidationMessage.IMAGE_REQUIRED;
 import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_NOT_BLANK;
@@ -17,12 +17,12 @@ import lombok.ToString;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @ToString
-public class BannerInfoRequestDto {
+public class BannerRequestDto {
 
     @NotBlank(message = TITLE_NOT_BLANK)
     @Size(max = 100, message = TITLE_SIZE)
     private String title;
 
     @NotNull(message = IMAGE_REQUIRED)
-    private Long mainImageId;
+    private Long fileId;
 }
