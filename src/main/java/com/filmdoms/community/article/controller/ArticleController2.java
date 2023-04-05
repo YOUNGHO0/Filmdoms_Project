@@ -1,5 +1,6 @@
 package com.filmdoms.community.article.controller;
 
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
@@ -9,6 +10,7 @@ import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +37,8 @@ public class ArticleController2 {
     }
 
     @GetMapping("/{category}/{articleId}")
-    public Response<ArticleDetailResponseDto> readDetail(@PathVariable Category category, @PathVariable Long articleId) {
-        ArticleDetailResponseDto dto = articleService.getDetail(category, articleId);
+    public Response<ArticleDetailResponseDto> readDetail(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
+        ArticleDetailResponseDto dto = articleService.getDetail(category, articleId, accountDto);
         return Response.success(dto);
     }
 
