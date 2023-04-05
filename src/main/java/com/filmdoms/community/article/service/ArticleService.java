@@ -1,8 +1,10 @@
 package com.filmdoms.community.article.service;
 
+import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
@@ -20,9 +22,11 @@ import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import com.filmdoms.community.imagefile.service.ImageFileService;
 import com.filmdoms.community.newcomment.data.entity.NewComment;
 import com.filmdoms.community.newcomment.repository.NewCommentRepository;
-import com.filmdoms.community.imagefile.service.ImageFileService;
+import com.filmdoms.community.vote.data.entity.VoteKey;
+import com.filmdoms.community.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -42,18 +46,20 @@ public class ArticleService {
     private final FileRepository fileRepository;
     private final NewCommentRepository newCommentRepository;
     private final ImageFileService imageFileService;
+    private final VoteRepository voteRepository;
+    private final AccountRepository accountRepository;
 
     public Response createDefaultArticle(ArticleControllerToServiceDto dto) {
         Article userArticle = Article.from(dto);
         Article savedArticle = articleRepository.save(userArticle);
-        imageFileService.setImageContent(dto.getContentImageId(),savedArticle.getContent());
+        imageFileService.setImageContent(dto.getContentImageId(), savedArticle.getContent());
         return Response.success(savedArticle.getId());
     }
 
     public Response createFilmUniverseArticle(FilmUniverseControllerToServiceDto dto) {
         Article userArticle = Article.from((ArticleControllerToServiceDto) dto);
         articleRepository.save(userArticle);
-        imageFileService.setImageContent(dto.getContentImageId(),userArticle.getContent());
+        imageFileService.setImageContent(dto.getContentImageId(), userArticle.getContent());
         FilmUniverse notice = FilmUniverse.from(userArticle, dto.getStartDate(), dto.getEndDate());
         FilmUniverse savedNotice = filmUniverseRepository.save(notice);
         return Response.success(savedNotice.getId());
@@ -100,7 +106,7 @@ public class ArticleService {
         throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND);
     }
 
-    public ArticleDetailResponseDto getDetail(Category category, Long articleId) {
+    public ArticleDetailResponseDto getDetail(Category category, Long articleId, AccountDto accountDto) {
 
         if (category == Category.MOVIE || category == Category.CRITIC) { //총 3번의 쿼리가 나감
             Article article = articleRepository.findByIdWithAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
@@ -110,16 +116,31 @@ public class ArticleService {
 
             List<File> images = fileRepository.findByArticleId(articleId);
             List<NewComment> comments = newCommentRepository.findByArticleIdWithAuthorProfileImage(articleId);
-            return ArticleDetailResponseDto.from(article, images, comments);
+            boolean isVoted = getArticleVoteStatus(accountDto, article);
+
+            return ArticleDetailResponseDto.from(article, images, comments, isVoted);
 
         } else if (category == Category.FILM_UNIVERSE) { //총 3번의 쿼리가 나감
             FilmUniverse notice = filmUniverseRepository.findByArticleIdWithArticleAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
 
             List<File> images = fileRepository.findByArticleId(articleId);
             List<NewComment> comments = newCommentRepository.findByArticleIdWithAuthorProfileImage(articleId);
-            return FilmUniverseDetailResponseDto.from(notice, images, comments);
+            boolean isVoted = getArticleVoteStatus(accountDto, notice.getArticle());
+
+            return FilmUniverseDetailResponseDto.from(notice, images, comments, isVoted);
         }
 
         throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND);
+    }
+
+    private boolean getArticleVoteStatus(AccountDto accountDto, Article article) { //해당 Account가 Article을 추천했는지 boolean으로 반환
+        if (accountDto != null) {
+            VoteKey voteKey = VoteKey.builder()
+                    .account(accountRepository.getReferenceById(accountDto.getId()))
+                    .article(article)
+                    .build();
+            return voteRepository.findByVoteKey(voteKey).isPresent();
+        }
+        return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
     }
 }
