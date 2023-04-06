@@ -101,16 +101,16 @@ insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, statu
 insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (28, 'NoticeHeader', '2022-09-23 04:39:37', now(), 'INACTIVE', 'Mauris sit amet eros.', 361, 27, 28);
 insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (29, 'NoticeHeader', '2022-10-01 11:17:23', now(), 'INACTIVE', 'Suspendisse potenti.', 788, 27, 29);
 insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (30, 'NoticeHeader', '2022-06-27 18:11:02', now(), 'INACTIVE', 'Duis ac nibh.', 401, 1, 30);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (31, 'BannerHeader', '2022-10-01 22:16:17', now(), 'ACTIVE', 'Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.', 710, 20, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (32, 'BannerHeader', '2022-11-26 00:28:27', now(), 'ACTIVE', 'Vestibulum ac est lacinia nisi venenatis tristique.', 933, 26, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (33, 'BannerHeader', '2022-05-09 10:46:14', now(), 'ACTIVE', 'Integer non velit.', 22, 29, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (34, 'BannerHeader', '2022-01-30 07:05:01', now(), 'INACTIVE', 'Proin eu mi.', 688, 10, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (35, 'BannerHeader', '2022-07-30 19:41:46', now(), 'INACTIVE', 'Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.', 914, 19, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (36, 'BannerHeader', '2022-04-03 03:04:07', now(), 'ACTIVE', 'Ut at dolor quis odio consequat varius.', 476, 17, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (37, 'BannerHeader', '2023-01-17 05:57:41', now(), 'INACTIVE', 'Nullam varius.', 64, 5, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (38, 'BannerHeader', '2022-05-31 03:29:32', now(), 'ACTIVE', 'Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue.', 507, 26, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (39, 'BannerHeader', '2022-05-09 08:35:09', now(), 'ACTIVE', 'Praesent lectus.', 380, 10, null);
-insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (40, 'BannerHeader', '2022-02-25 04:25:25', now(), 'INACTIVE', 'Integer a nibh.', 504, 21, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (31, 'Banner', '2022-10-01 22:16:17', now(), 'ACTIVE', 'Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl.', 710, 20, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (32, 'Banner', '2022-11-26 00:28:27', now(), 'ACTIVE', 'Vestibulum ac est lacinia nisi venenatis tristique.', 933, 26, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (33, 'Banner', '2022-05-09 10:46:14', now(), 'ACTIVE', 'Integer non velit.', 22, 29, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (34, 'Banner', '2022-01-30 07:05:01', now(), 'INACTIVE', 'Proin eu mi.', 688, 10, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (35, 'Banner', '2022-07-30 19:41:46', now(), 'INACTIVE', 'Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.', 914, 19, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (36, 'Banner', '2022-04-03 03:04:07', now(), 'ACTIVE', 'Ut at dolor quis odio consequat varius.', 476, 17, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (37, 'Banner', '2023-01-17 05:57:41', now(), 'INACTIVE', 'Nullam varius.', 64, 5, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (38, 'Banner', '2022-05-31 03:29:32', now(), 'ACTIVE', 'Nam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue.', 507, 26, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (39, 'Banner', '2022-05-09 08:35:09', now(), 'ACTIVE', 'Praesent lectus.', 380, 10, null);
+insert into BOARD_HEAD_CORE  (id, dtype, date_created, date_last_modified, status, title, view, account_id, board_content_id) values (40, 'Banner', '2022-02-25 04:25:25', now(), 'INACTIVE', 'Integer a nibh.', 504, 21, null);
 
 insert into IMAGE_FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name, board_content_id) values (1, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp', 1);
 insert into IMAGE_FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name, board_content_id) values (2, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp', 2);
@@ -183,16 +183,6 @@ insert into NOTICE_HEADER  (id, start_date, end_date, image_file_id) values (27,
 insert into NOTICE_HEADER  (id, start_date, end_date, image_file_id) values (28, '2022-09-27 17:38:05', '2023-02-24 03:24:45', 28);
 insert into NOTICE_HEADER  (id, start_date, end_date, image_file_id) values (29, '2022-03-01 01:19:30', '2023-01-31 13:56:32', 29);
 insert into NOTICE_HEADER  (id, start_date, end_date, image_file_id) values (30, '2022-10-31 16:51:37', '2022-07-06 04:04:00', 30);
-insert into BANNER_HEADER  (id, image_file_id) values (31, 31);
-insert into BANNER_HEADER  (id, image_file_id) values (32, 32);
-insert into BANNER_HEADER  (id, image_file_id) values (33, 33);
-insert into BANNER_HEADER  (id, image_file_id) values (34, 34);
-insert into BANNER_HEADER  (id, image_file_id) values (35, 35);
-insert into BANNER_HEADER  (id, image_file_id) values (36, 36);
-insert into BANNER_HEADER  (id, image_file_id) values (37, 37);
-insert into BANNER_HEADER  (id, image_file_id) values (38, 38);
-insert into BANNER_HEADER  (id, image_file_id) values (39, 39);
-insert into BANNER_HEADER  (id, image_file_id) values (40, 40);
 
 insert into COMMENT (id, date_created, date_last_modified, content, status, account_id, comment_id, board_head_core_id) values (1, now(), now(), 'Donec quis orci eget orci vehicula condimentum. Curabitur in libero ut massa volutpat convallis.', 'ACTIVE', 16, null, 13);
 insert into COMMENT (id, date_created, date_last_modified, content, status, account_id, comment_id, board_head_core_id) values (2, now(), now(), 'Quisque id justo sit amet sapien dignissim vestibulum.', 'INACTIVE', 27, 1, 13);
@@ -395,3 +385,26 @@ insert into POST_COMMENT (id, date_created, date_last_modified, content, status,
 insert into POST_COMMENT (id, date_created, date_last_modified, content, status, account_id, post_comment_id, post_header_id) values (98, now(), now(), 'Duis mattis egestas metus. Aenean fermentum.', 'INACTIVE', 13, null, 2);
 insert into POST_COMMENT (id, date_created, date_last_modified, content, status, account_id, post_comment_id, post_header_id) values (99, now(), now(), 'Duis mattis egestas metus. Aenean fermentum.', 'ACTIVE', 21, null, 7);
 insert into POST_COMMENT (id, date_created, date_last_modified, content, status, account_id, post_comment_id, post_header_id) values (100, now(), now(), 'Duis ac nibh.', 'ACTIVE', 14, null, 8);
+
+
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (1, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (2, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (3, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (4, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (5, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (6, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (7, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (8, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (9, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+insert into FILE  (id, date_created, date_last_modified, original_file_name, uuid_file_name) values (10, now(), now(), 'popcorn-movie-party-entertainment.webp', '3554e88f-d683-4f18-b3f4-33fbf6905792.webp');
+
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (1, '2022-05-02 07:09:01', '2022-09-21 10:27:27', 'Nam tristique tortor eu pede.', 1, 1);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (2, '2022-12-02 20:06:26', '2022-11-03 20:32:40', 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;', 1, 2);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (3, '2022-09-07 11:23:12', '2022-07-31 17:46:58', 'Cras pellentesque volutpat dui.', 1, 3);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (4, '2022-10-22 18:59:22', '2022-06-14 05:06:33', 'Donec semper sapien a libero.', 1, 4);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (5, '2022-06-02 05:29:05', '2022-08-21 08:20:49', 'Phasellus in felis.', 1, 5);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (6, '2022-07-14 21:05:52', '2022-09-23 12:37:10', 'Duis consequat dui nec nisi volutpat eleifend.', 1, 6);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (7, '2022-09-24 01:43:53', '2022-05-29 10:27:13', 'Integer ac leo.', 1, 7);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (8, '2022-09-27 17:38:05', '2023-02-24 03:24:45', 'Maecenas pulvinar lobortis est.', 1, 8);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (9, '2022-03-01 01:19:30', '2023-01-31 13:56:32', 'Donec posuere metus vitae ipsum.', 1, 9);
+insert into BANNER  (ID, DATE_CREATED, DATE_LAST_MODIFIED, TITLE, ACCOUNT_ID, FILE_ID) values (0, '2022-10-31 16:51:37', '2022-07-06 04:04:00', 'Aliquam erat volutpat.', 1, 10);
