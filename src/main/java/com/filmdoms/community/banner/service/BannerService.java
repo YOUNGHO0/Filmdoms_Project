@@ -74,9 +74,9 @@ public class BannerService {
     @Transactional
     public void delete(Long bannerId) {
         log.info("배너 호출");
-        Banner header = bannerRepository.findById(bannerId)
+        Banner banner = bannerRepository.findById(bannerId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.URI_NOT_FOUND));
         log.info("배너 삭제");
-        bannerRepository.delete(header);
+        bannerRepository.delete(banner);
     }
 }
