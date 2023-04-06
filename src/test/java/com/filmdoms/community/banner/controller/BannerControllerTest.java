@@ -58,7 +58,7 @@ class BannerControllerTest {
             given(bannerService.getMainPageBanner()).willReturn(getMockBannerDtos());
 
             // When & Then
-            mockMvc.perform(get("/api/v1/article/banner/main"))
+            mockMvc.perform(get("/api/v1/main/banner"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -87,7 +87,7 @@ class BannerControllerTest {
             given(bannerService.create(any(), any())).willReturn(responseDto);
 
             // When & Then
-            mockMvc.perform(post("/api/v1/article/banner")
+            mockMvc.perform(post("/api/v1/banner")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -106,7 +106,7 @@ class BannerControllerTest {
             BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(post("/api/v1/article/banner")
+            mockMvc.perform(post("/api/v1/banner")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -125,7 +125,7 @@ class BannerControllerTest {
             BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(post("/api/v1/article/banner")
+            mockMvc.perform(post("/api/v1/banner")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -156,7 +156,7 @@ class BannerControllerTest {
             given(bannerService.update(any(), any())).willReturn(responseDto);
 
             // When & Then
-            mockMvc.perform(put("/api/v1/article/banner/1")
+            mockMvc.perform(put("/api/v1/banner/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -175,7 +175,7 @@ class BannerControllerTest {
             BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(put("/api/v1/article/banner/1")
+            mockMvc.perform(put("/api/v1/banner/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -194,7 +194,7 @@ class BannerControllerTest {
             BannerRequestDto requestDto = getMockRequestDto();
 
             // When & Then
-            mockMvc.perform(put("/api/v1/article/banner/1")
+            mockMvc.perform(put("/api/v1/banner/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsBytes(requestDto)))
                     .andDo(print())
@@ -217,7 +217,7 @@ class BannerControllerTest {
             // Given
 
             // When & Then
-            mockMvc.perform(delete("/api/v1/article/banner/1"))
+            mockMvc.perform(delete("/api/v1/banner/1"))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -232,7 +232,7 @@ class BannerControllerTest {
             // Given
 
             // When & Then
-            mockMvc.perform(delete("/api/v1/article/banner/1"))
+            mockMvc.perform(delete("/api/v1/banner/1"))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -248,7 +248,7 @@ class BannerControllerTest {
             // Given
 
             // When & Then
-            mockMvc.perform(delete("/api/v1/article/banner/1"))
+            mockMvc.perform(delete("/api/v1/banner/1"))
                     .andDo(print())
                     .andExpect(status().isUnauthorized())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
