@@ -33,8 +33,8 @@ public class Banner extends BaseTimeEntity {
     @Column
     private String title;
 
-    @OneToOne
     @JoinColumn(name = "file_id")
+    @OneToOne(fetch = FetchType.LAZY)
     private File file;
 
     @Builder
