@@ -13,6 +13,10 @@ import com.filmdoms.community.article.service.InitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,12 +58,15 @@ public class ArticleController2 {
     @GetMapping("article/{category}")
     public Response getBoardCategoryList(@PathVariable Category category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<? extends ParentBoardListDto> boardList = articleService.getBoardList(category, size, page);
+        if (pageable.getPageSize() > 50)
+            pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
+
+        Page<? extends ParentBoardListDto> boardList = articleService.getBoardList(category, pageable);
 
         if (boardList == null)
             return Response.error(ErrorCode.CATEGORY_NOT_FOUND.getMessage());
 
-        if (boardList.getTotalPages() - 1 < page)
+        if (boardList.getTotalPages() - 1 < pageable.getPageNumber())
             return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
 
         return Response.success(boardList);
