@@ -20,32 +20,32 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/article")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class ArticleController2 {
 
     private final ArticleService articleService;
     private final InitService initService;
 
-    @GetMapping("/{category}/main")
+    @GetMapping("/main/{category}")
     public Response<List<? extends ParentMainPageResponseDto>> readMain(@PathVariable Category category, @RequestParam(defaultValue = "5") int limit) {
         List<? extends ParentMainPageResponseDto> dtoList = articleService.getMainPageDtoList(category, limit);
         return Response.success(dtoList);
     }
 
-    @GetMapping("/recent/main")
+    @GetMapping("/main/recent")
     public Response<List<MovieAndRecentMainPageResponseDto>> readMain(@RequestParam(defaultValue = "5") int limit) {
         List<MovieAndRecentMainPageResponseDto> dtoList = articleService.getRecentMainPageDtoList(limit);
         return Response.success(dtoList);
     }
 
-    @GetMapping("/{category}/{articleId}")
+    @GetMapping("/article/{category}/{articleId}")
     public Response<ArticleDetailResponseDto> readDetail(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
         ArticleDetailResponseDto dto = articleService.getDetail(category, articleId, accountDto);
         return Response.success(dto);
     }
 
-    @GetMapping("/init-data")
+    @GetMapping("/article/init-data")
     public Response initData(@RequestParam(defaultValue = "10") int limit) {
         initService.makeArticleData(limit);
         return Response.success();

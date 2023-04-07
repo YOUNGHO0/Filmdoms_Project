@@ -27,7 +27,6 @@ import com.filmdoms.community.article.repository.FilmUniverseRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.imagefile.service.ImageFileService;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
 import com.filmdoms.community.newcomment.repository.NewCommentRepository;
 import com.filmdoms.community.vote.data.entity.VoteKey;
 import com.filmdoms.community.vote.repository.VoteRepository;
@@ -121,19 +120,17 @@ public class ArticleService {
             }
 
             List<File> images = fileRepository.findByArticleId(articleId);
-            List<NewComment> comments = newCommentRepository.findByArticleIdWithAuthorProfileImage(articleId);
             boolean isVoted = getArticleVoteStatus(accountDto, article);
 
-            return ArticleDetailResponseDto.from(article, images, comments, isVoted);
+            return ArticleDetailResponseDto.from(article, images, isVoted);
 
         } else if (category == Category.FILM_UNIVERSE) { //총 3번의 쿼리가 나감
             FilmUniverse notice = filmUniverseRepository.findByArticleIdWithArticleAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
 
             List<File> images = fileRepository.findByArticleId(articleId);
-            List<NewComment> comments = newCommentRepository.findByArticleIdWithAuthorProfileImage(articleId);
             boolean isVoted = getArticleVoteStatus(accountDto, notice.getArticle());
 
-            return FilmUniverseDetailResponseDto.from(notice, images, comments, isVoted);
+            return FilmUniverseDetailResponseDto.from(notice, images, isVoted);
         }
 
         throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND);
