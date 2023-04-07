@@ -25,7 +25,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findByIdWithAuthorProfileImageContent(@Param("articleId") Long articleId);
 
     @Query(value = "SELECT a from Article a inner join fetch a.author where a.category =:categoryId"
-            ,countQuery = "SELECT count(a) from Article a where a.category =: categoryId")
-    Page<Article> findArticlesByCategory(@Param("categoryId") Category category,Pageable pageable);
+            , countQuery = "SELECT count(a) from Article a where a.category =: categoryId")
+    Page<Article> findArticlesByCategory(@Param("categoryId") Category category, Pageable pageable);
 
 }

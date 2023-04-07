@@ -26,7 +26,7 @@ public enum ErrorCode {
     IMAGE_BELONG_TO_OTHER_POST(HttpStatus.BAD_REQUEST, "다른 게시물에 포함된 이미지입니다."),
     INVALID_POST_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 게시물 아이디입니다."), //삭제 예정
     INVALID_ARTICLE_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 게시물 아이디입니다."),
-    INVALID_Page_NUMBER(HttpStatus.BAD_REQUEST, "존재하지 않는 페이지 입니다."),
+    INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "존재하지 않는 페이지 입니다."),
     INVALID_COMMENT_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 코멘트 아이디입니다."),
     COMMENT_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "비활성화되었거나 삭제된 코멘트입니다."),
 

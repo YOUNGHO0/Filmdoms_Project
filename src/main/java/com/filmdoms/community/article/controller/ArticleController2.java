@@ -53,18 +53,17 @@ public class ArticleController2 {
 
     @GetMapping("/{category}")
     public Response getBoardCategoryList(@PathVariable Category category, @RequestParam(defaultValue = "24") int size,
-                                         @RequestParam(defaultValue = "0") int page )
-    {
-        if(size >30) // 악의적 공격 방지
+                                         @RequestParam(defaultValue = "0") int page) {
+        if (size > 30) // 악의적 공격 방지
             size = 30;
 
         Page<? extends ParentBoardListDto> boardList = articleService.getBoardList(category, size, page);
 
-        if(boardList == null)
+        if (boardList == null)
             return Response.error(ErrorCode.CATEGORY_NOT_FOUND.getMessage());
 
-        if(boardList.getTotalPages()-1 < page)
-            return Response.error(ErrorCode.INVALID_Page_NUMBER.getMessage());
+        if (boardList.getTotalPages() - 1 < page)
+            return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
 
         return Response.success(boardList);
     }

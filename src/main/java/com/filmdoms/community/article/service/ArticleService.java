@@ -147,24 +147,22 @@ public class ArticleService {
         return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
     }
 
-    public Page<? extends ParentBoardListDto> getBoardList(Category category, int size, int page)
-    {
+    public Page<? extends ParentBoardListDto> getBoardList(Category category, int size, int page) {
 
-        PageRequest pageRequest = PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "id") ); //Article의 id로 역정렬
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
         Page<Article> articlesByCategory;
 
-        switch (category)
-        {
+        switch (category) {
             case MOVIE:
-                articlesByCategory = articleRepository.findArticlesByCategory(category,pageRequest);
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageRequest);
                 Page<MovieListDto> movieListDtos = articlesByCategory.map(MovieListDto::from);
                 return movieListDtos;
             case CRITIC:
-                articlesByCategory = articleRepository.findArticlesByCategory(category,pageRequest);
-                Page<CriticListDto>  criticListDtos = articlesByCategory.map(CriticListDto::from);
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageRequest);
+                Page<CriticListDto> criticListDtos = articlesByCategory.map(CriticListDto::from);
                 return criticListDtos;
             case FILM_UNIVERSE:
-                articlesByCategory = articleRepository.findArticlesByCategory(category,pageRequest);
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageRequest);
                 Page<FilmUniverseListDto> filmUniverseListDtos = articlesByCategory.map(FilmUniverseListDto::from);
                 return filmUniverseListDtos;
 
