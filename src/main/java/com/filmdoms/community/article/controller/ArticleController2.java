@@ -51,11 +51,8 @@ public class ArticleController2 {
         return Response.success();
     }
 
-    @GetMapping("/{category}")
-    public Response getBoardCategoryList(@PathVariable Category category, @RequestParam(defaultValue = "24") int size,
-                                         @RequestParam(defaultValue = "0") int page) {
-        if (size > 30) // 악의적 공격 방지
-            size = 30;
+    @GetMapping("article/{category}")
+    public Response getBoardCategoryList(@PathVariable Category category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<? extends ParentBoardListDto> boardList = articleService.getBoardList(category, size, page);
 
