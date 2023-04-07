@@ -18,6 +18,11 @@
 * [ERD](https://www.erdcloud.com/d/FwbkjZwxj7yPCBfxp)
 * [API 명세](https://www.notion.so/Backend-API-1-f2a7140af5e9490ba92802b4b58acebf)
 
+### 참여 인원
+* [YOUNGHO0](https://github.com/YOUNGHO0)
+* [TaemHam](https://github.com/TaemHam)
+* [gunner6603](https://github.com/gunner6603)
+
 ### 개발 환경
 * 언어
   * Java (JDK 17)
@@ -34,7 +39,7 @@
   * MariaDB 10.5 (개발 및 운영 환경)
   * h2 database 2.1.214 (로컬 환경)
   
-### 협업도구(Tool)
+### 협업 도구
 
 * Google Meet
 * Slack
