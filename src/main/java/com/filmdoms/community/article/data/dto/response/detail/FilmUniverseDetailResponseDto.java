@@ -2,7 +2,6 @@ package com.filmdoms.community.article.data.dto.response.detail;
 
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.file.data.entity.File;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,13 +16,13 @@ public class FilmUniverseDetailResponseDto extends ArticleDetailResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private FilmUniverseDetailResponseDto(FilmUniverse filmUniverse, List<File> images, List<NewComment> comments, boolean isVoted) {
-        super(filmUniverse.getArticle(), images, comments, isVoted);
+    private FilmUniverseDetailResponseDto(FilmUniverse filmUniverse, List<File> images, boolean isVoted) {
+        super(filmUniverse.getArticle(), images, isVoted);
         this.startDate = filmUniverse.getStartDate();
         this.endDate = filmUniverse.getEndDate();
     }
 
-    public static FilmUniverseDetailResponseDto from(FilmUniverse filmUniverse, List<File> images, List<NewComment> comments, boolean isVoted) {
-        return new FilmUniverseDetailResponseDto(filmUniverse, images, comments, isVoted);
+    public static FilmUniverseDetailResponseDto from(FilmUniverse filmUniverse, List<File> images, boolean isVoted) {
+        return new FilmUniverseDetailResponseDto(filmUniverse, images, isVoted);
     }
 }
