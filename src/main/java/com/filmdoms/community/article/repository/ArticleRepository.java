@@ -2,6 +2,7 @@ package com.filmdoms.community.article.repository;
 
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "LEFT JOIN FETCH a.content " +
             "WHERE a.id = :articleId")
     Optional<Article> findByIdWithAuthorProfileImageContent(@Param("articleId") Long articleId);
+
+    @Query(value = "SELECT a from Article a inner join fetch a.author where a.category =:categoryId"
+            , countQuery = "SELECT count(a) from Article a where a.category =: categoryId")
+    Page<Article> findArticlesByCategory(@Param("categoryId") Category category, Pageable pageable);
+
 }

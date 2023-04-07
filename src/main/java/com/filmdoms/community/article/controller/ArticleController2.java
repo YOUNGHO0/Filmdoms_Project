@@ -2,7 +2,9 @@ package com.filmdoms.community.article.controller;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
@@ -10,6 +12,11 @@ import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,5 +53,22 @@ public class ArticleController2 {
     public Response initData(@RequestParam(defaultValue = "10") int limit) {
         initService.makeArticleData(limit);
         return Response.success();
+    }
+
+    @GetMapping("article/{category}")
+    public Response getBoardCategoryList(@PathVariable Category category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        if (pageable.getPageSize() > 50)
+            pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
+
+        Page<? extends ParentBoardListDto> boardList = articleService.getBoardList(category, pageable);
+
+        if (boardList == null)
+            return Response.error(ErrorCode.CATEGORY_NOT_FOUND.getMessage());
+
+        if (boardList.getTotalPages() - 1 < pageable.getPageNumber())
+            return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
+
+        return Response.success(boardList);
     }
 }

@@ -8,6 +8,10 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.CriticListDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.FilmUniverseListDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.MovieListDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.FilmUniverseDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.CriticMainPageResponseDto;
@@ -27,7 +31,10 @@ import com.filmdoms.community.newcomment.repository.NewCommentRepository;
 import com.filmdoms.community.vote.data.entity.VoteKey;
 import com.filmdoms.community.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,4 +147,31 @@ public class ArticleService {
         }
         return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
     }
+
+    public Page<? extends ParentBoardListDto> getBoardList(Category category, Pageable pageable) {
+
+
+        Page<Article> articlesByCategory;
+
+        switch (category) {
+            case MOVIE:
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
+                Page<MovieListDto> movieListDtos = articlesByCategory.map(MovieListDto::from);
+                return movieListDtos;
+            case CRITIC:
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
+                Page<CriticListDto> criticListDtos = articlesByCategory.map(CriticListDto::from);
+                return criticListDtos;
+            case FILM_UNIVERSE:
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
+                Page<FilmUniverseListDto> filmUniverseListDtos = articlesByCategory.map(FilmUniverseListDto::from);
+                return filmUniverseListDtos;
+
+        }
+
+        return null;
+
+    }
+
+
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Getter
 @SuperBuilder
-public class FilmUniverseControllerToServiceDto extends ArticleControllerToServiceDto{
+public class FilmUniverseControllerToServiceDto extends ArticleControllerToServiceDto {
 
 
     private LocalDateTime startDate;
@@ -20,15 +20,14 @@ public class FilmUniverseControllerToServiceDto extends ArticleControllerToServi
 
 
     public FilmUniverseControllerToServiceDto(String title, Category category, Tag tag, Account author,
-                                              String content, Set<Long> contentImageId, LocalDateTime startDate, LocalDateTime endDate){
+                                              String content, Set<Long> contentImageId, LocalDateTime startDate, LocalDateTime endDate) {
         super(title, category, tag, author, content, contentImageId);
-        this.startDate =  startDate;
+        this.startDate = startDate;
         this.endDate = endDate;
 
     }
 
-    public static FilmUniverseControllerToServiceDto from (FilmUniverseRequestDto dto, Category category, Tag tag, Account author)
-    {
+    public static FilmUniverseControllerToServiceDto from(FilmUniverseRequestDto dto, Category category, Tag tag, Account author) {
         return FilmUniverseControllerToServiceDto.builder()
                 .title(dto.getTitle())
                 .category(category)

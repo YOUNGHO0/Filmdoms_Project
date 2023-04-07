@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 
@@ -43,6 +44,9 @@ public class Article extends BaseTimeEntity {
     @JoinColumn(name = "content_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Content content;
+
+    @Formula(("select count(1) from NEW_COMMENT c where c.ARTICLE_ID = id"))
+    private int commentCount;
 
     @OneToMany(mappedBy = "article")
     private List<NewComment> comments;
