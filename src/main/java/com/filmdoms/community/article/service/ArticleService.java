@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,22 +148,22 @@ public class ArticleService {
         return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
     }
 
-    public Page<? extends ParentBoardListDto> getBoardList(Category category, int size, int page) {
+    public Page<? extends ParentBoardListDto> getBoardList(Category category, Pageable pageable) {
 
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
+
         Page<Article> articlesByCategory;
 
         switch (category) {
             case MOVIE:
-                articlesByCategory = articleRepository.findArticlesByCategory(category, pageRequest);
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
                 Page<MovieListDto> movieListDtos = articlesByCategory.map(MovieListDto::from);
                 return movieListDtos;
             case CRITIC:
-                articlesByCategory = articleRepository.findArticlesByCategory(category, pageRequest);
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
                 Page<CriticListDto> criticListDtos = articlesByCategory.map(CriticListDto::from);
                 return criticListDtos;
             case FILM_UNIVERSE:
-                articlesByCategory = articleRepository.findArticlesByCategory(category, pageRequest);
+                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
                 Page<FilmUniverseListDto> filmUniverseListDtos = articlesByCategory.map(FilmUniverseListDto::from);
                 return filmUniverseListDtos;
 
