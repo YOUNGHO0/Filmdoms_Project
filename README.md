@@ -1,7 +1,7 @@
 # 필름덤즈 프로젝트
 
-영화인들을 위한 커뮤니티 사이트를 개발합니다.<br/> 
-프로젝트 기획서 상세 내용 확인: https://letspl.me/project/736
+영화인들을 위한 커뮤니티 사이트를 개발합니다.<br/>
+[프로젝트 기획서 링크](https://letspl.me/project/736)
 
 ## 프로젝트 참여 인원
 
@@ -10,15 +10,34 @@
 * 프론트엔드 3명
 * 백엔드 3명
 
-
-
 ## 프로젝트 진행 기간
 
-2023.02.04 - 2023.04.08(예정)
-<br/> 
-## 프로젝트 세부사항
+2023.02.04 - (진행중)
 
-### 사이트 기능(백엔드)
+## 백엔드 세부사항
+
+### 백엔드 개발 환경
+* 언어
+  * Java (JDK 17)
+* 서버
+   * Apache 2.0 Apache Tomcat 10.1.5
+   * NGINX 1.20 (프록시 서버)
+* 프레임워크
+  * Spring Framework 6.0.4
+  * Spring Boot 3.0.2
+  * Spring Data JPA 3.0.1
+  * Spring Security 6.0.1
+* 데이터베이스
+  * MariaDB 10.5 (개발 및 운영 환경)
+  * h2 database 2.1.214 (로컬 환경)
+  
+### 협업도구(Tool)
+
+* Google Meet
+* Slack
+* Github
+
+### 구현 완료 기능
 
 * 회원 등급(권한)설정
 * 사이트 게시글 작성
@@ -26,18 +45,8 @@
 * 태그(@) 이름으로 댓글 작성
 * 회원 프로필 페이지
 
-### (예상) 개발 언어(Framework)
+### 구현 예정 기능
 
-* Figma
-* React
-* Spring boot
-* Spring data jpa
-
-### 협업도구(Tool)
-
-* Google Meet / Zoom
-* Slack
-* Github
 
 
 
