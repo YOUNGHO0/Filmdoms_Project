@@ -7,8 +7,6 @@ import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import com.filmdoms.community.file.data.dto.response.FileResponseDto;
 import com.filmdoms.community.file.data.entity.File;
-import com.filmdoms.community.newcomment.data.dto.response.ParentNewCommentResponseDto;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -28,16 +26,14 @@ public class ArticleDetailResponseDto {
     private PostStatus status;
     private int view;
     private int vote_count;
-    private int commentCount;
     private boolean isVoted;
     private String content;
     private LocalDateTime dateCreated;
     private LocalDateTime dateLastModified;
     private DetailPageAccountResponseDto author;
     private List<FileResponseDto> images;
-    private List<ParentNewCommentResponseDto> comments;
 
-    protected ArticleDetailResponseDto(Article article, List<File> images, List<NewComment> comments, boolean isVoted) {
+    protected ArticleDetailResponseDto(Article article, List<File> images, boolean isVoted) {
         this.id = article.getId();
         this.category = article.getCategory();
         this.tag = article.getTag();
@@ -45,17 +41,15 @@ public class ArticleDetailResponseDto {
         this.status = article.getStatus();
         this.view = article.getView();
         this.vote_count = article.getVoteCount();
-        this.commentCount = comments.size();
         this.isVoted = isVoted;
         this.content = article.getContent().getContent();
         this.dateCreated = article.getDateCreated();
         this.dateLastModified = article.getDateLastModified();
         this.author = DetailPageAccountResponseDto.from(article.getAuthor());
         this.images = images.stream().sorted(Comparator.comparing(File::getId)).map(FileResponseDto::from).toList(); //id로 정렬한 뒤 DTO 변환
-        this.comments = ParentNewCommentResponseDto.convert(comments);
     }
 
-    public static ArticleDetailResponseDto from(Article article, List<File> images, List<NewComment> comments, boolean isVoted) {
-        return new ArticleDetailResponseDto(article, images, comments, isVoted);
+    public static ArticleDetailResponseDto from(Article article, List<File> images, boolean isVoted) {
+        return new ArticleDetailResponseDto(article, images, isVoted);
     }
 }
