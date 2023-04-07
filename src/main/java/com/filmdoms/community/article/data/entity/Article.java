@@ -45,7 +45,7 @@ public class Article extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Content content;
 
-    @Formula(("select count(1) from NEW_COMMENT c where c.ARTICLE_ID = id"))
+    @Formula(("select count(*) from NEW_COMMENT c where c.ARTICLE_ID = id"))
     private int commentCount;
 
     @OneToMany(mappedBy = "article")
