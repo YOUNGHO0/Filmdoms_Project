@@ -8,8 +8,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.Getter;
 
-import java.time.LocalDate;
-
 @Getter
 public abstract class ParentBoardListResponseDto {
 
@@ -19,6 +17,7 @@ public abstract class ParentBoardListResponseDto {
     private String title;
     private SimpleAccountResponseDto author;
     private long createdAt;
+    private long updatedAt;
     private int view;
     private int voteCount;
     private long commentCount;
@@ -30,9 +29,9 @@ public abstract class ParentBoardListResponseDto {
         this.title = article.getTitle();
         this.author = SimpleAccountResponseDto.from(article.getAuthor());
         this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
+        this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.view = article.getView();
         this.voteCount = article.getVoteCount();
         this.commentCount = article.getCommentCount();
     }
-
 }
