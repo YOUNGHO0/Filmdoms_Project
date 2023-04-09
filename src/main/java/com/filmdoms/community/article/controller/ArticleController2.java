@@ -4,7 +4,7 @@ import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
-import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
@@ -61,7 +61,7 @@ public class ArticleController2 {
         if (pageable.getPageSize() > 50)
             pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
 
-        Page<? extends ParentBoardListDto> boardList = articleService.getBoardList(category, pageable);
+        Page<? extends ParentBoardListResponseDto> boardList = articleService.getBoardList(category, pageable);
 
         if (boardList == null)
             return Response.error(ErrorCode.CATEGORY_NOT_FOUND.getMessage());
