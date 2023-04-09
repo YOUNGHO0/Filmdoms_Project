@@ -30,8 +30,8 @@ public class ArticleDetailResponseDto {
     private int voteCount;
     private boolean isVoted;
     private String content;
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateLastModified;
+    private long createdAt;
+    private long updatedAt;
     private DetailPageAccountResponseDto author;
     private List<FileResponseDto> images;
 
@@ -45,8 +45,8 @@ public class ArticleDetailResponseDto {
         this.voteCount = article.getVoteCount();
         this.isVoted = isVoted;
         this.content = article.getContent().getContent();
-        this.dateCreated = article.getDateCreated();
-        this.dateLastModified = article.getDateLastModified();
+        this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
+        this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.author = DetailPageAccountResponseDto.from(article.getAuthor());
         this.images = images.stream().sorted(Comparator.comparing(File::getId)).map(FileResponseDto::from).toList(); //id로 정렬한 뒤 DTO 변환
     }
