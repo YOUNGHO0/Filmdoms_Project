@@ -7,6 +7,8 @@ import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import com.filmdoms.community.file.data.dto.response.FileResponseDto;
 import com.filmdoms.community.file.data.entity.File;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -25,11 +27,11 @@ public class ArticleDetailResponseDto {
     private String title;
     private PostStatus status;
     private int view;
-    private int vote_count;
+    private int voteCount;
     private boolean isVoted;
     private String content;
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateLastModified;
+    private long createdAt;
+    private long updatedAt;
     private DetailPageAccountResponseDto author;
     private List<FileResponseDto> images;
 
@@ -40,11 +42,11 @@ public class ArticleDetailResponseDto {
         this.title = article.getTitle();
         this.status = article.getStatus();
         this.view = article.getView();
-        this.vote_count = article.getVoteCount();
+        this.voteCount = article.getVoteCount();
         this.isVoted = isVoted;
         this.content = article.getContent().getContent();
-        this.dateCreated = article.getDateCreated();
-        this.dateLastModified = article.getDateLastModified();
+        this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
+        this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.author = DetailPageAccountResponseDto.from(article.getAuthor());
         this.images = images.stream().sorted(Comparator.comparing(File::getId)).map(FileResponseDto::from).toList(); //id로 정렬한 뒤 DTO 변환
     }
