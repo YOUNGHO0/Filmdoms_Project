@@ -55,7 +55,7 @@ public class ArticleController2 {
         return Response.success();
     }
 
-    @GetMapping("article/{category}")
+    @GetMapping("/article/{category}")
     public Response getBoardCategoryList(@PathVariable Category category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         if (pageable.getPageSize() > 50)
