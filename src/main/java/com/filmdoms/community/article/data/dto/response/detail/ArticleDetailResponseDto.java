@@ -7,6 +7,8 @@ import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.board.data.constant.PostStatus;
 import com.filmdoms.community.file.data.dto.response.FileResponseDto;
 import com.filmdoms.community.file.data.entity.File;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,7 @@ public class ArticleDetailResponseDto {
     private String title;
     private PostStatus status;
     private int view;
-    private int vote_count;
+    private int voteCount;
     private boolean isVoted;
     private String content;
     private LocalDateTime dateCreated;
@@ -40,7 +42,7 @@ public class ArticleDetailResponseDto {
         this.title = article.getTitle();
         this.status = article.getStatus();
         this.view = article.getView();
-        this.vote_count = article.getVoteCount();
+        this.voteCount = article.getVoteCount();
         this.isVoted = isVoted;
         this.content = article.getContent().getContent();
         this.dateCreated = article.getDateCreated();
