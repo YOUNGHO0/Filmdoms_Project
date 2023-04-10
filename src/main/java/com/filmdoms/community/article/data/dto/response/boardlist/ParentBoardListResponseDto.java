@@ -21,7 +21,7 @@ public abstract class ParentBoardListResponseDto {
     private int view;
     private int voteCount;
     private long commentCount;
-
+    private boolean containsImage;
     public ParentBoardListResponseDto(Article article) {
         this.id = article.getId();
         this.category = article.getCategory();
@@ -31,6 +31,7 @@ public abstract class ParentBoardListResponseDto {
         this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.view = article.getView();
+        this.containsImage = article.isContainsImage();
         this.voteCount = article.getVoteCount();
         this.commentCount = article.getCommentCount();
     }

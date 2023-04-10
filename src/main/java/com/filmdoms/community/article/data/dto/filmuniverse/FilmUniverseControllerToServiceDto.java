@@ -20,8 +20,8 @@ public class FilmUniverseControllerToServiceDto extends ArticleControllerToServi
 
 
     public FilmUniverseControllerToServiceDto(String title, Category category, Tag tag, Account author,
-                                              String content, Set<Long> contentImageId, LocalDateTime startDate, LocalDateTime endDate) {
-        super(title, category, tag, author, content, contentImageId);
+                                              String content, Set<Long> contentImageId, LocalDateTime startDate, LocalDateTime endDate, boolean containsImage) {
+        super(title, category, tag, author, content, contentImageId,containsImage);
         this.startDate = startDate;
         this.endDate = endDate;
 

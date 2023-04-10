@@ -35,6 +35,7 @@ public abstract class ParentRequestDto {
     @NotBlank(message = CONTENT_NOT_BLANK)
     @Size(max = 10000, message = CONTENT_SIZE)
     private String content;
+    boolean containsImage;
     private Set<Long> contentImageId;
 
 }
