@@ -1,10 +1,8 @@
 package com.filmdoms.community.newcomment.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.BoardHeadCore;
 import com.filmdoms.community.board.data.constant.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -59,7 +57,7 @@ public class NewComment extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void updateStatus(CommentStatus status) {
-        this.status = status;
+    public void changeStatusToDeleted() {
+        this.status = CommentStatus.DELETED;
     }
 }
