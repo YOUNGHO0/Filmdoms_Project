@@ -69,21 +69,22 @@ public class InitService {
                     .tag(movieTagList.get(i % movieTagList.size()))
                     .author(admin)
                     .content("Movie 게시판 " + i + "번째 글 내용\nMovie 게시판 " + i + "번째 글 내용")
+                    .containsImage(false)
                     .build();
             articleRepository.save(article);
 
-            FileContent fileContent = FileContent.builder()
-                    .file(defaultImage)
-                    .content(article.getContent())
-                    .build();
-
-            FileContent fileContent2 = FileContent.builder()
-                    .file(defaultImage2)
-                    .content(article.getContent())
-                    .build();
-
-            fileContentRepository.save(fileContent);
-            fileContentRepository.save(fileContent2);
+//            FileContent fileContent = FileContent.builder()
+//                    .file(defaultImage)
+//                    .content(article.getContent())
+//                    .build();
+//
+//            FileContent fileContent2 = FileContent.builder()
+//                    .file(defaultImage2)
+//                    .content(article.getContent())
+//                    .build();
+//
+//            fileContentRepository.save(fileContent);
+//            fileContentRepository.save(fileContent2);
 
             int commentNum = (i - 1) % 3 + 1; //댓글 개수는 1,2,3,1,2,3,... 순서로 데이터 만들기
             for (int j = 1; j <= commentNum; j++) {
@@ -115,6 +116,7 @@ public class InitService {
                     .category(Category.FILM_UNIVERSE)
                     .tag(noticeTagList.get(i % noticeTagList.size()))
                     .author(admin)
+                    .containsImage(true)
                     .content("File Universe 게시판 " + i + "번째 글 내용\nFile Universe 게시판 " + i + "번째 글 내용")
                     .build();
 
@@ -169,6 +171,7 @@ public class InitService {
                     .category(Category.CRITIC)
                     .tag(criticTagList.get(i % criticTagList.size()))
                     .author(admin)
+                    .containsImage(true)
                     .content("Critic 게시판 " + i + "번째 글 내용\nCritic 게시판 " + i + "번째 글 내용")
                     .build();
 

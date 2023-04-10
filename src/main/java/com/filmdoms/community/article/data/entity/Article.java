@@ -45,7 +45,7 @@ public class Article extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Content content;
 
-    @Formula(("select count(1) from NEW_COMMENT c where c.ARTICLE_ID = id"))
+    @Formula(("select count(*) from NEW_COMMENT c where c.ARTICLE_ID = id"))
     private int commentCount;
 
     @OneToMany(mappedBy = "article")
@@ -58,12 +58,13 @@ public class Article extends BaseTimeEntity {
     private boolean containsImage = false;
 
     @Builder
-    private Article(String title, Category category, Tag tag, Account author, String content) {
+    private Article(String title, Category category, Tag tag, Account author, String content, boolean containsImage) {
         this.title = title;
         this.category = category;
         this.tag = tag;
         this.author = author;
         this.content = new Content(content);
+        this.containsImage = containsImage;
     }
 
     public static Article from(ArticleControllerToServiceDto dto)
@@ -74,6 +75,7 @@ public class Article extends BaseTimeEntity {
                 .author(dto.getAuthor())
                 .category(dto.getCategory())
                 .tag(dto.getTag())
+                .containsImage(dto.isContainsImage())
                 .build();
     }
 

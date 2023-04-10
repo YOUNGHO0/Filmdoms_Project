@@ -18,10 +18,11 @@ public class ArticleControllerToServiceDto {
     private Tag tag;
     private Account author;
     private String content;
+    boolean containsImage;
     private Set<Long> contentImageId;
 
 
-    public ArticleControllerToServiceDto (String title, Category category, Tag tag, Account author, String content, Set<Long> contentImageId )
+    public ArticleControllerToServiceDto (String title, Category category, Tag tag, Account author, String content, Set<Long> contentImageId, boolean containsImage )
     {
         this.title = title;
         this.category = category;
@@ -29,6 +30,7 @@ public class ArticleControllerToServiceDto {
         this.author = author;
         this.content = content;
         this.contentImageId =  contentImageId;
+        this.containsImage = containsImage;
     }
 
     public static ArticleControllerToServiceDto from(ArticleRequestDto dto, Category category, Tag tag, Account author)
@@ -40,6 +42,7 @@ public class ArticleControllerToServiceDto {
                 .category(category)
                 .contentImageId(dto.getContentImageId())
                 .tag(tag)
+                .containsImage(dto.isContainsImage())
                 .build();
 
     }
