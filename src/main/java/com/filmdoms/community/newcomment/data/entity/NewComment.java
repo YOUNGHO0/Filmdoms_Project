@@ -54,4 +54,12 @@ public class NewComment extends BaseTimeEntity {
         this.content = content;
         this.isManagerComment = isManagerComment;
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
+
+    public void updateStatus(CommentStatus status) {
+        this.status = status;
+    }
 }
