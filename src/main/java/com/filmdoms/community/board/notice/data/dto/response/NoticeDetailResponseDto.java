@@ -5,6 +5,8 @@ import com.filmdoms.community.board.comment.data.entity.Comment;
 import com.filmdoms.community.board.comment.data.utility.CommentUtils;
 import com.filmdoms.community.board.data.dto.BoardHeadCoreDetailResponseDto;
 import com.filmdoms.community.board.notice.data.entity.NoticeHeader;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,15 +19,15 @@ public class NoticeDetailResponseDto extends BoardHeadCoreDetailResponseDto {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private List<ParentCommentResponseDto> comments;
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateLastModified;
+    private long createdAt;
+    private long updatedAt;
 
     public NoticeDetailResponseDto(NoticeHeader noticeHeader, List<Comment> comments) {
         super(noticeHeader);
         this.startDate = noticeHeader.getStartDate();
         this.endDate = noticeHeader.getEndDate();
         this.comments = CommentUtils.convert(comments);
-        this.dateCreated = noticeHeader.getDateCreated();
-        this.dateLastModified = noticeHeader.getDateLastModified();
+        this.createdAt = ZonedDateTime.of(noticeHeader.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
+        this.updatedAt = ZonedDateTime.of(noticeHeader.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 }
