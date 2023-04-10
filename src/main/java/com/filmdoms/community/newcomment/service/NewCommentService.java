@@ -1,5 +1,6 @@
 package com.filmdoms.community.newcomment.service;
 
+import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
@@ -55,11 +56,8 @@ public class NewCommentService {
             //부모 댓글이 INACTIVE, DELETED인 경우 댓글 생성 불가능하게 할지 결정 필요
         }
 
-        //일단 관리자 댓글은 공지 게시판에서 공지 작성자에 의해서만 생성되도록 함
         if (requestDto.isManagerComment()) {
-            if (article.getCategory() != Category.FILM_UNIVERSE || !Objects.equals(article.getAuthor().getId(), accountDto.getId())) {
-                throw new ApplicationException(ErrorCode.MANAGER_COMMENT_CANNOT_BE_CREATED);
-            }
+            checkManagerCommentPermission(accountDto, article);
         }
 
         NewComment comment = NewComment.builder()
@@ -72,6 +70,13 @@ public class NewCommentService {
 
         NewComment savedComment = commentRepository.save(comment);
         return NewCommentCreateResponseDto.from(savedComment);
+    }
+
+    private void checkManagerCommentPermission(AccountDto accountDto, Article article) {
+        //일단 관리자 댓글은 공지 게시판에서 공지 작성자와 ADMIN에 의해서만 생성되도록 함
+        if (article.getCategory() != Category.FILM_UNIVERSE || (!Objects.equals(article.getAuthor().getId(), accountDto.getId()) && accountDto.getAccountRole() != AccountRole.ADMIN)) {
+            throw new ApplicationException(ErrorCode.MANAGER_COMMENT_CANNOT_BE_CREATED);
+        }
     }
 
     public void updateComment(NewCommentUpdateRequestDto requestDto, Long commentId, AccountDto accountDto) {
@@ -104,7 +109,7 @@ public class NewCommentService {
         //부모 댓글의 경우
         if (commentRepository.existsByParentComment(comment)) {
             //자식 댓글이 있으면 DELETED로 변경
-            comment.updateStatus(CommentStatus.DELETED);
+            comment.changeStatusToDeleted();
         } else {
             //자식 댓글이 없으면 삭제
             commentRepository.delete(comment);
