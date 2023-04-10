@@ -7,6 +7,7 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.file.data.entity.File;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,12 +50,17 @@ public class AccountService {
     public AccountDto join(String username, String password) {
         String testUsername = (username == null) ? "tester" : username;
         String testPassword = (password == null) ? "password" : password;
+        File profileImage = File.builder()
+                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
+                .originalFileName("original_file_name")
+                .build();
+
         Account testAccount = Account.builder()
                 .username(testUsername)
                 .password(passwordEncoder.encode(testPassword))
                 .role(AccountRole.USER)
+                .profileImage(profileImage)
                 .build();
         return AccountDto.from(accountRepository.save(testAccount));
     }
-
 }
