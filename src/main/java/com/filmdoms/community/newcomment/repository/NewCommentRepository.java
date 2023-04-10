@@ -13,4 +13,6 @@ public interface NewCommentRepository extends JpaRepository<NewComment, Long> {
             "LEFT JOIN FETCH c.author.profileImage " +
             "WHERE c.article.id = :articleId")
     List<NewComment> findByArticleIdWithAuthorProfileImage(@Param("articleId") Long articleId);
+
+    boolean existsByParentComment(NewComment parentComment);
 }
