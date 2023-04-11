@@ -24,7 +24,7 @@ public class ArticleInfoController {
         return Response.success(categoryListDtos);
     }
 
-    @GetMapping("/{category}")
+    @GetMapping("/{category}/tag")
     public Response getTagInCategory(@PathVariable Category category) {
         List<TagListDto> tagListDtos = Arrays.stream(Tag.values()).filter(tag -> tag.getCategory() == category).map(TagListDto::from).collect(Collectors.toList());
         return Response.success(tagListDtos);
