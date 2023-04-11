@@ -4,6 +4,7 @@ import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
@@ -56,12 +57,12 @@ public class ArticleController2 {
     }
 
     @GetMapping("/article/{category}")
-    public Response getBoardCategoryList(@PathVariable Category category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Response getBoardCategoryList(@PathVariable Category category, @RequestParam(required = false) Tag tag, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         if (pageable.getPageSize() > 50)
             pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
 
-        Page<? extends ParentBoardListResponseDto> boardList = articleService.getBoardList(category, pageable);
+        Page<? extends ParentBoardListResponseDto> boardList = articleService.getBoardList(category, tag, pageable);
 
         if (boardList == null)
             return Response.error(ErrorCode.CATEGORY_NOT_FOUND.getMessage());

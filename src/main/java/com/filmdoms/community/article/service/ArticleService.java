@@ -6,6 +6,7 @@ import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.CriticListResponseResponseDto;
@@ -147,23 +148,32 @@ public class ArticleService {
         return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
     }
 
-    public Page<? extends ParentBoardListResponseDto> getBoardList(Category category, Pageable pageable) {
+    public Page<? extends ParentBoardListResponseDto> getBoardList(Category category, Tag tag, Pageable pageable) {
 
 
         Page<Article> articlesByCategory;
 
         switch (category) {
             case MOVIE:
-                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
+                if (tag != null)
+                    articlesByCategory = articleRepository.findArticlesByCategoryAndTag(category, tag, pageable);
+                else
+                    articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
                 Page<MovieListResponseResponseDto> movieListDtos = articlesByCategory.map(MovieListResponseResponseDto::from);
                 return movieListDtos;
             case CRITIC:
-                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
+                if (tag != null)
+                    articlesByCategory = articleRepository.findArticlesByCategoryAndTag(category, tag, pageable);
+                else
+                    articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
                 Page<CriticListResponseResponseDto> criticListDtos = articlesByCategory.map(
                         CriticListResponseResponseDto::from);
                 return criticListDtos;
             case FILM_UNIVERSE:
-                articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
+                if (tag != null)
+                    articlesByCategory = articleRepository.findArticlesByCategoryAndTag(category, tag, pageable);
+                else
+                    articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
                 Page<FilmUniverseListResponseResponseDto> filmUniverseListDtos = articlesByCategory.map(
                         FilmUniverseListResponseResponseDto::from);
                 return filmUniverseListDtos;

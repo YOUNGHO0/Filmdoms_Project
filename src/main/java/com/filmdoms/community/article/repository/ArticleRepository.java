@@ -1,6 +1,7 @@
 package com.filmdoms.community.article.repository;
 
 import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +25,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "WHERE a.id = :articleId")
     Optional<Article> findByIdWithAuthorProfileImageContent(@Param("articleId") Long articleId);
 
-    @Query(value = "SELECT a from Article a inner join fetch a.author where a.category =:categoryId"
+    @Query(value = "SELECT a from Article a inner join fetch a.author join fetch a.author.profileImage where a.category =:categoryId"
             , countQuery = "SELECT count(a) from Article a where a.category =: categoryId")
     Page<Article> findArticlesByCategory(@Param("categoryId") Category category, Pageable pageable);
+
+    @Query(value = "SELECT a from Article a inner join fetch a.author join fetch a.author.profileImage where a.category =:categoryId and a.tag =:tagId"
+            , countQuery = "SELECT count(a) from Article a where a.category =: categoryId and a.tag =: tagId")
+    Page<Article> findArticlesByCategoryAndTag(@Param("categoryId") Category category, @Param("tagId") Tag tag, Pageable pageable);
 
 }
