@@ -9,10 +9,7 @@ import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
 import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
-import com.filmdoms.community.article.data.dto.response.boardlist.CriticListResponseResponseDto;
-import com.filmdoms.community.article.data.dto.response.boardlist.FilmUniverseListResponseResponseDto;
-import com.filmdoms.community.article.data.dto.response.boardlist.MovieListResponseResponseDto;
-import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.*;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.FilmUniverseDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.CriticMainPageResponseDto;
@@ -146,6 +143,19 @@ public class ArticleService {
             return voteRepository.findByVoteKey(voteKey).isPresent();
         }
         return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
+    }
+
+    public Page<RecentListResponseDto> getRecentArticles(Tag tag, Pageable pageable) {
+
+        Page<Article> articles;
+
+        if (tag == null)
+            articles = articleRepository.getAllArticles(pageable);
+        else
+            articles = articleRepository.getAllArticlesByTag(tag, pageable);
+
+        Page<RecentListResponseDto> recentListResponseDtos = articles.map(RecentListResponseDto::from);
+        return recentListResponseDtos;
     }
 
     public Page<? extends ParentBoardListResponseDto> getBoardList(Category category, Tag tag, Pageable pageable) {
