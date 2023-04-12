@@ -10,6 +10,7 @@ import com.filmdoms.community.article.data.dto.response.boardlist.RecentListResp
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
+import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleResponseDto;
 import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
 import lombok.RequiredArgsConstructor;
@@ -86,5 +87,11 @@ public class ArticleController2 {
             return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
 
         return Response.success(boardList);
+    }
+
+    @GetMapping("/article/top-posts")
+    public Response getTopPosts() {
+        List<TopFiveArticleResponseDto> topFiveArticles = articleService.getTopFiveArticles();
+        return Response.success(topFiveArticles);
     }
 }
