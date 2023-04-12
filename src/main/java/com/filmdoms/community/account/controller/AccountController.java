@@ -62,10 +62,11 @@ public class AccountController {
     }
 
     @PutMapping("/profile")
-    public Response<AccountResponseDto> updateProfile(
+    public Response<Void> updateProfile(
             @RequestBody UpdateProfileRequestDto requestDto,
             @AuthenticationPrincipal AccountDto accountDto) {
-        return Response.success(accountService.updateAccountProfile(requestDto, accountDto));
+        accountService.updateAccountProfile(requestDto, accountDto);
+        return Response.success();
     }
 
     @PutMapping("/profile/password")
