@@ -6,6 +6,7 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.RecentListResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
@@ -54,6 +55,20 @@ public class ArticleController2 {
     public Response initData(@RequestParam(defaultValue = "10") int limit) {
         initService.makeArticleData(limit);
         return Response.success();
+    }
+
+    @GetMapping("/article/recent")
+    public Response getRecentArticles(@RequestParam(required = false) Tag tag, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (pageable.getPageSize() > 50)
+            pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
+        Page<RecentListResponseDto> recentArticles = articleService.getRecentArticles(tag, pageable);
+
+        if (recentArticles.getTotalPages() - 1 < pageable.getPageNumber())
+            return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
+
+        return Response.success(recentArticles);
+
+
     }
 
     @GetMapping("/article/{category}")
