@@ -6,9 +6,6 @@ import com.filmdoms.community.board.data.BaseTimeEntity;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -50,9 +47,6 @@ public class Account extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
-    @Column(name = "date_created")
-    private LocalDateTime dateCreated;
-
     @Column(name = "login_fail_count")
     private int loginFailCount = 0;
 
@@ -74,6 +68,15 @@ public class Account extends BaseTimeEntity {
         this.email = email;
         this.accountRole = Optional.ofNullable(role).orElse(AccountRole.USER);
         this.isSocialLogin = isSocialLogin;
+        this.profileImage = profileImage;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateProfile(String nickname, File profileImage) {
+        this.nickname = nickname;
         this.profileImage = profileImage;
     }
 }
