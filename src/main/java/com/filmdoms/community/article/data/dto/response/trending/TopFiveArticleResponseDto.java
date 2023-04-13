@@ -7,17 +7,20 @@ import lombok.Getter;
 @Getter
 public class TopFiveArticleResponseDto {
 
-    Long id;
-    String title;
-    SimpleAccountResponseDto author;
+    private Long id;
+    private String title;
+    private SimpleAccountResponseDto author;
+    private boolean containsImage;
 
-    public TopFiveArticleResponseDto(Long id, String title, SimpleAccountResponseDto author) {
+
+    public TopFiveArticleResponseDto(Long id, String title, SimpleAccountResponseDto author, boolean containsImage) {
         this.id = id;
         this.title = title;
+        this.containsImage = containsImage;
         this.author = author;
     }
 
     public static TopFiveArticleResponseDto from(Article article) {
-        return new TopFiveArticleResponseDto(article.getId(), article.getTitle(), SimpleAccountResponseDto.from(article.getAuthor()));
+        return new TopFiveArticleResponseDto(article.getId(), article.getTitle(), SimpleAccountResponseDto.from(article.getAuthor()), article.isContainsImage());
     }
 }
