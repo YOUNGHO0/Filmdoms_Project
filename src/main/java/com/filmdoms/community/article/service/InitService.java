@@ -71,6 +71,8 @@ public class InitService {
                     .content("Movie 게시판 " + i + "번째 글 내용\nMovie 게시판 " + i + "번째 글 내용")
                     .containsImage(false)
                     .build();
+            for(int p=i; p<=limit-3; p++)
+                article.addVote();
             articleRepository.save(article);
 
 //            FileContent fileContent = FileContent.builder()
@@ -93,6 +95,7 @@ public class InitService {
                         .author(admin)
                         .content("Movie 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
+
                 newCommentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
@@ -119,6 +122,8 @@ public class InitService {
                     .containsImage(true)
                     .content("File Universe 게시판 " + i + "번째 글 내용\nFile Universe 게시판 " + i + "번째 글 내용")
                     .build();
+            for(int p=i/3; p<=limit/2; p++)
+                article.addVote();
 
             FilmUniverse filmUniverse = FilmUniverse.builder()
                     .mainImage(defaultImage)
@@ -174,7 +179,8 @@ public class InitService {
                     .containsImage(true)
                     .content("Critic 게시판 " + i + "번째 글 내용\nCritic 게시판 " + i + "번째 글 내용")
                     .build();
-
+            for(int p=i; p<=limit-10; p++)
+                article.addVote();
             Critic critic = Critic.builder()
                     .article(article)
                     .mainImage(defaultImage)
