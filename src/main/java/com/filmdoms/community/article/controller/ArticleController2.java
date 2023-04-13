@@ -6,9 +6,11 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
+import com.filmdoms.community.article.data.dto.response.boardlist.RecentListResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
+import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleResponseDto;
 import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +58,20 @@ public class ArticleController2 {
         return Response.success();
     }
 
+    @GetMapping("/article/recent")
+    public Response getRecentArticles(@RequestParam(required = false) Tag tag, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (pageable.getPageSize() > 50)
+            pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
+        Page<RecentListResponseDto> recentArticles = articleService.getRecentArticles(tag, pageable);
+
+        if (recentArticles.getTotalPages() - 1 < pageable.getPageNumber())
+            return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
+
+        return Response.success(recentArticles);
+
+
+    }
+
     @GetMapping("/article/{category}")
     public Response getBoardCategoryList(@PathVariable Category category, @RequestParam(required = false) Tag tag, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
@@ -71,5 +87,11 @@ public class ArticleController2 {
             return Response.error(ErrorCode.INVALID_PAGE_NUMBER.getMessage());
 
         return Response.success(boardList);
+    }
+
+    @GetMapping("/article/top-posts")
+    public Response getTopPosts() {
+        List<TopFiveArticleResponseDto> topFiveArticles = articleService.getTopFiveArticles();
+        return Response.success(topFiveArticles);
     }
 }

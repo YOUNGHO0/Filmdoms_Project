@@ -33,4 +33,15 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             , countQuery = "SELECT count(a) from Article a where a.category =: categoryId and a.tag =: tagId")
     Page<Article> findArticlesByCategoryAndTag(@Param("categoryId") Category category, @Param("tagId") Tag tag, Pageable pageable);
 
+    @Query(value = "SELECT a from Article a inner join fetch  a.author join fetch  a.author.profileImage"
+            ,countQuery =  "SELECT count(a) FROM  Article a")
+    Page<Article> getAllArticles(Pageable pageable);
+
+    @Query(value = "SELECT a from Article a inner join fetch  a.author join fetch  a.author.profileImage where a.tag =:tagId"
+            ,countQuery =  "SELECT count(a) FROM  Article a where a.tag =:tagId")
+    Page<Article> getAllArticlesByTag(@Param("tagId") Tag tag, Pageable pageable);
+
+    @Query(value = "SELECT a from Article a inner join fetch a.author order by a.voteCount desc limit 5")
+    List<Article> getTop5Articles();
+
 }
