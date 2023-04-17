@@ -11,8 +11,12 @@ import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.newcomment.data.dto.request.NewCommentCreateRequestDto;
 import com.filmdoms.community.newcomment.data.dto.request.NewCommentUpdateRequestDto;
 import com.filmdoms.community.newcomment.data.dto.response.NewCommentCreateResponseDto;
+import com.filmdoms.community.newcomment.data.dto.response.NewCommentVoteResponseDto;
 import com.filmdoms.community.newcomment.data.entity.NewComment;
+import com.filmdoms.community.newcomment.data.entity.NewCommentVote;
+import com.filmdoms.community.newcomment.data.entity.NewCommentVoteKey;
 import com.filmdoms.community.newcomment.repository.NewCommentRepository;
+import com.filmdoms.community.newcomment.repository.NewCommentVoteRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Assertions;
@@ -41,6 +45,9 @@ class NewCommentServiceTest {
 
     @Autowired
     ArticleRepository articleRepository;
+
+    @Autowired
+    NewCommentVoteRepository newCommentVoteRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -119,6 +126,41 @@ class NewCommentServiceTest {
         assertThat(commentRepository.findById(comment.getId()).isEmpty());
     }
 
+    @Test
+    @DisplayName("추천 안한 댓글을 추천하면 추천수가 정상적으로 증가하는지 확인")
+    void applyVoteComment() {
+        Account articleAuthor = createSampleAccount("articleAuthor");
+        Article article = createSampleArticle(articleAuthor);
+        Account commentAuthor = createSampleAccount("commentAuthor");
+        NewComment comment = createSampleComment(article, commentAuthor, null);
+
+        //when
+        NewCommentVoteResponseDto responseDto = commentService.toggleCommentVote(comment.getId(), AccountDto.from(articleAuthor));
+
+        //then
+        assertThat(responseDto)
+                .hasFieldOrPropertyWithValue("isVoted", true)
+                .hasFieldOrPropertyWithValue("voteCount", 1);
+    }
+
+    @Test
+    @DisplayName("추천한 댓글을 추천하면 추천수가 정상적으로 감소하는지 확인")
+    void cancelVoteComment() {
+        Account articleAuthor = createSampleAccount("articleAuthor");
+        Article article = createSampleArticle(articleAuthor);
+        Account commentAuthor = createSampleAccount("commentAuthor");
+        NewComment comment = createSampleComment(article, commentAuthor, null);
+        createSampleVote(articleAuthor, comment);
+
+        //when
+        NewCommentVoteResponseDto responseDto = commentService.toggleCommentVote(comment.getId(), AccountDto.from(articleAuthor));
+
+        //then
+        assertThat(responseDto)
+                .hasFieldOrPropertyWithValue("isVoted", false)
+                .hasFieldOrPropertyWithValue("voteCount", 0);
+    }
+
     private Account createSampleAccount(String username) {
         Account account = Account.builder()
                 .username(username)
@@ -146,5 +188,14 @@ class NewCommentServiceTest {
                 .content("content")
                 .build();
         return commentRepository.save(comment);
+    }
+
+    private void createSampleVote(Account voter, NewComment comment) {
+        NewCommentVoteKey voteKey = NewCommentVoteKey.builder()
+                .comment(comment)
+                .account(voter)
+                .build();
+        comment.addVote();
+        newCommentVoteRepository.save(new NewCommentVote(voteKey));
     }
 }
