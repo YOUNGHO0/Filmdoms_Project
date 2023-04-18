@@ -5,6 +5,7 @@ import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
+import com.filmdoms.community.article.data.dto.response.boardlist.AnnounceListResponseDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.RecentListResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
@@ -70,6 +71,18 @@ public class ArticleController2 {
         return Response.success(recentArticles);
 
 
+    }
+
+    @GetMapping("/article/announce")
+    public Response getAllAnnounceArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<AnnounceListResponseDto> announceArticles = articleService.getAllAnnounceArticles(pageable);
+        return Response.success(announceArticles);
+    }
+
+    @GetMapping("/article/{category}/announce")
+    public Response getAnnounceArticlesByCategory(@PathVariable Category category,@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<AnnounceListResponseDto> announceArticles = articleService.getAnnounceArticlesByCategory(category,pageable);
+        return Response.success(announceArticles);
     }
 
     @GetMapping("/article/{category}")
