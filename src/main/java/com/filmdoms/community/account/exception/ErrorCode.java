@@ -33,6 +33,8 @@ public enum ErrorCode {
     MANAGER_COMMENT_CANNOT_BE_CREATED(HttpStatus.BAD_REQUEST, "관리자 댓글을 생성할 수 없습니다."),
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "중복된 회원 ID 입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "중복된 회원 이메일 입니다."),
+    NO_KEYWORD_FOUND(HttpStatus.BAD_REQUEST, "검색할 키워드가 누락되었습니다"),
+    TOO_MANY_KEYWORD(HttpStatus.BAD_REQUEST, "한개의 키워드로만 검색 가능합니다"),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "존재하지 않는 이메일입니다."),
     MAIN_IMAGE_ID_NOT_IN_CONTENT_IMAGE_ID_LIST(HttpStatus.BAD_REQUEST, "메인 이미지 ID는 전체 이미지 ID 리스트에 포함되어야 합니다."),
     NOT_SOCIAL_LOGIN_ACCOUNT(HttpStatus.BAD_REQUEST, "소셜 로그인 계정이 아닙니다."),
