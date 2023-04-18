@@ -6,8 +6,10 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
+import com.filmdoms.community.article.data.entity.extra.Announce;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
+import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
@@ -37,6 +39,7 @@ public class InitService {
     private final FileRepository fileRepository;
     private final FileContentRepository fileContentRepository;
     private final NewCommentRepository newCommentRepository;
+    private final AnnounceRepository announceRepository;
 
     public void makeArticleData(int limit) {
 
@@ -54,6 +57,7 @@ public class InitService {
 
         Account admin = Account.builder() //게시글, 댓글과 매핑될 Account 생성
                 .username("admin")
+                .nickname("ironman")
                 .role(AccountRole.ADMIN)
                 .profileImage(defaultImage) //프로필 이미지를 디폴트 이미지로 세팅
                 .build();
@@ -219,6 +223,41 @@ public class InitService {
                     newCommentRepository.save(childComment);
                 }
             }
+        }
+
+        for(int i=0; i<limit/2; i++)
+        {
+            Article article = Article.builder()
+                    .title("공지사항 게시판 " + i + "번째 글 제목")
+                    .category(Category.FILM_UNIVERSE)
+                    .tag(noticeTagList.get(i % noticeTagList.size()))
+                    .author(admin)
+                    .containsImage(false)
+                    .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
+                    .build();
+
+            Announce announce = Announce.builder()
+                    .article(article)
+                    .build();
+            announceRepository.save(announce);
+
+        }
+
+        for(int i=limit/2; i<limit; i++)
+        {
+            Article article = Article.builder()
+                    .title("공지사항 게시판 " + i + "번째 글 제목")
+                    .category(Category.CRITIC)
+                    .tag(noticeTagList.get(i % noticeTagList.size()))
+                    .author(admin)
+                    .containsImage(false)
+                    .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
+                    .build();
+
+            Announce announce = Announce.builder()
+                    .article(article)
+                    .build();
+            announceRepository.save(announce);
         }
     }
 }
