@@ -14,6 +14,7 @@ import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageR
 import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleResponseDto;
 import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
+import com.filmdoms.community.article.service.InitService2;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class ArticleController2 {
 
     private final ArticleService articleService;
     private final InitService initService;
+    private final InitService2 initService2;
 
     @GetMapping("/main/{category}")
     public Response<List<? extends ParentMainPageResponseDto>> readMain(@PathVariable Category category, @RequestParam(defaultValue = "5") int limit) {
@@ -56,6 +58,7 @@ public class ArticleController2 {
     @GetMapping("/article/init-data")
     public Response initData(@RequestParam(defaultValue = "10") int limit) {
         initService.makeArticleData(limit);
+        initService2.initData();
         return Response.success();
     }
 
