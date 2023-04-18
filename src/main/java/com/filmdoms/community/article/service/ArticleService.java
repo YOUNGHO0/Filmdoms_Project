@@ -18,8 +18,10 @@ import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentM
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleResponseDto;
 import com.filmdoms.community.article.data.entity.Article;
+import com.filmdoms.community.article.data.entity.extra.Announce;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
+import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
@@ -53,6 +55,7 @@ public class ArticleService {
     private final ImageFileService imageFileService;
     private final VoteRepository voteRepository;
     private final AccountRepository accountRepository;
+    private final AnnounceRepository announceRepository;
 
     public Response createDefaultArticle(ArticleControllerToServiceDto dto) {
         Article userArticle = Article.from(dto);
@@ -194,6 +197,18 @@ public class ArticleService {
 
         return null;
 
+    }
+    public Page<AnnounceListResponseDto> getAllAnnounceArticles(Pageable pageable)
+    {
+        Page<Announce> announces = announceRepository.findAllAnnounceList(pageable);
+        Page<AnnounceListResponseDto> announceListResponseDtos = announces.map(AnnounceListResponseDto::from);
+        return announceListResponseDtos;
+    }
+    public Page<AnnounceListResponseDto> getAnnounceArticlesByCategory(Category category, Pageable pageable) {
+
+        Page<Announce> announces = announceRepository.findAnnounceListByCategory(category,pageable);
+        Page<AnnounceListResponseDto> announceListResponseDtos = announces.map(AnnounceListResponseDto::from);
+        return announceListResponseDtos;
     }
 
     public List<TopFiveArticleResponseDto> getTopFiveArticles() {
