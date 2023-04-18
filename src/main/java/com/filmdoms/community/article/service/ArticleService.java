@@ -20,6 +20,7 @@ import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleR
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
+import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
@@ -53,6 +54,8 @@ public class ArticleService {
     private final ImageFileService imageFileService;
     private final VoteRepository voteRepository;
     private final AccountRepository accountRepository;
+
+    private final AnnounceRepository announceRepository;
 
     public Response createDefaultArticle(ArticleControllerToServiceDto dto) {
         Article userArticle = Article.from(dto);
@@ -200,6 +203,47 @@ public class ArticleService {
         List<Article> top5Articles = articleRepository.getTop5Articles();
         List<TopFiveArticleResponseDto> topFiveArticleResponseDtos = top5Articles.stream().map(TopFiveArticleResponseDto::from).collect(Collectors.toList());
         return topFiveArticleResponseDtos;
+    }
+
+
+    public Page<? extends ParentBoardListResponseDto> findArticlesByKeyword(Category category, String keyword, Pageable pageable) {
+        Page<Article> articles;
+        switch (category) {
+            case MOVIE:
+                articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
+                Page<MovieListResponseResponseDto> movieListResponseDtos = articles.map(MovieListResponseResponseDto::from);
+                return movieListResponseDtos;
+            case CRITIC:
+                articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
+                Page<CriticListResponseResponseDto> criticListResponseDto = articles.map(CriticListResponseResponseDto::from);
+
+            case FILM_UNIVERSE:
+                articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
+                Page<FilmUniverseListResponseResponseDto> filmUniverseDto = articles.map(FilmUniverseListResponseResponseDto::from);
+                return filmUniverseDto;
+        }
+
+        return null;
+    }
+
+    public Page<? extends ParentBoardListResponseDto> findArticlesByNickname(Category category, String authorName, Pageable pageable) {
+        Page<Article> articles;
+        switch (category) {
+            case MOVIE:
+                articles = articleRepository.findArticlesByNickname(category, authorName, pageable);
+                Page<MovieListResponseResponseDto> movieListResponseDtos = articles.map(MovieListResponseResponseDto::from);
+                return movieListResponseDtos;
+            case CRITIC:
+                articles = articleRepository.findArticlesByNickname(category, authorName, pageable);
+                Page<CriticListResponseResponseDto> criticListResponseDto = articles.map(CriticListResponseResponseDto::from);
+
+            case FILM_UNIVERSE:
+                articles = articleRepository.findArticlesByNickname(category, authorName, pageable);
+                Page<FilmUniverseListResponseResponseDto> filmUniverseDto = articles.map(FilmUniverseListResponseResponseDto::from);
+                return filmUniverseDto;
+        }
+
+        return null;
     }
 
 
