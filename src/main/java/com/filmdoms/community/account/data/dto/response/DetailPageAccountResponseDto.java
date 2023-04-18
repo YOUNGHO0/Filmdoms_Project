@@ -11,19 +11,19 @@ import lombok.Getter;
 public class DetailPageAccountResponseDto {
 
     private Long id;
-    private String username;
+    private String nickname;
     private FileResponseDto profileImage;
 
-    private DetailPageAccountResponseDto(Long id, String username, FileResponseDto profileImage) {
+    private DetailPageAccountResponseDto(Long id, String nickname, FileResponseDto profileImage) {
         this.id = id;
-        this.username = username;
+        this.nickname = nickname;
         this.profileImage = profileImage;
     }
 
     public static DetailPageAccountResponseDto from(Account account) {
         return new DetailPageAccountResponseDto(
                 account.getId(),
-                account.getUsername(),
+                account.getNickname(),
                 FileResponseDto.from(account.getProfileImage())
         );
     }

@@ -7,19 +7,19 @@ import lombok.Getter;
 public class SimpleAccountResponseDto {
 
     private Long id;
-    private String username;
+    private String nickname;
 
     public SimpleAccountResponseDto(Account account) { //리팩토링 후 삭제 예정
         this.id = account.getId();
-        this.username = account.getUsername();
+        this.nickname = account.getNickname();
     }
 
-    private SimpleAccountResponseDto(Long id, String username) {
+    private SimpleAccountResponseDto(Long id, String nickname) {
         this.id = id;
-        this.username = username;
+        this.nickname = nickname;
     }
 
     public static SimpleAccountResponseDto from(Account account) {
-        return new SimpleAccountResponseDto(account.getId(), account.getUsername());
+        return new SimpleAccountResponseDto(account.getId(), account.getNickname());
     }
 }
