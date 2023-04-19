@@ -248,7 +248,7 @@ public class InitService {
             Article article = Article.builder()
                     .title("공지사항 게시판 " + i + "번째 글 제목")
                     .category(Category.CRITIC)
-                    .tag(noticeTagList.get(i % noticeTagList.size()))
+                    .tag(criticTagList.get(i % noticeTagList.size()))
                     .author(admin)
                     .containsImage(false)
                     .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
