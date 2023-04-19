@@ -13,14 +13,14 @@ public interface AnnounceRepository extends JpaRepository<Announce, Long> {
     @Query(value = "SELECT a from Announce a " +
             "inner join fetch a.article " +
             "inner join fetch a.article.author " +
-            "inner join a.article.author.profileImage"
+            "inner join fetch a.article.author.profileImage"
             , countQuery = "SELECT count(a) from Announce a")
     Page<Announce> findAllAnnounceList(Pageable pageable);
 
     @Query(value = "SELECT a from Announce a " +
             "inner join fetch a.article " +
             "inner join fetch a.article.author " +
-            "inner join a.article.author.profileImage where a.article.category =:categoryId"
+            "inner join fetch a.article.author.profileImage where a.article.category =:categoryId"
             , countQuery = "SELECT count(a) from Announce a inner join a.article where a.article.category =:categoryId")
     Page<Announce> findAnnounceListByCategory(@Param("categoryId") Category category, Pageable pageable);
 }
