@@ -1,0 +1,111 @@
+package com.filmdoms.community.article.service;
+
+import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.constant.Tag;
+import com.filmdoms.community.article.data.entity.Article;
+import com.filmdoms.community.article.data.entity.extra.Announce;
+import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
+import com.filmdoms.community.article.repository.AnnounceRepository;
+import com.filmdoms.community.article.repository.ArticleRepository;
+import com.filmdoms.community.article.repository.FilmUniverseRepository;
+import com.filmdoms.community.file.data.entity.File;
+import com.filmdoms.community.file.repository.FileRepository;
+import com.filmdoms.community.newcomment.data.entity.NewComment;
+import com.filmdoms.community.newcomment.repository.NewCommentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class InitServiceGenerator {
+
+    private final FileRepository fileRepository;
+    private final AccountRepository accountRepository;
+    private final NewCommentRepository newCommentRepository;
+    private final FilmUniverseRepository filmUniverseRepository;
+    private final AnnounceRepository announceRepository;
+    private final ArticleRepository articleRepository;
+
+    public File fileGenerator(String uuidFileName, String originalFileName) {
+        File fileImage = File.builder() //게시글과 매핑될 디폴트 이미지 생성
+                .uuidFileName(uuidFileName)
+                .originalFileName(originalFileName)
+                .build();
+        fileRepository.save(fileImage);
+        return fileImage;
+    }
+
+    public Account accountGenerator(String username, String nickname, AccountRole role, File progfileImage) {
+        Account user = Account.builder() //게시글, 댓글과 매핑될 Account 생성
+                .username(username)
+                .nickname(nickname)
+                .role(role)
+                .profileImage(progfileImage) //프로필 이미지를 디폴트 이미지로 세팅
+                .build();
+        accountRepository.save(user);
+        return user;
+    }
+
+    public NewComment commentGenerator(Article article, Account account, String content) {
+        NewComment newComment = NewComment.builder() //댓글 생성
+                .article(article)
+                .author(account)
+                .content(content)
+                .build();
+        newCommentRepository.save(newComment);
+        return newComment;
+    }
+
+    public NewComment childCommentGenerator(Article article, Account account, NewComment parentComment, String content) {
+        NewComment childComment = NewComment.builder() //댓글 생성
+                .article(article)
+                .author(account)
+                .parentComment(parentComment)
+                .content(content)
+                .build();
+        newCommentRepository.save(childComment);
+        return childComment;
+    }
+
+    public Article articleGenerator(String title, Category category, Tag tag, Account account, boolean containsImage, String content) {
+        Article article = Article.builder()
+                .title(title)
+                .category(category)
+                .tag(tag)
+                .author(account)
+                .containsImage(containsImage)
+                .content(content)
+                .build();
+        articleRepository.save(article);
+        return article;
+
+    }
+
+    public FilmUniverse filmUniverseGenerator(File file, Article article, LocalDateTime startTime, LocalDateTime endTime) {
+        FilmUniverse filmUniverse = FilmUniverse.builder()
+                .mainImage(file)
+                .article(article)
+                .startDate(startTime)
+                .endDate(endTime)
+                .build();
+        filmUniverseRepository.save(filmUniverse);
+        return filmUniverse;
+    }
+
+    public Announce announceGenerator(Article article) {
+        Announce announce = Announce.builder()
+                .article(article)
+                .build();
+        announceRepository.save(announce);
+        return announce;
+    }
+
+
+}
