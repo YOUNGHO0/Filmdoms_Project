@@ -16,24 +16,24 @@ public abstract class ParentBoardListResponseDto {
     private Category category;
     private Tag tag;
     private String title;
-    private DetailPageAccountResponseDto author;
+    private DetailPageAccountResponseDto writer;
     private long createdAt;
     private long updatedAt;
-    private int view;
-    private int voteCount;
+    private int views;
+    private int likes;
     private long commentCount;
-    private boolean containsImage;
+    private boolean isContainImage;
     public ParentBoardListResponseDto(Article article) {
         this.id = article.getId();
         this.category = article.getCategory();
         this.tag = article.getTag();
         this.title = article.getTitle();
-        this.author = DetailPageAccountResponseDto.from(article.getAuthor());
+        this.writer = DetailPageAccountResponseDto.from(article.getAuthor());
         this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.view = article.getView();
-        this.containsImage = article.isContainsImage();
-        this.voteCount = article.getVoteCount();
+        this.views = article.getView();
+        this.isContainImage = article.isContainsImage();
+        this.likes = article.getVoteCount();
         this.commentCount = article.getCommentCount();
     }
 }

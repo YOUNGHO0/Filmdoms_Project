@@ -26,13 +26,13 @@ public class ArticleDetailResponseDto {
     private Tag tag;
     private String title;
     private PostStatus status;
-    private int view;
-    private int voteCount;
-    private boolean isVoted;
-    private String content;
+    private int views;
+    private int likes;
+    private boolean liked;
+    private String description;
     private long createdAt;
     private long updatedAt;
-    private DetailPageAccountResponseDto author;
+    private DetailPageAccountResponseDto writer;
     private List<FileResponseDto> images;
 
     protected ArticleDetailResponseDto(Article article, List<File> images, boolean isVoted) {
@@ -41,13 +41,13 @@ public class ArticleDetailResponseDto {
         this.tag = article.getTag();
         this.title = article.getTitle();
         this.status = article.getStatus();
-        this.view = article.getView();
-        this.voteCount = article.getVoteCount();
-        this.isVoted = isVoted;
-        this.content = article.getContent().getContent();
+        this.views = article.getView();
+        this.likes = article.getVoteCount();
+        this.liked = isVoted;
+        this.description = article.getContent().getContent();
         this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
-        this.author = DetailPageAccountResponseDto.from(article.getAuthor());
+        this.writer = DetailPageAccountResponseDto.from(article.getAuthor());
         this.images = images.stream().sorted(Comparator.comparing(File::getId)).map(FileResponseDto::from).toList(); //id로 정렬한 뒤 DTO 변환
     }
 
