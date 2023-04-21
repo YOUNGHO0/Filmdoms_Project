@@ -12,7 +12,7 @@ import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import com.filmdoms.community.imagefile.service.ImageFileService;
+import com.filmdoms.community.file.service.ImageFileService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

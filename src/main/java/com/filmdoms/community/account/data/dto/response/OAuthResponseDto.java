@@ -1,6 +1,6 @@
 package com.filmdoms.community.account.data.dto.response;
 
-import com.filmdoms.community.account.data.constants.OAuthType;
+import com.filmdoms.community.account.data.constant.OAuthType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -4,9 +4,9 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
-import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.constant.PostStatus;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
+import com.filmdoms.community.account.data.entity.BaseTimeEntity;
+import com.filmdoms.community.article.data.constant.PostStatus;
+import com.filmdoms.community.comment.data.entity.Comment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,7 +49,7 @@ public class Article extends BaseTimeEntity {
     private int commentCount;
 
     @OneToMany(mappedBy = "article")
-    private List<NewComment> comments;
+    private List<Comment> comments;
 
     private int view = 0;
 

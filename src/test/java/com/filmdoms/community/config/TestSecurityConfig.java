@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.UserDetailsServiceImpl;

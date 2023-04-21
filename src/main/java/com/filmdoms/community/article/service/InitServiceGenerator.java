@@ -1,6 +1,6 @@
 package com.filmdoms.community.article.service;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
@@ -13,8 +13,8 @@ import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
-import com.filmdoms.community.newcomment.repository.NewCommentRepository;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ public class InitServiceGenerator {
 
     private final FileRepository fileRepository;
     private final AccountRepository accountRepository;
-    private final NewCommentRepository newCommentRepository;
+    private final CommentRepository commentRepository;
     private final FilmUniverseRepository filmUniverseRepository;
     private final AnnounceRepository announceRepository;
     private final ArticleRepository articleRepository;
@@ -53,24 +53,24 @@ public class InitServiceGenerator {
         return user;
     }
 
-    public NewComment commentGenerator(Article article, Account account, String content) {
-        NewComment newComment = NewComment.builder() //댓글 생성
+    public Comment commentGenerator(Article article, Account account, String content) {
+        Comment comment = Comment.builder() //댓글 생성
                 .article(article)
                 .author(account)
                 .content(content)
                 .build();
-        newCommentRepository.save(newComment);
-        return newComment;
+        commentRepository.save(comment);
+        return comment;
     }
 
-    public NewComment childCommentGenerator(Article article, Account account, NewComment parentComment, String content) {
-        NewComment childComment = NewComment.builder() //댓글 생성
+    public Comment childCommentGenerator(Article article, Account account, Comment parentComment, String content) {
+        Comment childComment = Comment.builder() //댓글 생성
                 .article(article)
                 .author(account)
                 .parentComment(parentComment)
                 .content(content)
                 .build();
-        newCommentRepository.save(childComment);
+        commentRepository.save(childComment);
         return childComment;
     }
 
