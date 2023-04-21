@@ -40,9 +40,9 @@ class EmailServiceTest {
         //given
         String email = "address@domain.com";
         String authCode = "sampleAuthCode";
-        String mockAccountUsername = "username";
+        String mockAccountNickname = "nickname";
         Account mockAccount = Account.builder()
-                .username(mockAccountUsername)
+                .nickname(mockAccountNickname)
                 .email(email)
                 .build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
@@ -55,6 +55,6 @@ class EmailServiceTest {
 
         //then
         Assertions.assertThat(responseDto.getId()).isEqualTo(1L);
-        Assertions.assertThat(responseDto.getUsername()).isEqualTo(mockAccountUsername);
+        Assertions.assertThat(responseDto.getNickname()).isEqualTo(mockAccountNickname);
     }
 }

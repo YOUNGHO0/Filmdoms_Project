@@ -11,7 +11,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
 import com.filmdoms.community.account.config.SecurityConfig;
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
@@ -27,7 +27,7 @@ import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import com.filmdoms.community.imagefile.service.ImageFileService;
+import com.filmdoms.community.file.service.ImageFileService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;

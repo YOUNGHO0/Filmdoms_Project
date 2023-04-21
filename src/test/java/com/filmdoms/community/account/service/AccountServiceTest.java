@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.request.DeleteAccountRequestDto;
 import com.filmdoms.community.account.data.dto.request.JoinRequestDto;

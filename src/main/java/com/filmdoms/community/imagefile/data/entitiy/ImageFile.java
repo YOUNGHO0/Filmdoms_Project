@@ -1,7 +1,7 @@
 package com.filmdoms.community.imagefile.data.entitiy;
 
 
-import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.account.data.entity.BaseTimeEntity;
 import com.filmdoms.community.board.data.BoardContent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

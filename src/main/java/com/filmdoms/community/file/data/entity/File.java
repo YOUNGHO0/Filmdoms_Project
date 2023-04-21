@@ -1,6 +1,6 @@
 package com.filmdoms.community.file.data.entity;
 
-import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.account.data.entity.BaseTimeEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

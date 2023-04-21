@@ -4,14 +4,13 @@ import com.filmdoms.community.account.data.dto.response.DetailPageAccountRespons
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.board.data.constant.PostStatus;
+import com.filmdoms.community.article.data.constant.PostStatus;
 import com.filmdoms.community.file.data.dto.response.FileResponseDto;
 import com.filmdoms.community.file.data.entity.File;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 

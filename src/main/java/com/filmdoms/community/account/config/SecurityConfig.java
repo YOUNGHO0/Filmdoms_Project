@@ -8,6 +8,7 @@ import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@PropertySource(value = "classpath:oauth.yml", factory = YamlPropertySourceFactory.class)
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -39,6 +41,7 @@ public class SecurityConfig {
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/v1/login", "/api/v1/join").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/email/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/banner/**").hasRole("ADMIN")

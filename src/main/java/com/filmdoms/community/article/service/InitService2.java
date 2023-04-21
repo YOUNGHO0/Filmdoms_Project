@@ -1,6 +1,6 @@
 package com.filmdoms.community.article.service;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;

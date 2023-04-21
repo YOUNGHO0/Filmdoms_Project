@@ -2,8 +2,8 @@ package com.filmdoms.community.board.post.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.constant.CommentStatus;
+import com.filmdoms.community.account.data.entity.BaseTimeEntity;
+import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
