@@ -3,7 +3,7 @@ package com.filmdoms.community.newcomment.service;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
-import com.filmdoms.community.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.config.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
@@ -19,13 +19,10 @@ import com.filmdoms.community.newcomment.repository.NewCommentRepository;
 import com.filmdoms.community.newcomment.repository.NewCommentVoteRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

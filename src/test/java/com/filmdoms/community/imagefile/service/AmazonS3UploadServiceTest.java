@@ -3,7 +3,9 @@ package com.filmdoms.community.imagefile.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
-import com.filmdoms.community.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.config.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.file.data.entity.File;
+import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.imagefile.data.dto.response.ImageUploadResponseDto;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
@@ -30,7 +32,7 @@ import static org.mockito.Mockito.when;
 class AmazonS3UploadServiceTest {
 
     @Autowired
-    ImageFileRepository imageFileRepository;
+    FileRepository fileRepository;
 
     @SpyBean
     AmazonS3UploadService amazonS3UploadService;
@@ -56,7 +58,7 @@ class AmazonS3UploadServiceTest {
         ImageUploadResponseDto responseDto = amazonS3UploadService.uploadAndSaveImages(imageMultipartFiles);
 
         //then
-        List<ImageFile> savedImageFiles = imageFileRepository.findAll();
+        List<File> savedImageFiles = fileRepository.findAll();
         assertThat(savedImageFiles.size()).isEqualTo(5); //실제 이미지가 저장되는지 확인
         assertThat(responseDto.getImageIds().size()).isEqualTo(5); //응답 DTO가 잘 생성되는지 확인
     }
