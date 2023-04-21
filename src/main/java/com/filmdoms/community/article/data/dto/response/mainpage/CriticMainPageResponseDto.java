@@ -16,14 +16,14 @@ import java.time.LocalDate;
 public class CriticMainPageResponseDto extends ParentMainPageResponseDto {
     private FileResponseDto mainImage;
     private SimpleAccountResponseDto author;
-    private String contentPreview;
+    private String description;
     private long createdAt;
 
     private CriticMainPageResponseDto(Critic critic) {
         super(critic.getArticle());
         this.mainImage = FileResponseDto.from(critic.getMainImage());
         this.author = SimpleAccountResponseDto.from(critic.getArticle().getAuthor());
-        this.contentPreview = critic.getArticle().getContent().getContent();
+        this.description = critic.getArticle().getContent().getContent();
         this.createdAt = ZonedDateTime.of(critic.getArticle().getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 

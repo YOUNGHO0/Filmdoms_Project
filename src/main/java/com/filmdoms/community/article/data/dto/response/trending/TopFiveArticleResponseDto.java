@@ -11,7 +11,7 @@ public class TopFiveArticleResponseDto {
     private Long id;
     private String title;
     private SimpleAccountResponseDto author;
-    private boolean containsImage;
+    private boolean isContainImage;
 
     private Category category;
 
@@ -20,7 +20,7 @@ public class TopFiveArticleResponseDto {
         this.id = id;
         this.title = title;
         this.category = category;
-        this.containsImage = containsImage;
+        this.isContainImage = containsImage;
         this.author = author;
     }
 

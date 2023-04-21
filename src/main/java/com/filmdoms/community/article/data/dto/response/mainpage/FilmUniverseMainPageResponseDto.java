@@ -14,15 +14,15 @@ import java.time.LocalDate;
 public class FilmUniverseMainPageResponseDto extends ParentMainPageResponseDto {
     private FileResponseDto mainImage;
     private SimpleAccountResponseDto author;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate startAt;
+    private LocalDate endAt;
 
     private FilmUniverseMainPageResponseDto(FilmUniverse filmUniverse) {
         super(filmUniverse.getArticle());
         this.mainImage = FileResponseDto.from(filmUniverse.getMainImage());
         this.author = SimpleAccountResponseDto.from(filmUniverse.getArticle().getAuthor());
-        this.startDate = filmUniverse.getStartDate().toLocalDate();
-        this.endDate = filmUniverse.getEndDate().toLocalDate();
+        this.startAt = filmUniverse.getStartDate().toLocalDate();
+        this.endAt = filmUniverse.getEndDate().toLocalDate();
     }
 
     public static FilmUniverseMainPageResponseDto from(FilmUniverse filmUniverse) {
