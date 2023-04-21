@@ -10,8 +10,8 @@ public class TopFiveArticleResponseDto {
 
     private Long id;
     private String title;
-    private SimpleAccountResponseDto author;
-    private boolean containsImage;
+    private SimpleAccountResponseDto writer;
+    private boolean isContainImage;
 
     private Category category;
 
@@ -20,8 +20,8 @@ public class TopFiveArticleResponseDto {
         this.id = id;
         this.title = title;
         this.category = category;
-        this.containsImage = containsImage;
-        this.author = author;
+        this.isContainImage = containsImage;
+        this.writer = author;
     }
 
     public static TopFiveArticleResponseDto from(Article article) {

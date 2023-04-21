@@ -13,13 +13,13 @@ import java.util.List;
 @Getter
 public class FilmUniverseDetailResponseDto extends ArticleDetailResponseDto {
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
 
     private FilmUniverseDetailResponseDto(FilmUniverse filmUniverse, List<File> images, boolean isVoted) {
         super(filmUniverse.getArticle(), images, isVoted);
-        this.startDate = filmUniverse.getStartDate();
-        this.endDate = filmUniverse.getEndDate();
+        this.startAt = filmUniverse.getStartDate();
+        this.endAt = filmUniverse.getEndDate();
     }
 
     public static FilmUniverseDetailResponseDto from(FilmUniverse filmUniverse, List<File> images, boolean isVoted) {

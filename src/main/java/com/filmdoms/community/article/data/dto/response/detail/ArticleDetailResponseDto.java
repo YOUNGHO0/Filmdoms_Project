@@ -29,7 +29,7 @@ public class ArticleDetailResponseDto {
     private int views;
     private int likes;
     private boolean liked;
-    private String description;
+    private String content;
     private long createdAt;
     private long updatedAt;
     private DetailPageAccountResponseDto writer;
@@ -44,7 +44,7 @@ public class ArticleDetailResponseDto {
         this.views = article.getView();
         this.likes = article.getVoteCount();
         this.liked = isVoted;
-        this.description = article.getContent().getContent();
+        this.content = article.getContent().getContent();
         this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.writer = DetailPageAccountResponseDto.from(article.getAuthor());
