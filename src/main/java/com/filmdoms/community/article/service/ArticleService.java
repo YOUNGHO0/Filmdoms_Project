@@ -57,7 +57,6 @@ public class ArticleService {
     private final AccountRepository accountRepository;
     private final AnnounceRepository announceRepository;
 
-    private final AnnounceRepository announceRepository;
 
     public Response createDefaultArticle(ArticleControllerToServiceDto dto) {
         Article userArticle = Article.from(dto);
