@@ -1,4 +1,4 @@
-package com.filmdoms.community.newcomment.service;
+package com.filmdoms.community.comment.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -8,15 +8,15 @@ import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
-import com.filmdoms.community.newcomment.data.dto.request.NewCommentCreateRequestDto;
-import com.filmdoms.community.newcomment.data.dto.request.NewCommentUpdateRequestDto;
-import com.filmdoms.community.newcomment.data.dto.response.NewCommentCreateResponseDto;
-import com.filmdoms.community.newcomment.data.dto.response.NewCommentVoteResponseDto;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
-import com.filmdoms.community.newcomment.data.entity.NewCommentVote;
-import com.filmdoms.community.newcomment.data.entity.NewCommentVoteKey;
-import com.filmdoms.community.newcomment.repository.NewCommentRepository;
-import com.filmdoms.community.newcomment.repository.NewCommentVoteRepository;
+import com.filmdoms.community.comment.data.dto.request.CommentCreateRequestDto;
+import com.filmdoms.community.comment.data.dto.request.CommentUpdateRequestDto;
+import com.filmdoms.community.comment.data.dto.response.CommentCreateResponseDto;
+import com.filmdoms.community.comment.data.dto.response.CommentVoteResponseDto;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.data.entity.CommentVote;
+import com.filmdoms.community.comment.data.entity.CommentVoteKey;
+import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.comment.repository.CommentVoteRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
@@ -29,13 +29,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTestWithJpaAuditing
 @DisplayName("댓글 서비스 통합 테스트")
-class NewCommentServiceTest {
+class CommentServiceTest {
 
     @SpyBean
-    NewCommentService commentService;
+    CommentService commentService;
 
     @Autowired
-    NewCommentRepository commentRepository;
+    CommentRepository commentRepository;
 
     @Autowired
     AccountRepository accountRepository;
@@ -44,7 +44,7 @@ class NewCommentServiceTest {
     ArticleRepository articleRepository;
 
     @Autowired
-    NewCommentVoteRepository newCommentVoteRepository;
+    CommentVoteRepository commentVoteRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -56,13 +56,13 @@ class NewCommentServiceTest {
         Account articleAuthor = createSampleAccount("articleAuthor");
         Article article = createSampleArticle(articleAuthor);
         Account commentAuthor = createSampleAccount("commentAuthor");
-        NewCommentCreateRequestDto requestDto = new NewCommentCreateRequestDto(article.getId(), null, "content", false);
+        CommentCreateRequestDto requestDto = new CommentCreateRequestDto(article.getId(), null, "content", false);
 
         //when
-        NewCommentCreateResponseDto responseDto = commentService.createComment(requestDto, AccountDto.from(commentAuthor));
+        CommentCreateResponseDto responseDto = commentService.createComment(requestDto, AccountDto.from(commentAuthor));
 
         //then
-        NewComment comment = commentRepository.findById(responseDto.getCommentId()).get();
+        Comment comment = commentRepository.findById(responseDto.getCommentId()).get();
         assertThat(comment.getArticle().getId()).isEqualTo(requestDto.getArticleId());
         assertThat(comment.getParentComment()).isNull();
         assertThat(comment.getContent()).isEqualTo(requestDto.getContent());
@@ -77,14 +77,14 @@ class NewCommentServiceTest {
         Article article = createSampleArticle(articleAuthor);
         Account parentCommentAuthor = createSampleAccount("parentCommentAuthor");
         Account childCommentAuthor = createSampleAccount("childCommentAuthor");
-        NewComment parentComment = createSampleComment(article, parentCommentAuthor, null);
-        NewCommentCreateRequestDto requestDto = new NewCommentCreateRequestDto(article.getId(), parentComment.getId(), "content", false);
+        Comment parentComment = createSampleComment(article, parentCommentAuthor, null);
+        CommentCreateRequestDto requestDto = new CommentCreateRequestDto(article.getId(), parentComment.getId(), "content", false);
 
         //when
-        NewCommentCreateResponseDto responseDto = commentService.createComment(requestDto, AccountDto.from(childCommentAuthor));
+        CommentCreateResponseDto responseDto = commentService.createComment(requestDto, AccountDto.from(childCommentAuthor));
 
         //then
-        NewComment comment = commentRepository.findById(responseDto.getCommentId()).get();
+        Comment comment = commentRepository.findById(responseDto.getCommentId()).get();
         assertThat(comment.getArticle().getId()).isEqualTo(requestDto.getArticleId());
         assertThat(comment.getParentComment().getId()).isEqualTo(requestDto.getParentCommentId());
         assertThat(comment.getContent()).isEqualTo(requestDto.getContent());
@@ -97,14 +97,14 @@ class NewCommentServiceTest {
         Account articleAuthor = createSampleAccount("articleAuthor");
         Article article = createSampleArticle(articleAuthor);
         Account commentAuthor = createSampleAccount("commentAuthor");
-        NewComment comment = createSampleComment(article, commentAuthor, null);
-        NewCommentUpdateRequestDto requestDto = new NewCommentUpdateRequestDto("updatedContent");
+        Comment comment = createSampleComment(article, commentAuthor, null);
+        CommentUpdateRequestDto requestDto = new CommentUpdateRequestDto("updatedContent");
 
         //when
         commentService.updateComment(requestDto, comment.getId(), AccountDto.from(commentAuthor));
 
         //then
-        NewComment findComment = commentRepository.findById(comment.getId()).get();
+        Comment findComment = commentRepository.findById(comment.getId()).get();
         assertThat(findComment.getContent()).isEqualTo(requestDto.getContent());
     }
 
@@ -114,7 +114,7 @@ class NewCommentServiceTest {
         Account articleAuthor = createSampleAccount("articleAuthor");
         Article article = createSampleArticle(articleAuthor);
         Account commentAuthor = createSampleAccount("commentAuthor");
-        NewComment comment = createSampleComment(article, commentAuthor, null);
+        Comment comment = createSampleComment(article, commentAuthor, null);
 
         //when
         commentService.deleteComment(comment.getId(), AccountDto.from(commentAuthor));
@@ -129,10 +129,10 @@ class NewCommentServiceTest {
         Account articleAuthor = createSampleAccount("articleAuthor");
         Article article = createSampleArticle(articleAuthor);
         Account commentAuthor = createSampleAccount("commentAuthor");
-        NewComment comment = createSampleComment(article, commentAuthor, null);
+        Comment comment = createSampleComment(article, commentAuthor, null);
 
         //when
-        NewCommentVoteResponseDto responseDto = commentService.toggleCommentVote(comment.getId(), AccountDto.from(articleAuthor));
+        CommentVoteResponseDto responseDto = commentService.toggleCommentVote(comment.getId(), AccountDto.from(articleAuthor));
 
         //then
         assertThat(responseDto)
@@ -146,11 +146,11 @@ class NewCommentServiceTest {
         Account articleAuthor = createSampleAccount("articleAuthor");
         Article article = createSampleArticle(articleAuthor);
         Account commentAuthor = createSampleAccount("commentAuthor");
-        NewComment comment = createSampleComment(article, commentAuthor, null);
+        Comment comment = createSampleComment(article, commentAuthor, null);
         createSampleVote(articleAuthor, comment);
 
         //when
-        NewCommentVoteResponseDto responseDto = commentService.toggleCommentVote(comment.getId(), AccountDto.from(articleAuthor));
+        CommentVoteResponseDto responseDto = commentService.toggleCommentVote(comment.getId(), AccountDto.from(articleAuthor));
 
         //then
         assertThat(responseDto)
@@ -176,8 +176,8 @@ class NewCommentServiceTest {
         return articleRepository.save(article);
     }
 
-    private NewComment createSampleComment(Article article, Account author, NewComment parentComment) {
-        NewComment comment = NewComment.builder()
+    private Comment createSampleComment(Article article, Account author, Comment parentComment) {
+        Comment comment = Comment.builder()
                 .article(article)
                 .author(author)
                 .parentComment(parentComment)
@@ -187,12 +187,12 @@ class NewCommentServiceTest {
         return commentRepository.save(comment);
     }
 
-    private void createSampleVote(Account voter, NewComment comment) {
-        NewCommentVoteKey voteKey = NewCommentVoteKey.builder()
+    private void createSampleVote(Account voter, Comment comment) {
+        CommentVoteKey voteKey = CommentVoteKey.builder()
                 .comment(comment)
                 .account(voter)
                 .build();
         comment.addVote();
-        newCommentVoteRepository.save(new NewCommentVote(voteKey));
+        commentVoteRepository.save(new CommentVote(voteKey));
     }
 }

@@ -1,9 +1,9 @@
-package com.filmdoms.community.newcomment.data.entity;
+package com.filmdoms.community.comment.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.board.data.BaseTimeEntity;
-import com.filmdoms.community.board.data.constant.CommentStatus;
+import com.filmdoms.community.account.data.entity.BaseTimeEntity;
+import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class NewComment extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class NewComment extends BaseTimeEntity {
 
     @JoinColumn(name = "new_comment_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private NewComment parentComment;
+    private Comment parentComment;
 
     @JoinColumn(name = "account_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,8 +56,8 @@ public class NewComment extends BaseTimeEntity {
     private boolean isManagerComment;
 
     @Builder
-    private NewComment(Article article, NewComment parentComment, Account author, String content,
-                       boolean isManagerComment) {
+    private Comment(Article article, Comment parentComment, Account author, String content,
+                    boolean isManagerComment) {
         this.article = article;
         this.parentComment = parentComment;
         this.author = author;

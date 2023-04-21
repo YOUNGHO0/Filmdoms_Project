@@ -1,6 +1,6 @@
-package com.filmdoms.community.newcomment.service;
+package com.filmdoms.community.comment.service;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
@@ -9,17 +9,17 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
-import com.filmdoms.community.board.data.constant.CommentStatus;
-import com.filmdoms.community.newcomment.data.dto.request.NewCommentCreateRequestDto;
-import com.filmdoms.community.newcomment.data.dto.request.NewCommentUpdateRequestDto;
-import com.filmdoms.community.newcomment.data.dto.response.DetailPageCommentResponseDto;
-import com.filmdoms.community.newcomment.data.dto.response.NewCommentCreateResponseDto;
-import com.filmdoms.community.newcomment.data.dto.response.NewCommentVoteResponseDto;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
-import com.filmdoms.community.newcomment.data.entity.NewCommentVote;
-import com.filmdoms.community.newcomment.data.entity.NewCommentVoteKey;
-import com.filmdoms.community.newcomment.repository.NewCommentRepository;
-import com.filmdoms.community.newcomment.repository.NewCommentVoteRepository;
+import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
+import com.filmdoms.community.comment.data.dto.request.CommentCreateRequestDto;
+import com.filmdoms.community.comment.data.dto.request.CommentUpdateRequestDto;
+import com.filmdoms.community.comment.data.dto.response.DetailPageCommentResponseDto;
+import com.filmdoms.community.comment.data.dto.response.CommentCreateResponseDto;
+import com.filmdoms.community.comment.data.dto.response.CommentVoteResponseDto;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.data.entity.CommentVote;
+import com.filmdoms.community.comment.data.entity.CommentVoteKey;
+import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.comment.repository.CommentVoteRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,25 +32,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NewCommentService {
+public class CommentService {
 
-    private final NewCommentRepository commentRepository;
+    private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
     private final AccountRepository accountRepository;
-    private final NewCommentVoteRepository newCommentVoteRepository;
+    private final CommentVoteRepository commentVoteRepository;
 
     public DetailPageCommentResponseDto getDetailPageCommentList(Long articleId) {
-        List<NewComment> comments = commentRepository.findByArticleIdWithAuthorProfileImage(articleId);
+        List<Comment> comments = commentRepository.findByArticleIdWithAuthorProfileImage(articleId);
         return DetailPageCommentResponseDto.from(comments);
     }
 
-    public NewCommentCreateResponseDto createComment(NewCommentCreateRequestDto requestDto, AccountDto accountDto) {
+    public CommentCreateResponseDto createComment(CommentCreateRequestDto requestDto, AccountDto accountDto) {
         Article article = articleRepository.findById(requestDto.getArticleId())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
 
         Account author = accountRepository.getReferenceById(accountDto.getId());
 
-        NewComment parentComment = null;
+        Comment parentComment = null;
         if (requestDto.getParentCommentId() != null) {
             parentComment = commentRepository.findById(requestDto.getParentCommentId())
                     .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_PARENT_COMMENT_ID));
@@ -67,7 +67,7 @@ public class NewCommentService {
             checkManagerCommentPermission(accountDto, article);
         }
 
-        NewComment comment = NewComment.builder()
+        Comment comment = Comment.builder()
                 .article(article)
                 .parentComment(parentComment)
                 .author(author)
@@ -75,8 +75,8 @@ public class NewCommentService {
                 .isManagerComment(requestDto.isManagerComment())
                 .build();
 
-        NewComment savedComment = commentRepository.save(comment);
-        return NewCommentCreateResponseDto.from(savedComment);
+        Comment savedComment = commentRepository.save(comment);
+        return CommentCreateResponseDto.from(savedComment);
     }
 
     private void checkManagerCommentPermission(AccountDto accountDto, Article article) {
@@ -88,8 +88,8 @@ public class NewCommentService {
         }
     }
 
-    public void updateComment(NewCommentUpdateRequestDto requestDto, Long commentId, AccountDto accountDto) {
-        NewComment comment = commentRepository.findById(commentId)
+    public void updateComment(CommentUpdateRequestDto requestDto, Long commentId, AccountDto accountDto) {
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_COMMENT_ID));
 
         //ACTIVE 상태인 댓글만 수정 가능
@@ -102,7 +102,7 @@ public class NewCommentService {
     }
 
     public void deleteComment(Long commentId, AccountDto accountDto) {
-        NewComment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_COMMENT_ID));
 
         //ACTIVE 상태인 댓글만 삭제 가능
@@ -127,52 +127,52 @@ public class NewCommentService {
         }
     }
 
-    private void checkPermission(AccountDto accountDto, NewComment comment) {
+    private void checkPermission(AccountDto accountDto, Comment comment) {
         if (!Objects.equals(comment.getAuthor().getId(), accountDto.getId())) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION);
         }
     }
 
-    private void checkCommentStatus(NewComment comment) {
+    private void checkCommentStatus(Comment comment) {
         if (comment.getStatus() != CommentStatus.ACTIVE) {
             throw new ApplicationException(ErrorCode.COMMENT_NOT_ACTIVE);
         }
     }
 
-    public NewCommentVoteResponseDto toggleCommentVote(Long commentId, AccountDto accountDto) {
+    public CommentVoteResponseDto toggleCommentVote(Long commentId, AccountDto accountDto) {
 
         log.info("계정 호출");
         Account account = accountRepository.getReferenceById(accountDto.getId());
 
         log.info("댓글 호출");
-        NewComment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_COMMENT_ID));
 
         log.info("추천용 키 생성");
-        NewCommentVoteKey voteKey = NewCommentVoteKey.builder()
+        CommentVoteKey voteKey = CommentVoteKey.builder()
                 .account(account)
                 .comment(comment)
                 .build();
 
         log.info("추천 여부 확인");
-        Optional<NewCommentVote> foundVote = newCommentVoteRepository.findByVoteKey(voteKey);
+        Optional<CommentVote> foundVote = commentVoteRepository.findByVoteKey(voteKey);
         int voteCount;
         boolean pressedResult;
 
         if (foundVote.isPresent()) {
             log.info("추천 취소");
-            newCommentVoteRepository.delete(foundVote.get());
+            commentVoteRepository.delete(foundVote.get());
             voteCount = comment.removeVote();
             pressedResult = false;
         } else {
             log.info("추천 생성");
-            newCommentVoteRepository.save(new NewCommentVote(voteKey));
+            commentVoteRepository.save(new CommentVote(voteKey));
             voteCount = comment.addVote();
             pressedResult = true;
         }
 
         log.info("추천 결과 반환");
-        return NewCommentVoteResponseDto.builder()
+        return CommentVoteResponseDto.builder()
                 .voteCount(voteCount)
                 .isVoted(pressedResult)
                 .build();

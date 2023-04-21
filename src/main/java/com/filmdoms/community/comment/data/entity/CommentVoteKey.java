@@ -1,4 +1,4 @@
-package com.filmdoms.community.newcomment.data.entity;
+package com.filmdoms.community.comment.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
 import jakarta.persistence.Embeddable;
@@ -17,11 +17,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class NewCommentVoteKey implements Serializable {
+public class CommentVoteKey implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
-    private NewComment comment;
+    private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

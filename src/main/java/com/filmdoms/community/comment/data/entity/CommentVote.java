@@ -1,4 +1,4 @@
-package com.filmdoms.community.newcomment.data.entity;
+package com.filmdoms.community.comment.data.entity;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class NewCommentVote {
+public class CommentVote {
 
     @EmbeddedId
-    private NewCommentVoteKey voteKey;
+    private CommentVoteKey voteKey;
 }

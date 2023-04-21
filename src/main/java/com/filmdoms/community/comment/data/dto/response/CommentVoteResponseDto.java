@@ -1,4 +1,4 @@
-package com.filmdoms.community.newcomment.data.dto.response;
+package com.filmdoms.community.comment.data.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class NewCommentVoteResponseDto {
+public class CommentVoteResponseDto {
 
     private Boolean isVoted;
     private Integer voteCount;
