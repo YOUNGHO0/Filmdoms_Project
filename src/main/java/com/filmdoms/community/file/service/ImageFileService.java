@@ -1,9 +1,8 @@
-package com.filmdoms.community.imagefile.service;
+package com.filmdoms.community.file.service;
 
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.entity.Content;
-
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.data.entity.FileContent;
 import com.filmdoms.community.file.repository.FileContentRepository;
@@ -40,11 +39,10 @@ public class ImageFileService {
         File imageFile = imageFileRepository.findById(imageId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
         FileContent fileContent = FileContent.builder()
-                            .content(content)
-                            .file(imageFile)
-                            .build();
-        if(fileContentRepository.findByFile(imageFile).isPresent())
-        {
+                .content(content)
+                .file(imageFile)
+                .build();
+        if (fileContentRepository.findByFile(imageFile).isPresent()) {
             throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST); //이미지에 이미 게시글 컨텐츠가 매핑되어 있으면 예외 발생
         }
         fileContentRepository.save(fileContent);
@@ -80,8 +78,7 @@ public class ImageFileService {
                             .content(boardContent)
                             .file(image)
                             .build();
-                    if(fileContentRepository.findByFile(image).isPresent())
-                    {
+                    if (fileContentRepository.findByFile(image).isPresent()) {
                         throw new ApplicationException(ErrorCode.IMAGE_BELONG_TO_OTHER_POST); //이미지에 이미 게시글 컨텐츠가 매핑되어 있으면 예외 발생
                     }
                     fileContentRepository.save(fileContent);

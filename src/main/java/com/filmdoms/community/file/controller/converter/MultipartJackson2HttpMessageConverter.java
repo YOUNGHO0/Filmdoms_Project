@@ -1,4 +1,4 @@
-package com.filmdoms.community.board.review.controller;
+package com.filmdoms.community.file.controller.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;

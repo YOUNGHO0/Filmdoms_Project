@@ -1,4 +1,4 @@
-package com.filmdoms.community.imagefile.data.dto.response;
+package com.filmdoms.community.file.data.dto.response;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.filmdoms.community.imagefile.service;
+package com.filmdoms.community.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -6,8 +6,7 @@ import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import com.filmdoms.community.imagefile.data.dto.UploadedFileDto;
-import com.filmdoms.community.imagefile.data.dto.response.ImageUploadResponseDto;
+import com.filmdoms.community.file.data.dto.response.ImageUploadResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,29 +29,6 @@ public class AmazonS3UploadService {
     private String bucket;
     private final AmazonS3 amazonS3;
     public final FileRepository fileRepository;
-
-    //to be deprecated
-    public UploadedFileDto upload(MultipartFile multipartFile, String originalFileName) {
-
-        String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String uuidFileName = UUID.randomUUID() + ext;
-
-        try {
-            ObjectMetadata objMeta = new ObjectMetadata();
-            objMeta.setContentLength(multipartFile.getInputStream().available());
-            amazonS3.putObject(bucket, uuidFileName, multipartFile.getInputStream(), objMeta);
-        } catch (IOException e) {
-            throw new ApplicationException(ErrorCode.S3_ERROR, e.getMessage());
-        }
-
-        log.info("업로드 성공");
-
-        return UploadedFileDto.builder()
-                .uuidFileName(uuidFileName)
-                .originalFileName(originalFileName)
-                .url(amazonS3.getUrl(bucket, uuidFileName).toString())
-                .build();
-    }
 
     public ImageUploadResponseDto uploadAndSaveImages(List<MultipartFile> imageMultipartFiles) {
 

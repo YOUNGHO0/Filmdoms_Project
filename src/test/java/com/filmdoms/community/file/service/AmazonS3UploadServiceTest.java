@@ -1,14 +1,12 @@
-package com.filmdoms.community.imagefile.service;
+package com.filmdoms.community.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.config.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.file.data.dto.response.ImageUploadResponseDto;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import com.filmdoms.community.imagefile.data.dto.response.ImageUploadResponseDto;
-import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
-import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

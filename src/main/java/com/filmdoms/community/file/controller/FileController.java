@@ -1,0 +1,35 @@
+package com.filmdoms.community.file.controller;
+
+import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.file.service.AmazonS3UploadService;
+import com.filmdoms.community.file.data.dto.response.ImageUploadResponseDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/v1")
+@RequiredArgsConstructor
+public class FileController {
+
+    private final AmazonS3UploadService amazonS3UploadService;
+
+    @PostMapping("/image")
+    public Response<ImageUploadResponseDto> uploadImages(
+            @RequestPart("image") List<MultipartFile> imageMultipartFiles) {
+        ImageUploadResponseDto responseDto = amazonS3UploadService.uploadAndSaveImages(imageMultipartFiles);
+        return Response.success(responseDto);
+    }
+
+    // TODO: 테스트 용도이므로 추후 삭제 예정
+    // 실제 S3에는 업로드 안하고, DB에 매핑 안된 이미지를 추가해주는 API 입니다.
+    @GetMapping("/test-image")
+    public Response createTestImage() {
+        amazonS3UploadService.createTestImage();
+        return Response.success();
+    }
+}
