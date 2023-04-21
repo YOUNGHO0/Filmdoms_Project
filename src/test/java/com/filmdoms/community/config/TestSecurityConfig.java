@@ -4,6 +4,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
 import com.filmdoms.community.account.data.constants.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
@@ -17,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@Import({SecurityConfig.class, JwtTokenProvider.class, UserDetailsServiceImpl.class})
+@Import({SecurityConfig.class, JwtTokenProvider.class, UserDetailsServiceImpl.class, CustomOAuthSuccessHandler.class})
 @TestPropertySource(properties = {
         "JWT_KEY=aKeyThatIsVeryLongToBeUsedForJWTKEY"
 })
