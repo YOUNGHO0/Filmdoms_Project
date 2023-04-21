@@ -8,8 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @SpringBootApplication
 @PropertySource(value = {
         "classpath:application.yml",
-        "classpath:mail.yml",
-        "classpath:s3.yml"
+        "classpath:mail.yml"
 }, factory = YamlPropertySourceFactory.class)
 public class CommunityApplication {
 
