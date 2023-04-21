@@ -2,8 +2,8 @@ package com.filmdoms.community.account.config.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
-import com.filmdoms.community.account.data.constants.AccountRole;
-import com.filmdoms.community.account.data.constants.OAuthType;
+import com.filmdoms.community.account.data.constant.AccountRole;
+import com.filmdoms.community.account.data.constant.OAuthType;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.OAuthResponseDto;
 import com.filmdoms.community.account.data.dto.response.Response;

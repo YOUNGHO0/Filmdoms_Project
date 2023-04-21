@@ -2,7 +2,7 @@ package com.filmdoms.community.board.data.dto;
 
 import com.filmdoms.community.account.data.dto.response.SimpleAccountResponseDto;
 import com.filmdoms.community.board.data.BoardHeadCore;
-import com.filmdoms.community.board.data.constant.PostStatus;
+import com.filmdoms.community.article.data.constant.PostStatus;
 import com.filmdoms.community.imagefile.data.dto.response.ImageResponseDto;
 import lombok.Getter;
 

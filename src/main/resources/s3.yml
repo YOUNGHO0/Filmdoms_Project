@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    credentials:
+      accessKey:  ${AWS_ACCESS_KEY_ID}
+      secretKey:  ${AWS_SECRET_ACCESS_KEY}
+    s3:
+      bucket: ${BUCKET_NAME}
+      dir: /image
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

@@ -1,6 +1,6 @@
 package com.filmdoms.community.article.service;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
@@ -17,8 +17,8 @@ import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.data.entity.FileContent;
 import com.filmdoms.community.file.repository.FileContentRepository;
 import com.filmdoms.community.file.repository.FileRepository;
-import com.filmdoms.community.newcomment.data.entity.NewComment;
-import com.filmdoms.community.newcomment.repository.NewCommentRepository;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,7 @@ public class InitService {
     private final CriticRepository criticRepository;
     private final FileRepository fileRepository;
     private final FileContentRepository fileContentRepository;
-    private final NewCommentRepository newCommentRepository;
+    private final CommentRepository commentRepository;
     private final AnnounceRepository announceRepository;
 
     public void makeArticleData(int limit) {
@@ -94,22 +94,22 @@ public class InitService {
 
             int commentNum = (i - 1) % 3 + 1; //댓글 개수는 1,2,3,1,2,3,... 순서로 데이터 만들기
             for (int j = 1; j <= commentNum; j++) {
-                NewComment comment = NewComment.builder() //댓글 생성
+                Comment comment = Comment.builder() //댓글 생성
                         .article(article)
                         .author(admin)
                         .content("Movie 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
 
-                newCommentRepository.save(comment);
+                commentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
-                    NewComment childComment = NewComment.builder() //댓글 생성
+                    Comment childComment = Comment.builder() //댓글 생성
                             .article(article)
                             .author(admin)
                             .parentComment(comment)
                             .content("Movie 게시판 " + i + "번째 글의 " + j + "번째 댓글의 " + k + "번째 대댓글 내용")
                             .build();
-                    newCommentRepository.save(childComment);
+                    commentRepository.save(childComment);
                 }
             }
         }
@@ -152,21 +152,21 @@ public class InitService {
 
             int commentNum = (i - 1) % 3 + 1;
             for (int j = 1; j <= commentNum; j++) {
-                NewComment comment = NewComment.builder()
+                Comment comment = Comment.builder()
                         .article(article)
                         .author(admin)
                         .content("File Universe 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
-                newCommentRepository.save(comment);
+                commentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
-                    NewComment childComment = NewComment.builder() //댓글 생성
+                    Comment childComment = Comment.builder() //댓글 생성
                             .article(article)
                             .author(admin)
                             .parentComment(comment)
                             .content("File Universe 게시판 " + i + "번째 글의 " + j + "번째 댓글의 " + k + "번째 대댓글 내용")
                             .build();
-                    newCommentRepository.save(childComment);
+                    commentRepository.save(childComment);
                 }
             }
         }
@@ -206,21 +206,21 @@ public class InitService {
 
             int commentNum = (i - 1) % 3 + 1;
             for (int j = 1; j <= commentNum; j++) {
-                NewComment comment = NewComment.builder()
+                Comment comment = Comment.builder()
                         .article(article)
                         .author(admin)
                         .content("Critic 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
-                newCommentRepository.save(comment);
+                commentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
-                    NewComment childComment = NewComment.builder() //댓글 생성
+                    Comment childComment = Comment.builder() //댓글 생성
                             .article(article)
                             .author(admin)
                             .parentComment(comment)
                             .content("Critic 게시판 " + i + "번째 글의 " + j + "번째 댓글의 " + k + "번째 대댓글 내용")
                             .build();
-                    newCommentRepository.save(childComment);
+                    commentRepository.save(childComment);
                 }
             }
         }

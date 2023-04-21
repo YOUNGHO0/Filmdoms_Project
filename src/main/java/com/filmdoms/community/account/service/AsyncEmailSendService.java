@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class AsyncEmailSendService {
 
     private final JavaMailSender emailSender;
-
     @Async("mailAsyncExecutor")
     public void sendEmail(String email, String subject, String content, boolean html, boolean multipart) {
         try {

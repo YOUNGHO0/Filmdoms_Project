@@ -1,7 +1,7 @@
 package com.filmdoms.community.banner.data.entity;
 
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.account.data.entity.BaseTimeEntity;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

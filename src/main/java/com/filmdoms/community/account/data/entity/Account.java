@@ -1,8 +1,7 @@
 package com.filmdoms.community.account.data.entity;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
-import com.filmdoms.community.account.data.constants.AccountStatus;
-import com.filmdoms.community.board.data.BaseTimeEntity;
+import com.filmdoms.community.account.data.constant.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountStatus;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
 

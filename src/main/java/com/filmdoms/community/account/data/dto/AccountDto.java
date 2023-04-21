@@ -1,9 +1,9 @@
 package com.filmdoms.community.account.data.dto;
 
-import com.filmdoms.community.account.data.constants.AccountRole;
-import com.filmdoms.community.account.data.constants.AccountStatus;
+import com.filmdoms.community.account.data.constant.AccountRole;
+import com.filmdoms.community.account.data.constant.AccountStatus;
 import com.filmdoms.community.account.data.entity.Account;
-import java.sql.Timestamp;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
