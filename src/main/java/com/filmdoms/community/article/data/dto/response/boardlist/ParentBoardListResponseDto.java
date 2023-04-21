@@ -16,7 +16,7 @@ public abstract class ParentBoardListResponseDto {
     private Category category;
     private Tag tag;
     private String title;
-    private DetailPageAccountResponseDto writer;
+    private DetailPageAccountResponseDto author;
     private long createdAt;
     private long updatedAt;
     private int views;
@@ -28,7 +28,7 @@ public abstract class ParentBoardListResponseDto {
         this.category = article.getCategory();
         this.tag = article.getTag();
         this.title = article.getTitle();
-        this.writer = DetailPageAccountResponseDto.from(article.getAuthor());
+        this.author = DetailPageAccountResponseDto.from(article.getAuthor());
         this.createdAt = ZonedDateTime.of(article.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updatedAt = ZonedDateTime.of(article.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.views = article.getView();

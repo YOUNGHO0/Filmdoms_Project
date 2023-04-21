@@ -10,7 +10,7 @@ public class TopFiveArticleResponseDto {
 
     private Long id;
     private String title;
-    private SimpleAccountResponseDto writer;
+    private SimpleAccountResponseDto author;
     private boolean isContainImage;
 
     private Category category;
@@ -21,7 +21,7 @@ public class TopFiveArticleResponseDto {
         this.title = title;
         this.category = category;
         this.isContainImage = containsImage;
-        this.writer = author;
+        this.author = author;
     }
 
     public static TopFiveArticleResponseDto from(Article article) {

@@ -15,14 +15,14 @@ import java.time.LocalDate;
 @Getter
 public class CriticMainPageResponseDto extends ParentMainPageResponseDto {
     private FileResponseDto mainImage;
-    private SimpleAccountResponseDto writer;
+    private SimpleAccountResponseDto author;
     private String description;
     private long createdAt;
 
     private CriticMainPageResponseDto(Critic critic) {
         super(critic.getArticle());
         this.mainImage = FileResponseDto.from(critic.getMainImage());
-        this.writer = SimpleAccountResponseDto.from(critic.getArticle().getAuthor());
+        this.author = SimpleAccountResponseDto.from(critic.getArticle().getAuthor());
         this.description = critic.getArticle().getContent().getContent();
         this.createdAt = ZonedDateTime.of(critic.getArticle().getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
