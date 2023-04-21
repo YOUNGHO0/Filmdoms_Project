@@ -8,19 +8,13 @@ server:
 
 domain: ${DOMAIN}
 
-spring:
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${GMAIL_ADDRESS}
-    password: ${GMAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
+# 어플리케이션 실행 시 LocalVariableTableParameterNameDiscoverer가 WARN 로그를 출력하지 않도록 함
+logging:
+  level:
+    org:
+      springframework:
+        core:
+          LocalVariableTableParameterNameDiscoverer: error
 ---
 
 spring:
@@ -50,19 +44,6 @@ spring:
     init:
       mode: never
 
-cloud:
-  aws:
-    credentials:
-      accessKey:  ${AWS_ACCESS_KEY_ID}
-      secretKey:  ${AWS_SECRET_ACCESS_KEY}
-    s3:
-      bucket: ${BUCKET_NAME}
-      dir: /image
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-
 ---
 
 spring:
@@ -91,29 +72,6 @@ spring:
   sql:
     init:
       mode: always
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
-            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
-            scope: email
-            redirect-uri: "{baseUrl}/front/oauth2/google"
-
-cloud:
-  aws:
-    credentials:
-      accessKey:  ${AWS_ACCESS_KEY_ID}
-      secretKey:  ${AWS_SECRET_ACCESS_KEY}
-    s3:
-      bucket: ${BUCKET_NAME}
-      dir: /image
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
 
 ---
 
@@ -153,29 +111,3 @@ spring:
     init:
       mode: always
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${OAUTH_GOOGLE_CLIENT_ID}
-            client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
-            scope: email
-            redirect-uri: "{baseUrl}/front/oauth2/google"
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
-cloud:
-  aws:
-    credentials:
-      accessKey:  ${AWS_ACCESS_KEY_ID}
-      secretKey:  ${AWS_SECRET_ACCESS_KEY}
-    s3:
-      bucket: ${BUCKET_NAME}
-      dir: /image
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
