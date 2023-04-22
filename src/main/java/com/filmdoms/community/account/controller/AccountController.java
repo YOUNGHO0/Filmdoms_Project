@@ -34,7 +34,7 @@ public class AccountController {
     public Response<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
 
         // 로그인 확인
-        String accessToken = accountService.login(requestDto.getUsername(), requestDto.getPassword());
+        String accessToken = accountService.login(requestDto.getEmail(), requestDto.getPassword());
 
         // JWT 토큰 반환
         return Response.success(new LoginResponseDto(accessToken));
@@ -46,10 +46,10 @@ public class AccountController {
         return Response.success();
     }
 
-    @GetMapping("/check/username")
-    public Response<CheckDuplicateResponseDto> isUsernameDuplicate(@RequestParam String username) {
-        return Response.success(new CheckDuplicateResponseDto(accountService.isUsernameDuplicate(username)));
-    }
+//    @GetMapping("/check/username")
+//    public Response<CheckDuplicateResponseDto> isUsernameDuplicate(@RequestParam String username) {
+//        return Response.success(new CheckDuplicateResponseDto(accountService.isUsernameDuplicate(username)));
+//    }
 
     @GetMapping("/check/email")
     public Response<CheckDuplicateResponseDto> isEmailDuplicate(@RequestParam String email) {

@@ -31,7 +31,7 @@ public enum ErrorCode {
     COMMENT_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "비활성화되었거나 삭제된 코멘트입니다."),
     INVALID_PARENT_COMMENT_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 부모 댓글 아이디이거나, 게시물에 해당 부모 댓글이 존재하지 않습니다."),
     MANAGER_COMMENT_CANNOT_BE_CREATED(HttpStatus.BAD_REQUEST, "관리자 댓글을 생성할 수 없습니다."),
-    DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "중복된 회원 ID 입니다."),
+//    DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "중복된 회원 ID 입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "중복된 회원 이메일 입니다."),
     NO_KEYWORD_FOUND(HttpStatus.BAD_REQUEST, "검색할 키워드가 누락되었습니다"),
     TOO_MANY_KEYWORD(HttpStatus.BAD_REQUEST, "한개의 키워드로만 검색 가능합니다"),

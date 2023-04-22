@@ -18,7 +18,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException exception) throws IOException {
         log.info(exception.getMessage() +
                 " for request of URI: [" + request.getRequestURI() + "]" +
-                " requested by Username: [" + request.getUserPrincipal().getName() + "]");
+                " requested by Account: " + request.getUserPrincipal().getName());
         response.setContentType("application/json");
         response.setStatus(ErrorCode.AUTHORIZATION_ERROR.getStatus().value());
         response.getWriter().write(Response.error(ErrorCode.AUTHORIZATION_ERROR.name()).toStream());

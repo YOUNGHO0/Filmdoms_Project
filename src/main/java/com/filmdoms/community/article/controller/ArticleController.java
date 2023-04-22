@@ -34,7 +34,7 @@ public class ArticleController {
 
         if (parentRequestDto instanceof ArticleRequestDto) {
             ArticleRequestDto requestArticleDto = (ArticleRequestDto) parentRequestDto;
-            Account userAccount = accountRepository.findByUsername(accountDto.getUsername()).orElseThrow(
+            Account userAccount = accountRepository.findByEmail(accountDto.getEmail()).orElseThrow(
                     () -> (new ApplicationException(ErrorCode.USER_NOT_FOUND, "사용자가 존재하지 않습니다")));
             ArticleControllerToServiceDto articleDto = ArticleControllerToServiceDto.from(requestArticleDto, category, tag, userAccount);
             articleService.createDefaultArticle(articleDto);
@@ -42,7 +42,7 @@ public class ArticleController {
 
         if (parentRequestDto instanceof FilmUniverseRequestDto) {
             FilmUniverseRequestDto requestNoticeDto = (FilmUniverseRequestDto) parentRequestDto;
-            Account userAccount = accountRepository.findByUsername(accountDto.getUsername()).orElseThrow(
+            Account userAccount = accountRepository.findByEmail(accountDto.getEmail()).orElseThrow(
                     () -> (new ApplicationException(ErrorCode.USER_NOT_FOUND, "사용자가 존재하지 않습니다")));
             FilmUniverseControllerToServiceDto noticeDto = FilmUniverseControllerToServiceDto.from(requestNoticeDto, category, tag, userAccount);
             articleService.createFilmUniverseArticle(noticeDto);

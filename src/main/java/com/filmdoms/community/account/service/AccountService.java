@@ -31,15 +31,15 @@ public class AccountService {
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * 유저 ID와 비밀번호를 확인해 계정 정보를 찾는다.
+     * 유저 이메일과 비밀번호를 확인해 계정 정보를 찾는다.
      *
-     * @param username 유저 ID
+     * @param email 유저 이메일
      * @param password 비밀번호
      * @return 계정정보
      */
-    public String login(String username, String password) {
+    public String login(String email, String password) {
         // 가입 여부 확인
-        AccountDto accountDto = accountRepository.findByUsername(username)
+        AccountDto accountDto = accountRepository.findByEmail(email)
                 .map(AccountDto::from)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
@@ -49,12 +49,12 @@ public class AccountService {
         }
 
         // 토큰 반환
-        return jwtTokenProvider.createToken(accountDto.getUsername(), accountDto.getAuthorities());
+        return jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
     }
 
-    public boolean isUsernameDuplicate(String username) {
-        return accountRepository.existsByUsername(username);
-    }
+//    public boolean isUsernameDuplicate(String username) {
+//        return accountRepository.existsByUsername(username);
+//    }
 
     public boolean isEmailDuplicate(String email) {
         return accountRepository.existsByEmail(email);
@@ -62,10 +62,10 @@ public class AccountService {
 
     public void createAccount(JoinRequestDto requestDto) {
 
-        log.info("아이디 중복 확인");
-        if (isUsernameDuplicate(requestDto.getUsername())) {
-            throw new ApplicationException(ErrorCode.DUPLICATE_USERNAME);
-        }
+//        log.info("아이디 중복 확인");
+//        if (isUsernameDuplicate(requestDto.getUsername())) {
+//            throw new ApplicationException(ErrorCode.DUPLICATE_USERNAME);
+//        }
 
         log.info("이메일 중복 확인");
         if (isEmailDuplicate(requestDto.getEmail())) {
@@ -74,7 +74,7 @@ public class AccountService {
 
         log.info("Account 엔티티 생성");
         Account newAccount = Account.builder()
-                .username(requestDto.getUsername())
+                //.username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
                 .email(requestDto.getEmail())
@@ -98,7 +98,7 @@ public class AccountService {
     public AccountResponseDto readAccount(AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsernameWithImage(accountDto.getUsername())
+        Account account = accountRepository.findByEmailWithImage(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         return AccountResponseDto.from(account);
@@ -108,7 +108,7 @@ public class AccountService {
     public AccountResponseDto updateAccountProfile(UpdateProfileRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsernameWithImage(accountDto.getUsername())
+        Account account = accountRepository.findByEmailWithImage(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         File profileImage = account.getProfileImage();
@@ -128,7 +128,7 @@ public class AccountService {
     public void updateAccountPassword(UpdatePasswordRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsername(accountDto.getUsername())
+        Account account = accountRepository.findByEmail(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         log.info("기존 비밀번호와 대조");
@@ -144,7 +144,7 @@ public class AccountService {
     public void deleteAccount(DeleteAccountRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsername(accountDto.getUsername())
+        Account account = accountRepository.findByEmail(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         log.info("기존 비밀번호와 대조");

@@ -62,7 +62,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             //아래 5줄은 공통 처리
             //그 다음은 분기 처리
             AccountDto accountDto = AccountDto.from(account);
-            String token = jwtTokenProvider.createToken(accountDto.getUsername(), accountDto.getAuthorities());
+            String token = jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
@@ -74,7 +74,6 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             }
         } else { //
             Account newAccount = Account.builder()
-                    .username(UUID.randomUUID().toString()) //임시로 UUID 발급 (JWT 인증절차 변경 필요)
                     .email(email)
                     .role(AccountRole.GUEST)
                     .isSocialLogin(true)
@@ -82,7 +81,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             accountRepository.save(newAccount);
             AccountDto accountDto = AccountDto.from(newAccount);
-            String token = jwtTokenProvider.createToken(accountDto.getUsername(), accountDto.getAuthorities());
+            String token = jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
