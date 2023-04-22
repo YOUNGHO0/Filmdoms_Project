@@ -15,6 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByNickname(String nickname);
+
     @Query("SELECT a FROM Account a " +
             "LEFT JOIN FETCH a.profileImage " +
             "WHERE a.email = :email")

@@ -52,9 +52,9 @@ public class AccountService {
         return jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
     }
 
-//    public boolean isUsernameDuplicate(String username) {
-//        return accountRepository.existsByUsername(username);
-//    }
+    public boolean isNicknameDuplicate(String nickname) {
+        return accountRepository.existsByNickname(nickname);
+    }
 
     public boolean isEmailDuplicate(String email) {
         return accountRepository.existsByEmail(email);
@@ -62,10 +62,10 @@ public class AccountService {
 
     public void createAccount(JoinRequestDto requestDto) {
 
-//        log.info("아이디 중복 확인");
-//        if (isUsernameDuplicate(requestDto.getUsername())) {
-//            throw new ApplicationException(ErrorCode.DUPLICATE_USERNAME);
-//        }
+        log.info("닉네임 중복 확인");
+        if (isNicknameDuplicate(requestDto.getNickname())) {
+            throw new ApplicationException(ErrorCode.DUPLICATE_NICKNAME);
+        }
 
         log.info("이메일 중복 확인");
         if (isEmailDuplicate(requestDto.getEmail())) {

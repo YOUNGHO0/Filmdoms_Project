@@ -46,10 +46,10 @@ public class AccountController {
         return Response.success();
     }
 
-//    @GetMapping("/check/username")
-//    public Response<CheckDuplicateResponseDto> isUsernameDuplicate(@RequestParam String username) {
-//        return Response.success(new CheckDuplicateResponseDto(accountService.isUsernameDuplicate(username)));
-//    }
+    @GetMapping("/check/nickname")
+    public Response<CheckDuplicateResponseDto> isUsernameDuplicate(@RequestParam String nickname) {
+        return Response.success(new CheckDuplicateResponseDto(accountService.isNicknameDuplicate(nickname)));
+    }
 
     @GetMapping("/check/email")
     public Response<CheckDuplicateResponseDto> isEmailDuplicate(@RequestParam String email) {
