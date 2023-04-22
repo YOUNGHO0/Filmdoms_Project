@@ -1,5 +1,6 @@
 package com.filmdoms.community.article.data.entity.extra;
 
+import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
@@ -29,6 +30,9 @@ public class Critic {
 
     @Builder
     private Critic(Article article, File mainImage) {
+        if (article.getCategory() != Category.CRITIC || article.getTag().getCategory() != Category.CRITIC) {
+            throw new IllegalArgumentException("Wrong article category or tag");
+        }
         this.article = article;
         this.mainImage = mainImage;
     }

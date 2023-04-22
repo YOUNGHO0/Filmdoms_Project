@@ -1,5 +1,6 @@
 package com.filmdoms.community.article.data.entity.extra;
 
+import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
@@ -31,6 +32,9 @@ public class FilmUniverse {
 
     @Builder
     private FilmUniverse(Article article, File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
+        if (article.getCategory() != Category.FILM_UNIVERSE || article.getTag().getCategory() != Category.FILM_UNIVERSE) {
+            throw new IllegalArgumentException("Wrong article category or tag");
+        }
         this.article = article;
         this.mainImage = mainImage;
         this.startDate = startDate;
