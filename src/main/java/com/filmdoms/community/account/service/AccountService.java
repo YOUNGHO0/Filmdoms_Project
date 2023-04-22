@@ -85,7 +85,6 @@ public class AccountService {
                 .build();
 
         log.info("Account 엔티티 저장");
-        System.out.println(newAccount.getProfileImage().getUuidFileName());
         accountRepository.save(newAccount);
     }
 
