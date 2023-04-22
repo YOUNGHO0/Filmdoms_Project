@@ -14,15 +14,17 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AccountService {
     private final FileRepository fileRepository;
@@ -33,7 +35,7 @@ public class AccountService {
     /**
      * 유저 이메일과 비밀번호를 확인해 계정 정보를 찾는다.
      *
-     * @param email 유저 이메일
+     * @param email    유저 이메일
      * @param password 비밀번호
      * @return 계정정보
      */
@@ -83,15 +85,18 @@ public class AccountService {
                 .build();
 
         log.info("Account 엔티티 저장");
+        System.out.println(newAccount.getProfileImage().getUuidFileName());
         accountRepository.save(newAccount);
     }
 
     // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요
     private File getDefaultImage() {
-        return fileRepository.findById(1L).orElse(File.builder()
-                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
-                .originalFileName("original_file_name")
-                .build()
+        return fileRepository.findById(1L).orElseGet(() -> fileRepository.save(
+                        File.builder()
+                                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
+                                .originalFileName("original_file_name")
+                                .build()
+                )
         );
     }
 
