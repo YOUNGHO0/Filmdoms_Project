@@ -1,7 +1,5 @@
 package com.filmdoms.community.config;
 
-import static org.mockito.BDDMockito.given;
-
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
@@ -9,14 +7,15 @@ import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.TokenAuthenticationService;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.Optional;
+
+import static org.mockito.BDDMockito.given;
 
 @Import({SecurityConfig.class, JwtTokenProvider.class, TokenAuthenticationService.class, CustomOAuthSuccessHandler.class})
 @TestPropertySource(properties = {

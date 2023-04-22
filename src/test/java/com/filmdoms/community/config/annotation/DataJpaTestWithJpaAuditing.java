@@ -1,4 +1,4 @@
-package com.filmdoms.community.config;
+package com.filmdoms.community.config.annotation;
 
 import com.filmdoms.community.account.config.JpaConfig;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

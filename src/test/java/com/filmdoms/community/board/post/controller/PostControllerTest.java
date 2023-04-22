@@ -1,19 +1,5 @@
 package com.filmdoms.community.board.post.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -23,8 +9,6 @@ import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
 import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.service.PostService;
 import com.filmdoms.community.config.TestSecurityConfig;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,14 +17,25 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockPart;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PostController.class)
 @Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 @DisplayName("컨트롤러 - 게시글 서비스")
 class PostControllerTest {
 
@@ -88,7 +83,8 @@ class PostControllerTest {
     class aboutPostCreate {
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("게시글 생성 요청시, 정상적인 요청이라면, 생성된 게시글 ID를 반환한다.")
         void givenCreatingPostRequest_whenCreatingPost_thenReturnsCreatedPostId() throws Exception {
             // Given
@@ -144,7 +140,8 @@ class PostControllerTest {
     class aboutPostUpdate {
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("게시글 수정 요청시, 정상적인 요청이라면, 수정된 게시글 ID를 반환한다.")
         void givenUpdatingPostRequest_whenUpdatingPost_thenReturnsUpdatedPostId() throws Exception {
             // Given
@@ -183,7 +180,8 @@ class PostControllerTest {
         }
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("게시글 수정 요청시, 생성자와 다른 유저라면, 인증 에러를 반환한다.")
         void givenDifferentUser_whenUpdatingPost_thenReturnsInvalidPermissionErrorCode() throws Exception {
             // Given
@@ -219,7 +217,8 @@ class PostControllerTest {
     class aboutPostDelete {
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("게시글 삭제 요청시, 정상적인 요청이라면, 성공 코드를 반환한다.")
         void givenNothing_whenViewingPostsFromMainPage_thenReturnsFourRecentPosts() throws Exception {
             // Given
@@ -246,7 +245,8 @@ class PostControllerTest {
         }
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("게시글 삭제 요청시, 생성자와 다른 유저라면, 권한 에러를 반환한다.")
         void givenDifferentUser_whenDeletingPost_thenReturnsInvalidPermissionErrorCode() throws Exception {
             // Given
@@ -263,7 +263,8 @@ class PostControllerTest {
         }
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("게시글 삭제 요청시, 존재하지 않는 게시글이라면, 에러를 반환한다.")
         void givenInvalidPostId_whenDeletingPost_thenReturnsUriNotFoundErrorCode() throws Exception {
             // Given

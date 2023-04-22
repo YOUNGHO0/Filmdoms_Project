@@ -1,13 +1,5 @@
 package com.filmdoms.community.banner.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-
-import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -20,20 +12,26 @@ import com.filmdoms.community.banner.data.entity.Banner;
 import com.filmdoms.community.banner.repository.BannerRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@WebMvcTest(controllers = BannerService.class, excludeAutoConfiguration = SecurityAutoConfiguration.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+
+@SpringBootTest(classes = {BannerService.class})
+@ActiveProfiles("test")
 @DisplayName("비즈니스 로직 - 배너 서비스")
 public class BannerServiceTest {
 
@@ -231,7 +229,7 @@ public class BannerServiceTest {
     }
 
     private Account getMockAdminAccount() {
-        Account mockAccount = Account.builder().username("testAdmin").password("testpw").email("tester@email.com")
+        Account mockAccount = Account.builder().nickname("testAdminNickname").password("testpw").email("tester@email.com")
                 .role(AccountRole.ADMIN).build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
         return mockAccount;

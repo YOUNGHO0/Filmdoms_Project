@@ -1,25 +1,13 @@
 package com.filmdoms.community.banner.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filmdoms.community.banner.data.dto.request.BannerRequestDto;
 import com.filmdoms.community.banner.data.dto.response.BannerResponseDto;
 import com.filmdoms.community.banner.service.BannerService;
 import com.filmdoms.community.config.TestSecurityConfig;
+import com.filmdoms.community.config.annotation.WithMockAdminUser;
 import com.filmdoms.community.file.data.dto.response.FileResponseDto;
 import com.filmdoms.community.file.data.entity.File;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,13 +16,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BannerController.class)
 @Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 @DisplayName("컨트롤러 - 배너 서비스")
 class BannerControllerTest {
 
@@ -74,7 +72,8 @@ class BannerControllerTest {
     class aboutBannerCreate {
 
         @Test
-        @WithUserDetails(value = "testAdmin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testAdmin@filmdoms.com", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockAdminUser
         @DisplayName("배너 생성 요청시, 정상적인 요청이라면, 생성된 배너 정보를 반환한다.")
         void givenCreatingBannerRequest_whenCreatingBanner_thenReturnsCreatedBannerInfo() throws Exception {
             // Given
@@ -99,7 +98,8 @@ class BannerControllerTest {
         }
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("배너 생성 요청시, 관리자가 아니라면, 인가 에러를 반환한다.")
         void givenUnauthorizedUser_whenCreatingBanner_thenReturnsUnauthorizedErrorCode() throws Exception {
             // Given
@@ -143,7 +143,8 @@ class BannerControllerTest {
     class aboutBannerUpdate {
 
         @Test
-        @WithUserDetails(value = "testAdmin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testAdmin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockAdminUser
         @DisplayName("배너 수정 요청시, 정상적인 요청이라면, 수정된 배너 정보를 반환한다.")
         void givenUpdatingBannerRequest_whenUpdatingBanner_thenReturnsUpdatedBannerInfo() throws Exception {
             // Given
@@ -168,7 +169,7 @@ class BannerControllerTest {
         }
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("배너 수정 요청시, 관리자가 아니라면, 인가 에러를 반환한다.")
         void givenUnauthorizedUser_whenUpdatingBanner_thenReturnsUnauthorizedErrorCode() throws Exception {
             // Given
@@ -211,7 +212,8 @@ class BannerControllerTest {
     @DisplayName("배너 삭제 요청 테스트")
     class aboutBannerDelete {
         @Test
-        @WithUserDetails(value = "testAdmin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testAdmin", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockAdminUser
         @DisplayName("배너 삭제 요청시, 정상적인 요청이라면, 성공 코드를 반환한다.")
         void givenDeletingBannerRequest_whenDeletingBanner_thenReturnsSuccessCode() throws Exception {
             // Given
@@ -226,7 +228,8 @@ class BannerControllerTest {
         }
 
         @Test
-        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//        @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        @WithMockUser
         @DisplayName("배너 삭제 요청시, 관리자가 아니라면, 인가 에러를 반환한다.")
         void givenUnauthorizedUser_whenDeletingBanner_thenReturnsUnauthorizedErrorCode() throws Exception {
             // Given

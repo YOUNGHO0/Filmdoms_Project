@@ -11,7 +11,7 @@ public class TestAccountProvider {
         count++;
         Account account = Account.builder()
                 .nickname("test_nickname_" + count)
-                .email("test_email" + count + "@filmdoms.com")
+                .email("test_email_" + count + "@filmdoms.com")
                 .password("test_password")
                 .role(AccountRole.USER)
                 .build();
