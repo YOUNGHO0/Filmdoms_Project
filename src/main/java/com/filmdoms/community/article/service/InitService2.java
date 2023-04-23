@@ -24,8 +24,8 @@ public class InitService2 {
     public void initData() {
         File tempFile = initServiceGenerator.fileGenerator("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png", "original_file_name21");
 
-        Account testAccount = initServiceGenerator.accountGenerator("hello", "hellonickname", AccountRole.USER, tempFile);
-        Account testAccount2 = initServiceGenerator.accountGenerator("ironman", "imironman", AccountRole.USER, tempFile);
+        Account testAccount = initServiceGenerator.accountGenerator("hellonickname", AccountRole.USER, tempFile);
+        Account testAccount2 = initServiceGenerator.accountGenerator("imironman", AccountRole.USER, tempFile);
         List<Tag> movieTagList = Arrays.stream(Tag.values()) //영화 게시판 태그만 추출
                 .filter(tag -> tag.getCategory() == Category.MOVIE)
                 .toList();

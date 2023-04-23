@@ -57,7 +57,7 @@ public class InitService {
         fileRepository.save(defaultImage2);
 
         Account admin = Account.builder() //게시글, 댓글과 매핑될 Account 생성
-                .username("admin")
+                .email("admin@filmdoms.com")
                 .nickname("ironman")
                 .role(AccountRole.ADMIN)
                 .profileImage(defaultImage) //프로필 이미지를 디폴트 이미지로 세팅

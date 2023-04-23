@@ -1,53 +1,50 @@
 package com.filmdoms.community.account.config.jwt;
 
+import com.filmdoms.community.account.data.dto.AccountDto;
+import com.filmdoms.community.account.service.TokenAuthenticationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Collection;
+import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final UserDetailsService userDetailsService;
+    private final TokenAuthenticationService tokenAuthenticationService;
 
 
     @Value("${jwt.secret-key}")
     private String secretKey;
+    private byte[] keyBytes;
     private final long TOKEN_VALID_MILLISECOND = 1000L * 60 * 60;
 
-
     @PostConstruct // Bean 으로 주입되면서 실행
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
+    private void init() {
+        keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
     }
 
     private Key getKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // 토큰 생성
-    public String createToken(String username, Collection<? extends GrantedAuthority> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", roles);
+    public String createToken(String subject) {
+        Claims claims = Jwts.claims().setSubject(subject);
         Date now = new Date();
 
         return Jwts.builder()
@@ -60,12 +57,12 @@ public class JwtTokenProvider {
 
     // 토큰 인증 정보 조회
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        AccountDto accountDto = tokenAuthenticationService.findAccountBySubject(getSubject(token));
+        return new UsernamePasswordAuthenticationToken(accountDto, null, accountDto.getAuthorities());
     }
 
     // 토큰 기반 회원 구별 정보 추출
-    public String getUsername(String token) {
+    public String getSubject(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()

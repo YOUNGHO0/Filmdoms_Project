@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "account", indexes = {
-        @Index(columnList = "username"),
+        @Index(columnList = "nickname"),
         @Index(columnList = "email")
 })
 @Getter
@@ -26,10 +26,7 @@ public class Account extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true)
-    private String username;
-
-    @Column(name = "nickname")
+    @Column(name = "nickname", unique = true)
     private String nickname;
 
     @Column(name = "password")
@@ -60,8 +57,7 @@ public class Account extends BaseTimeEntity {
     private File profileImage;
 
     @Builder
-    private Account(String username, String nickname, String password, AccountRole role, String email, boolean isSocialLogin, File profileImage) {
-        this.username = username;
+    private Account(String nickname, String password, AccountRole role, String email, boolean isSocialLogin, File profileImage) {
         this.nickname = nickname;
         this.password = password;
         this.email = email;

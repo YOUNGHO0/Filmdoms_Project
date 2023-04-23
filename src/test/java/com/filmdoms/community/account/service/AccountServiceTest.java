@@ -1,18 +1,5 @@
 package com.filmdoms.community.account.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
@@ -27,24 +14,29 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@WebMvcTest(
-        controllers = AccountService.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest(classes = {AccountService.class})
+@ActiveProfiles("test")
 @DisplayName("비즈니스 로직 - 회원 서비스")
 class AccountServiceTest {
 
@@ -67,31 +59,31 @@ class AccountServiceTest {
     @DisplayName("로그인 기능 테스트")
     class aboutLogin {
         @Test
-        @DisplayName("올바른 ID와 비밀번호를 입력하면, 유저 정보를 반환한다.")
+        @DisplayName("올바른 이메일과 비밀번호를 입력하면, 유저 정보를 반환한다.")
         void givenCorrectUsernameAndPassword_whenTryingToLogin_thenReturnsAccountInfo() {
             // Given
-            String username = "username";
+            String email = "address@filmdoms.com";
             String password = "password";
-            Account mockAccount = getMockAccount(username, password);
-            when(accountRepository.findByUsername(username)).thenReturn(Optional.of(mockAccount));
+            Account mockAccount = getMockAccount(email, password);
+            when(accountRepository.findByEmail(email)).thenReturn(Optional.of(mockAccount));
             when(encoder.matches(password, mockAccount.getPassword())).thenReturn(true);
-            when(jwtTokenProvider.createToken(any(), any())).thenReturn("mockJwtString");
+            when(jwtTokenProvider.createToken(any())).thenReturn("mockJwtString");
 
             // When & Then
-            assertDoesNotThrow(() -> accountService.login(username, password));
+            assertDoesNotThrow(() -> accountService.login(email, password));
         }
 
         @Test
-        @DisplayName("존재하지 않는 ID를 입력하면, 예외를 반환한다.")
+        @DisplayName("존재하지 않는 이메일을 입력하면, 예외를 반환한다.")
         void givenWrongUsername_whenTryingToLogin_thenReturnsException() {
             // Given
-            String username = "wrong_username";
+            String email = "wrong_address@filmdoms.com";
             String password = "password";
-            when(accountRepository.findByUsername(username)).thenReturn(Optional.empty());
+            when(accountRepository.findByEmail(email)).thenReturn(Optional.empty());
 
             // When & Then
             ApplicationException e = assertThrows(ApplicationException.class,
-                    () -> accountService.login(username, password));
+                    () -> accountService.login(email, password));
             assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
         }
 
@@ -99,15 +91,15 @@ class AccountServiceTest {
         @DisplayName("일치하지 않는 비밀번호를 입력하면, 예외를 반환한다.")
         void givenWrongPassword_whenTryingToLogin_thenReturnsException() {
             // Given
-            String username = "username";
+            String email = "address@filmdoms.com";
             String password = "wrong_password";
-            Account mockAccount = getMockAccount(username, password);
-            when(accountRepository.findByUsername(username)).thenReturn(Optional.of(mockAccount));
+            Account mockAccount = getMockAccount(email, password);
+            when(accountRepository.findByEmail(email)).thenReturn(Optional.of(mockAccount));
             when(encoder.matches(password, mockAccount.getPassword())).thenReturn(false);
 
             // When & Then
             ApplicationException e = assertThrows(ApplicationException.class,
-                    () -> accountService.login(username, password));
+                    () -> accountService.login(email, password));
             assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
         }
     }
@@ -116,15 +108,15 @@ class AccountServiceTest {
     @DisplayName("회원가입 기능 테스트")
     class aboutJoin {
         @Test
-        @DisplayName("중복 아이디 확인시, 중복된 아이디를 입력하면, 참을 반환한다.")
-        void givenDuplicateUsername_whenCheckingUsername_thenReturnsTrue() {
+        @DisplayName("중복 닉네임 확인시, 중복된 닉네임을 입력하면, 참을 반환한다.")
+        void givenDuplicateNickname_whenCheckingNickname_thenReturnsTrue() {
 
             // Given
-            String username = "username";
-            given(accountRepository.existsByUsername(username)).willReturn(true);
+            String nickname = "nickname";
+            given(accountRepository.existsByNickname(nickname)).willReturn(true);
 
             // When & Then
-            assertTrue(accountService.isUsernameDuplicate(username));
+            assertTrue(accountService.isNicknameDuplicate(nickname));
         }
 
         @Test
@@ -133,10 +125,10 @@ class AccountServiceTest {
 
             // Given
             String email = "random@email.com";
-            given(accountRepository.existsByUsername(email)).willReturn(true);
+            given(accountRepository.existsByEmail(email)).willReturn(true);
 
             // When & Then
-            assertTrue(accountService.isUsernameDuplicate(email));
+            assertTrue(accountService.isEmailDuplicate(email));
         }
 
         @Test
@@ -145,12 +137,11 @@ class AccountServiceTest {
 
             // Given
             JoinRequestDto requestDto = JoinRequestDto.builder()
-                    .username("testuser")
                     .password("PassWord!0")
                     .email("random@email.com")
                     .nickname("JavaNoob")
                     .build();
-            given(accountRepository.existsByUsername(any())).willReturn(false);
+            given(accountRepository.existsByNickname(any())).willReturn(false);
             given(accountRepository.existsByEmail(any())).willReturn(false);
             given(fileRepository.findById(any())).willReturn(Optional.empty());
 
@@ -162,17 +153,16 @@ class AccountServiceTest {
         }
 
         @Test
-        @DisplayName("계정 생성시, 중복된 아이디라면, 예외를 반환한다.")
-        void givenDuplicateUsername_whenCreatingAccount_thenReturnsDuplicateUsernameException() {
+        @DisplayName("계정 생성시, 중복된 닉네임이라면, 예외를 반환한다.")
+        void givenDuplicateNickname_whenCreatingAccount_thenReturnsDuplicateNicknameException() {
 
             // Given
             JoinRequestDto requestDto = JoinRequestDto.builder()
-                    .username("testuser")
                     .password("PassWord!0")
                     .email("random@email.com")
                     .nickname("JavaNoob")
                     .build();
-            given(accountRepository.existsByUsername(any())).willReturn(true);
+            given(accountRepository.existsByNickname(any())).willReturn(true);
             given(accountRepository.existsByEmail(any())).willReturn(false);
             given(fileRepository.findById(any())).willReturn(Optional.empty());
 
@@ -182,7 +172,7 @@ class AccountServiceTest {
             // Then
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
-                    .hasMessage(ErrorCode.DUPLICATE_USERNAME.getMessage());
+                    .hasMessage(ErrorCode.DUPLICATE_NICKNAME.getMessage());
         }
 
         @Test
@@ -191,12 +181,11 @@ class AccountServiceTest {
 
             // Given
             JoinRequestDto requestDto = JoinRequestDto.builder()
-                    .username("testuser")
                     .password("PassWord!0")
                     .email("random@email.com")
                     .nickname("JavaNoob")
                     .build();
-            given(accountRepository.existsByUsername(any())).willReturn(false);
+            given(accountRepository.existsByNickname(any())).willReturn(false);
             given(accountRepository.existsByEmail(any())).willReturn(true);
             given(fileRepository.findById(any())).willReturn(Optional.empty());
 
@@ -220,7 +209,7 @@ class AccountServiceTest {
 
             // Given
             AccountDto mockAccountDto = mock(AccountDto.class);
-            Account mockAccount = getMockAccount("testuser", "password");
+            Account mockAccount = getMockAccount("address@filmdoms.com", "password");
 
             File mockNewImage = mock(File.class);
             given(mockNewImage.getId()).willReturn(2L);
@@ -230,7 +219,7 @@ class AccountServiceTest {
                     .fileId(2L)
                     .nickname("newNickname")
                     .build();
-            given(accountRepository.findByUsernameWithImage(any())).willReturn(Optional.of(mockAccount));
+            given(accountRepository.findByEmailWithImage(any())).willReturn(Optional.of(mockAccount));
             given(fileRepository.findById(any())).willReturn(Optional.of(mockNewImage));
 
             // When
@@ -249,13 +238,13 @@ class AccountServiceTest {
 
             // Given
             AccountDto mockAccountDto = mock(AccountDto.class);
-            Account mockAccount = getMockAccount("testuser", "password");
+            Account mockAccount = getMockAccount("address@filmdoms.com", "password");
 
             UpdateProfileRequestDto requestDto = UpdateProfileRequestDto.builder()
                     .fileId(2L)
                     .nickname("newNickname")
                     .build();
-            given(accountRepository.findByUsernameWithImage(any())).willReturn(Optional.of(mockAccount));
+            given(accountRepository.findByEmailWithImage(any())).willReturn(Optional.of(mockAccount));
             given(fileRepository.findById(any())).willReturn(Optional.empty());
 
             // When
@@ -286,7 +275,7 @@ class AccountServiceTest {
                     .oldPassword("password")
                     .newPassword("newPassword")
                     .build();
-            given(accountRepository.findByUsername(any())).willReturn(Optional.of(mockAccount));
+            given(accountRepository.findByEmail(any())).willReturn(Optional.of(mockAccount));
             given(encoder.matches(any(), any())).willReturn(true);
             given(encoder.encode("newPassword")).willReturn(newEncodedPassword);
 
@@ -311,7 +300,7 @@ class AccountServiceTest {
                     .oldPassword("wrongPassword")
                     .newPassword("newPassword")
                     .build();
-            given(accountRepository.findByUsername(any())).willReturn(Optional.of(mockAccount));
+            given(accountRepository.findByEmail(any())).willReturn(Optional.of(mockAccount));
             given(encoder.matches(any(), any())).willReturn(false);
             given(encoder.encode("newPassword")).willReturn(newEncodedPassword);
 
@@ -342,7 +331,7 @@ class AccountServiceTest {
             DeleteAccountRequestDto requestDto = DeleteAccountRequestDto.builder()
                     .password("password")
                     .build();
-            given(accountRepository.findByUsername(any())).willReturn(Optional.of(mockAccount));
+            given(accountRepository.findByEmail(any())).willReturn(Optional.of(mockAccount));
             given(encoder.matches("password", "password")).willReturn(true);
 
             // When
@@ -364,7 +353,7 @@ class AccountServiceTest {
             DeleteAccountRequestDto requestDto = DeleteAccountRequestDto.builder()
                     .password("wrongPassword")
                     .build();
-            given(accountRepository.findByUsername(any())).willReturn(Optional.of(mockAccount));
+            given(accountRepository.findByEmail(any())).willReturn(Optional.of(mockAccount));
             given(encoder.matches("wrongPassword", "password")).willReturn(false);
 
             // When
@@ -378,22 +367,20 @@ class AccountServiceTest {
         }
     }
 
-    private Account getMockAccount(String username, String password) {
+    private Account getMockAccount(String email, String password) {
 
         File mockOriginalImage = mock(File.class);
         given(mockOriginalImage.getId()).willReturn(1L);
 
         Account mockAccount = Account.builder()
-                .username(username)
                 .password(password)
                 .nickname("oldNickname")
-                .email("random@email.com")
+                .email(email)
                 .role(AccountRole.USER)
                 .isSocialLogin(false)
                 .profileImage(mockOriginalImage)
                 .build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
-        ReflectionTestUtils.setField(mockAccount, Account.class, "isSocialLogin", false, boolean.class);
 
         return mockAccount;
     }

@@ -59,7 +59,7 @@ public class EmailService {
         인증된 계정으로 전환하는 작업 수행
          */
 
-        log.info("Account has been authenticated. email={}, username={}", email, account.getUsername());
+        log.info("Account has been authenticated. email={}, nickname={}", email, account.getNickname());
         return SimpleAccountResponseDto.from(account);
     }
 

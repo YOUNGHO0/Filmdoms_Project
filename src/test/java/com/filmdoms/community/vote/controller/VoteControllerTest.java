@@ -1,14 +1,5 @@
 package com.filmdoms.community.vote.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.config.TestSecurityConfig;
@@ -21,13 +12,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(VoteController.class)
 @Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 @DisplayName("컨트롤러 - 추천 기능")
 class VoteControllerTest {
     @Autowired
@@ -36,7 +35,8 @@ class VoteControllerTest {
     private VoteService voteService;
 
     @Test
-    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithMockUser
     @DisplayName("게시글을 추천 요청시, 정상적인 요청이라면, 게시글의 총 추천 수와 나의 추천 여부를 반환한다.")
     void givenProperRequest_whenVotingArticle_thenReturnsVoteResult() throws Exception {
 
@@ -58,7 +58,8 @@ class VoteControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//    @WithUserDetails(value = "testUser", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithMockUser
     @DisplayName("게시글을 추천 요청시, 존재하지 않는 게시글이라면, 에러를 반환한다.")
     void givenInvalidPostId_whenVotingArticle_thenReturnsUriNotFoundErrorCode() throws Exception {
 
@@ -76,7 +77,7 @@ class VoteControllerTest {
     }
 
     @Test
-    @WithAnonymousUser()
+    @WithAnonymousUser
     @DisplayName("게시글을 추천 요청시, 미인증 유저라면, 인증 에러를 반환한다.")
     void givenUnauthenticatedUser_whenVotingArticle_thenReturnsUnauthenticatedErrorCode() throws Exception {
 

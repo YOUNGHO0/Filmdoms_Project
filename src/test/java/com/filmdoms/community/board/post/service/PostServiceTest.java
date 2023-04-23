@@ -1,16 +1,5 @@
 package com.filmdoms.community.board.post.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-
-import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -25,31 +14,35 @@ import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
 import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.data.entity.PostHeader;
 import com.filmdoms.community.board.post.repository.PostHeaderRepository;
+import com.filmdoms.community.file.service.ImageFileService;
 import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
-import com.filmdoms.community.file.service.ImageFileService;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.test.util.ReflectionTestUtils;
 
-@WebMvcTest(
-        controllers = PostService.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+
+@SpringBootTest(classes = {PostService.class})
+@ActiveProfiles("test")
 @DisplayName("비즈니스 로직 - 회원 서비스")
 class PostServiceTest {
 
@@ -380,9 +373,9 @@ class PostServiceTest {
 
     private Account getMockAccount() {
         Account mockAccount = Account.builder()
-                .username("tester")
                 .password("testpw")
                 .email("tester@email.com")
+                .nickname("nickname")
                 .role(AccountRole.USER)
                 .build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 2L, Long.class);
@@ -391,9 +384,9 @@ class PostServiceTest {
 
     private Account getAnotherMockAccount() {
         Account mockAccount = Account.builder()
-                .username("anotherUser")
                 .password("anotherPw")
                 .email("anotherUser@email.com")
+                .nickname("anotherNickname")
                 .role(AccountRole.USER)
                 .build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 3L, Long.class);

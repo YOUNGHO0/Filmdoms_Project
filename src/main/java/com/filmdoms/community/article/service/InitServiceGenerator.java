@@ -42,9 +42,8 @@ public class InitServiceGenerator {
         return fileImage;
     }
 
-    public Account accountGenerator(String username, String nickname, AccountRole role, File progfileImage) {
+    public Account accountGenerator(String nickname, AccountRole role, File progfileImage) {
         Account user = Account.builder() //게시글, 댓글과 매핑될 Account 생성
-                .username(username)
                 .nickname(nickname)
                 .role(role)
                 .profileImage(progfileImage) //프로필 이미지를 디폴트 이미지로 세팅

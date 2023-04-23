@@ -1,11 +1,5 @@
 package com.filmdoms.community.account.controller;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.data.dto.request.LoginRequestDto;
@@ -21,13 +15,21 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(
         controllers = AccountController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
+@ActiveProfiles("test")
 @DisplayName("컨트롤러 - 회원 서비스")
 public class AccountControllerTest {
 
@@ -42,14 +44,14 @@ public class AccountControllerTest {
     @DisplayName("정상적으로 로그인시, 계정 정보를 반환한다.")
     void whenTryingToLogin_thenReturnsAccountInfo() throws Exception {
         // Given
-        String username = "username";
+        String email = "address@filmdoms.com";
         String password = "password";
-        when(accountService.login(username, password)).thenReturn("mockJwtString");
+        when(accountService.login(email, password)).thenReturn("mockJwtString");
 
         // When & Then
         mockMvc.perform(post("/api/v1/account/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new LoginRequestDto(username, password)))
+                        .content(objectMapper.writeValueAsBytes(new LoginRequestDto(email, password)))
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'SUCCESS')]").exists())
@@ -57,19 +59,19 @@ public class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("잘못된 ID로 로그인시, 에러 코드를 반환한다.")
+    @DisplayName("잘못된 이메일로 로그인시, 에러 코드를 반환한다.")
     void whenTryingToLoginWithWrongId_thenReturnsIsNotFound() throws Exception {
         // Given
-        String username = "wrong_username";
+        String email = "wrong_address@filmdoms.com";
         String password = "password";
-        when(accountService.login(username, password)).thenThrow(
+        when(accountService.login(email, password)).thenThrow(
                 new ApplicationException(ErrorCode.USER_NOT_FOUND)
         );
 
         // When & Then
         mockMvc.perform(post("/api/v1/account/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new LoginRequestDto(username, password)))
+                        .content(objectMapper.writeValueAsBytes(new LoginRequestDto(email, password)))
                 ).andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'USER_NOT_FOUND')]").exists());
@@ -79,16 +81,16 @@ public class AccountControllerTest {
     @DisplayName("잘못된 비밀번호로 로그인시, 에러 코드를 반환한다.")
     void whenTryingToLoginWithWrongPassword_thenReturnsIsUnauthorized() throws Exception {
         // Given
-        String username = "username";
+        String email = "address@filmdoms.com";
         String password = "wrong_password";
-        when(accountService.login(username, password)).thenThrow(
+        when(accountService.login(email, password)).thenThrow(
                 new ApplicationException(ErrorCode.INVALID_PASSWORD)
         );
 
         // When & Then
         mockMvc.perform(post("/api/v1/account/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(new LoginRequestDto(username, password)))
+                        .content(objectMapper.writeValueAsBytes(new LoginRequestDto(email, password)))
                 ).andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'INVALID_PASSWORD')]").exists());

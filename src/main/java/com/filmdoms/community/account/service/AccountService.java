@@ -14,15 +14,17 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AccountService {
     private final FileRepository fileRepository;
@@ -31,15 +33,15 @@ public class AccountService {
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * 유저 ID와 비밀번호를 확인해 계정 정보를 찾는다.
+     * 유저 이메일과 비밀번호를 확인해 계정 정보를 찾는다.
      *
-     * @param username 유저 ID
+     * @param email    유저 이메일
      * @param password 비밀번호
      * @return 계정정보
      */
-    public String login(String username, String password) {
+    public String login(String email, String password) {
         // 가입 여부 확인
-        AccountDto accountDto = accountRepository.findByUsername(username)
+        AccountDto accountDto = accountRepository.findByEmail(email)
                 .map(AccountDto::from)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
@@ -49,11 +51,11 @@ public class AccountService {
         }
 
         // 토큰 반환
-        return jwtTokenProvider.createToken(accountDto.getUsername(), accountDto.getAuthorities());
+        return jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
     }
 
-    public boolean isUsernameDuplicate(String username) {
-        return accountRepository.existsByUsername(username);
+    public boolean isNicknameDuplicate(String nickname) {
+        return accountRepository.existsByNickname(nickname);
     }
 
     public boolean isEmailDuplicate(String email) {
@@ -62,9 +64,9 @@ public class AccountService {
 
     public void createAccount(JoinRequestDto requestDto) {
 
-        log.info("아이디 중복 확인");
-        if (isUsernameDuplicate(requestDto.getUsername())) {
-            throw new ApplicationException(ErrorCode.DUPLICATE_USERNAME);
+        log.info("닉네임 중복 확인");
+        if (isNicknameDuplicate(requestDto.getNickname())) {
+            throw new ApplicationException(ErrorCode.DUPLICATE_NICKNAME);
         }
 
         log.info("이메일 중복 확인");
@@ -74,7 +76,7 @@ public class AccountService {
 
         log.info("Account 엔티티 생성");
         Account newAccount = Account.builder()
-                .username(requestDto.getUsername())
+                //.username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
                 .email(requestDto.getEmail())
@@ -88,17 +90,19 @@ public class AccountService {
 
     // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요
     private File getDefaultImage() {
-        return fileRepository.findById(1L).orElse(File.builder()
-                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
-                .originalFileName("original_file_name")
-                .build()
+        return fileRepository.findById(1L).orElseGet(() -> fileRepository.save(
+                        File.builder()
+                                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
+                                .originalFileName("original_file_name")
+                                .build()
+                )
         );
     }
 
     public AccountResponseDto readAccount(AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsernameWithImage(accountDto.getUsername())
+        Account account = accountRepository.findByEmailWithImage(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         return AccountResponseDto.from(account);
@@ -108,7 +112,7 @@ public class AccountService {
     public AccountResponseDto updateAccountProfile(UpdateProfileRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsernameWithImage(accountDto.getUsername())
+        Account account = accountRepository.findByEmailWithImage(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         File profileImage = account.getProfileImage();
@@ -128,7 +132,7 @@ public class AccountService {
     public void updateAccountPassword(UpdatePasswordRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsername(accountDto.getUsername())
+        Account account = accountRepository.findByEmail(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         log.info("기존 비밀번호와 대조");
@@ -144,7 +148,7 @@ public class AccountService {
     public void deleteAccount(DeleteAccountRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
-        Account account = accountRepository.findByUsername(accountDto.getUsername())
+        Account account = accountRepository.findByEmail(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         log.info("기존 비밀번호와 대조");
