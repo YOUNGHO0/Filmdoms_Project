@@ -14,6 +14,7 @@ import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import com.filmdoms.community.imagefile.repository.ImageFileRepository;
 import com.filmdoms.community.file.service.ImageFileService;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +75,7 @@ public class PostService {
         PostHeader header = postHeaderRepository.findByIdWithAuthorContentImage(postHeaderId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID));
         log.info("작성자 확인");
-        if (!AccountDto.from(header.getAuthor()).equals(accountDto)) {
+        if (!Objects.equals(header.getAuthor().getId(), accountDto.getId())) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION, "게시글의 작성자와 일치하지 않습니다.");
         }
         log.info("메인 이미지 호출");
@@ -93,7 +94,7 @@ public class PostService {
         PostHeader header = postHeaderRepository.findByIdWithAuthor(postHeaderId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_POST_ID));
         log.info("작성자 확인");
-        if (!AccountDto.from(header.getAuthor()).equals(accountDto)) {
+        if (!Objects.equals(header.getAuthor().getId(), accountDto.getId())) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION, "게시글의 작성자와 일치하지 않습니다.");
         }
         log.info("게시글 삭제");

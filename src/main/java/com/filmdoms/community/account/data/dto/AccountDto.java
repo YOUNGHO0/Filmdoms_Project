@@ -3,7 +3,6 @@ package com.filmdoms.community.account.data.dto;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.constant.AccountStatus;
 import com.filmdoms.community.account.data.entity.Account;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Getter
-@EqualsAndHashCode
 @ToString(onlyExplicitlyIncluded = true)
 public class AccountDto {
 
