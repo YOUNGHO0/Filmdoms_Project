@@ -37,7 +37,7 @@ public class Comment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
 
-    @JoinColumn(name = "new_comment_id")
+    @JoinColumn(name = "comment_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
