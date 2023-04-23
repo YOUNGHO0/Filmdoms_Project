@@ -20,6 +20,7 @@ import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,7 +100,9 @@ public class InitService {
                         .author(admin)
                         .content("Movie 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
-
+                for (int vc = 0; vc < 5; vc++) {
+                    comment.addVote();
+                }
                 commentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
@@ -109,6 +112,9 @@ public class InitService {
                             .parentComment(comment)
                             .content("Movie 게시판 " + i + "번째 글의 " + j + "번째 댓글의 " + k + "번째 대댓글 내용")
                             .build();
+                    for (int vc = 0; vc < 5; vc++) {
+                        childComment.addVote();
+                    }
                     commentRepository.save(childComment);
                 }
             }
@@ -157,6 +163,9 @@ public class InitService {
                         .author(admin)
                         .content("File Universe 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
+                for (int vc = 0; vc < 5; vc++) {
+                    comment.addVote();
+                }
                 commentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
@@ -166,6 +175,9 @@ public class InitService {
                             .parentComment(comment)
                             .content("File Universe 게시판 " + i + "번째 글의 " + j + "번째 댓글의 " + k + "번째 대댓글 내용")
                             .build();
+                    for (int vc = 0; vc < 5; vc++) {
+                        childComment.addVote();
+                    }
                     commentRepository.save(childComment);
                 }
             }
@@ -211,6 +223,9 @@ public class InitService {
                         .author(admin)
                         .content("Critic 게시판 " + i + "번째 글의 " + j + "번째 댓글 내용")
                         .build();
+                for (int vc = 0; vc < 5; vc++) {
+                    comment.addVote();
+                }
                 commentRepository.save(comment);
 
                 for (int k = 1; k < 3; k++) {
@@ -220,6 +235,9 @@ public class InitService {
                             .parentComment(comment)
                             .content("Critic 게시판 " + i + "번째 글의 " + j + "번째 댓글의 " + k + "번째 대댓글 내용")
                             .build();
+                    for (int vc = 0; vc < 5; vc++) {
+                        childComment.addVote();
+                    }
                     commentRepository.save(childComment);
                 }
             }

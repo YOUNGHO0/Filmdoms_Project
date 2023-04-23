@@ -16,6 +16,7 @@ public class CommentResponseDto {
     private Long id;
     private String content;
     private CommentStatus status;
+    private int likes;
     private long createdAt;
     private long updatedAt;
     private boolean isManagerComment;
@@ -25,6 +26,7 @@ public class CommentResponseDto {
         this.id = comment.getId();
         this.content = comment.getContent();
         this.status = comment.getStatus();
+        this.likes = comment.getVoteCount();
         this.createdAt = ZonedDateTime.of(comment.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updatedAt = ZonedDateTime.of(comment.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.isManagerComment = comment.isManagerComment();
