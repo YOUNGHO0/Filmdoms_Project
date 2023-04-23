@@ -9,3 +9,17 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile:
+        - dev
+
+  data:
+    redis:
+      host: svc.sel3.cloudtype.app
+      port: 30418
+      password: ${REDIS_SECRET}
