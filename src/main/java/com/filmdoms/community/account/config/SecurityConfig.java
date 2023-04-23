@@ -30,7 +30,6 @@ public class SecurityConfig {
         http
                 // REST API는 csrf 대응 필요 없음
                 .csrf().disable()
-                .cors().and()
 
                 // 세션 관리도 비활성화
                 .sessionManagement()
