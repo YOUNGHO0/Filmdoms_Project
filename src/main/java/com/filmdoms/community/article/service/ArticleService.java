@@ -1,15 +1,17 @@
 package com.filmdoms.community.article.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
-import com.filmdoms.community.article.data.dto.ArticleControllerToServiceDto;
-import com.filmdoms.community.article.data.dto.filmuniverse.FilmUniverseControllerToServiceDto;
+import com.filmdoms.community.article.data.dto.request.create.CriticCreateRequestDto;
+import com.filmdoms.community.article.data.dto.request.create.FilmUniverseCreateRequestDto;
+import com.filmdoms.community.article.data.dto.request.create.ParentCreateRequestDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.*;
+import com.filmdoms.community.article.data.dto.response.create.ArticleCreateResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.FilmUniverseDetailResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.CriticMainPageResponseDto;
@@ -25,10 +27,10 @@ import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
+import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.file.service.ImageFileService;
-import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.vote.data.entity.VoteKey;
 import com.filmdoms.community.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,29 +53,37 @@ public class ArticleService {
     private final FilmUniverseRepository filmUniverseRepository;
     private final CriticRepository criticRepository;
     private final FileRepository fileRepository;
-    private final CommentRepository commentRepository;
-    private final ImageFileService imageFileService;
     private final VoteRepository voteRepository;
     private final AccountRepository accountRepository;
     private final AnnounceRepository announceRepository;
 
+    public ArticleCreateResponseDto createArticle(ParentCreateRequestDto requestDto, AccountDto accountDto) {
+        //카테고리, 태그 확인
+        Category category = requestDto.getCategory();
+        Tag tag = requestDto.getTag();
+        tag.verifyCategory(category);
 
-    public Response createDefaultArticle(ArticleControllerToServiceDto dto) {
-        Article userArticle = Article.from(dto);
-        Article savedArticle = articleRepository.save(userArticle);
-        imageFileService.setImageContent(dto.getContentImageId(), savedArticle.getContent());
-        return Response.success(savedArticle.getId());
-    }
+        Account author = accountRepository.getReferenceById(accountDto.getId());
+        Article article = requestDto.toEntity(author);
+        articleRepository.save(article);
 
-    public Response createFilmUniverseArticle(FilmUniverseControllerToServiceDto dto) {
-        Article userArticle = Article.from((ArticleControllerToServiceDto) dto);
-        articleRepository.save(userArticle);
-        imageFileService.setImageContent(dto.getContentImageId(), userArticle.getContent());
-        FilmUniverse notice = FilmUniverse.from(userArticle, dto.getStartDate(), dto.getEndDate());
-        FilmUniverse savedNotice = filmUniverseRepository.save(notice);
-        return Response.success(savedNotice.getId());
+        if (requestDto instanceof FilmUniverseCreateRequestDto) {
+            FilmUniverseCreateRequestDto filmUniverseCreateRequestDto = (FilmUniverseCreateRequestDto) requestDto;
+            Long mainImageId = filmUniverseCreateRequestDto.getMainImageId();
+            File mainImageFile = fileRepository.findById(mainImageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+            FilmUniverse filmUniverse = filmUniverseCreateRequestDto.toEntity(article, mainImageFile);
+            filmUniverseRepository.save(filmUniverse);
+        }
 
+        if (requestDto instanceof CriticCreateRequestDto) {
+            CriticCreateRequestDto criticCreateRequestDto = (CriticCreateRequestDto) requestDto;
+            Long mainImageId = criticCreateRequestDto.getMainImageId();
+            File mainImageFile = fileRepository.findById(mainImageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+            Critic critic = criticCreateRequestDto.toEntity(article, mainImageFile);
+            criticRepository.save(critic);
+        }
 
+        return ArticleCreateResponseDto.from(article);
     }
 
     public List<MovieAndRecentMainPageResponseDto> getRecentMainPageDtoList(int limit) {
@@ -199,15 +209,16 @@ public class ArticleService {
         return null;
 
     }
-    public Page<AnnounceListResponseDto> getAllAnnounceArticles(Pageable pageable)
-    {
+
+    public Page<AnnounceListResponseDto> getAllAnnounceArticles(Pageable pageable) {
         Page<Announce> announces = announceRepository.findAllAnnounceList(pageable);
         Page<AnnounceListResponseDto> announceListResponseDtos = announces.map(AnnounceListResponseDto::from);
         return announceListResponseDtos;
     }
+
     public Page<AnnounceListResponseDto> getAnnounceArticlesByCategory(Category category, Pageable pageable) {
 
-        Page<Announce> announces = announceRepository.findAnnounceListByCategory(category,pageable);
+        Page<Announce> announces = announceRepository.findAnnounceListByCategory(category, pageable);
         Page<AnnounceListResponseDto> announceListResponseDtos = announces.map(AnnounceListResponseDto::from);
         return announceListResponseDtos;
     }
