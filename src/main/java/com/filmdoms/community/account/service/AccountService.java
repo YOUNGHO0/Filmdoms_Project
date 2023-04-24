@@ -48,9 +48,12 @@ public class AccountService {
             throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
-        log.info("리프레시 토큰 생성");
+        log.info("저장된 토큰 존재 여부 확인, 없다면 생성");
         String key = UUID.nameUUIDFromBytes(email.getBytes()).toString();
-        String refreshToken = jwtTokenProvider.createRefreshToken(key);
+        String refreshToken = refreshTokenRepository.findByKey(key)
+                .orElseGet(() -> jwtTokenProvider.createRefreshToken(key));
+
+        log.info("리프레시 토큰 저장 / 갱신");
         refreshTokenRepository.save(key, refreshToken);
 
         return LoginResponseDto.builder()
@@ -73,6 +76,9 @@ public class AccountService {
             throw new ApplicationException(ErrorCode.INVALID_TOKEN);
         }
 
+        log.info("리프레시 토큰 갱신");
+        refreshTokenRepository.save(key, refreshToken);
+
         log.info("새로운 엑세스 토큰 발급");
         String accessToken = jwtTokenProvider.createAccessToken(key);
         return RefreshAccessTokenResponseDto.builder()
@@ -82,8 +88,17 @@ public class AccountService {
 
     public void logout(String refreshToken) {
 
-        log.info("토큰 내 Subject 추출");
+        log.info("토큰 내 저장된 키 추출");
         String key = jwtTokenProvider.getSubject(refreshToken);
+
+        log.info("키로 저장된 토큰 호출");
+        String savedToken = refreshTokenRepository.findByKey(key)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_IN_DB));
+
+        log.info("저장된 토큰과 대조");
+        if (!Objects.equals(savedToken, refreshToken)) {
+            throw new ApplicationException(ErrorCode.INVALID_TOKEN);
+        }
 
         log.info("저장된 토큰 삭제");
         refreshTokenRepository.deleteByKey(key);
