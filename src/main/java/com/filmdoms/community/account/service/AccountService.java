@@ -8,19 +8,22 @@ import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
+import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
+import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -29,29 +32,61 @@ import java.util.Objects;
 public class AccountService {
     private final FileRepository fileRepository;
     private final AccountRepository accountRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * 유저 이메일과 비밀번호를 확인해 계정 정보를 찾는다.
-     *
-     * @param email    유저 이메일
-     * @param password 비밀번호
-     * @return 계정정보
-     */
-    public String login(String email, String password) {
-        // 가입 여부 확인
+    public LoginResponseDto login(String email, String password) {
+
+        log.info("가입 여부 확인");
         AccountDto accountDto = accountRepository.findByEmail(email)
                 .map(AccountDto::from)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        // 비밀번호를 암호화 시켜 저장된 비밀번호와 대조
+        log.info("비밀번호를 암호화 시켜 저장된 비밀번호와 대조");
         if (!passwordEncoder.matches(password, accountDto.getPassword())) {
             throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
-        // 토큰 반환
-        return jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
+        log.info("리프레시 토큰 생성");
+        String key = UUID.nameUUIDFromBytes(email.getBytes()).toString();
+        String refreshToken = jwtTokenProvider.createRefreshToken(key);
+        refreshTokenRepository.save(key, refreshToken);
+
+        return LoginResponseDto.builder()
+                .accessToken(jwtTokenProvider.createAccessToken(String.valueOf(accountDto.getId())))
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public RefreshAccessTokenResponseDto refreshAccessToken(String refreshToken) {
+
+        log.info("토큰 내 저장된 키 추출");
+        String key = jwtTokenProvider.getSubject(refreshToken);
+
+        log.info("키로 저장된 토큰 호출");
+        String savedToken = refreshTokenRepository.findByKey(key)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_IN_DB));
+
+        log.info("저장된 토큰과 대조");
+        if (!Objects.equals(savedToken, refreshToken)) {
+            throw new ApplicationException(ErrorCode.INVALID_TOKEN);
+        }
+
+        log.info("새로운 엑세스 토큰 발급");
+        String accessToken = jwtTokenProvider.createAccessToken(key);
+        return RefreshAccessTokenResponseDto.builder()
+                .accessToken(accessToken)
+                .build();
+    }
+
+    public void logout(String refreshToken) {
+
+        log.info("토큰 내 Subject 추출");
+        String key = jwtTokenProvider.getSubject(refreshToken);
+
+        log.info("저장된 토큰 삭제");
+        refreshTokenRepository.deleteByKey(key);
     }
 
     public boolean isNicknameDuplicate(String nickname) {
