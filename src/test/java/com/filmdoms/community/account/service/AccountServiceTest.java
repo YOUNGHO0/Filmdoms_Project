@@ -161,6 +161,7 @@ class AccountServiceTest {
             String refreshToken = "mockRefreshToken";
             String key = "mockRedisKey";
             when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
+            when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.of(refreshToken));
 
             // When
             accountService.logout(refreshToken);
