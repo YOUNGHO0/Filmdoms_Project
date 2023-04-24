@@ -1,4 +1,4 @@
-package com.filmdoms.community.article.data.dto.enuminfo;
+package com.filmdoms.community.article.data.dto.response.enuminfo;
 
 import com.filmdoms.community.article.data.constant.Category;
 import lombok.Getter;
