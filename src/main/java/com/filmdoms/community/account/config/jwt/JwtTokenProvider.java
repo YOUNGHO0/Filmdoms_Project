@@ -9,17 +9,14 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -42,15 +39,23 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 토큰 생성
-    public String createToken(String subject) {
+    // 액세스 토큰 생성
+    public String createAccessToken(String subject) {
         Claims claims = Jwts.claims().setSubject(subject);
         Date now = new Date();
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + TOKEN_VALID_MILLISECOND))
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // 리프레시 토큰 생성
+    public String createRefreshToken(String subject) {
+        Claims claims = Jwts.claims().setSubject(subject);
+        return Jwts.builder()
+                .setClaims(claims)
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

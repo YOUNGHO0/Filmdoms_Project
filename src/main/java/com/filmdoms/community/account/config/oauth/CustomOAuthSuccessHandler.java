@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -62,7 +61,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             //아래 5줄은 공통 처리
             //그 다음은 분기 처리
             AccountDto accountDto = AccountDto.from(account);
-            String token = jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
+            String token = jwtTokenProvider.createAccessToken(String.valueOf(accountDto.getId()));
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
@@ -81,7 +80,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             accountRepository.save(newAccount);
             AccountDto accountDto = AccountDto.from(newAccount);
-            String token = jwtTokenProvider.createToken(String.valueOf(accountDto.getId()));
+            String token = jwtTokenProvider.createAccessToken(String.valueOf(accountDto.getId()));
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
