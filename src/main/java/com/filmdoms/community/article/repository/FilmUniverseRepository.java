@@ -22,4 +22,6 @@ public interface FilmUniverseRepository extends JpaRepository<FilmUniverse, Long
             "LEFT JOIN FETCH n.article.content " +
             "WHERE n.article.id = :articleId")
     Optional<FilmUniverse> findByArticleIdWithArticleAuthorProfileImageContent(@Param("articleId") Long articleId);
+
+    Optional<FilmUniverse> findByArticleId(Long articleId);
 }

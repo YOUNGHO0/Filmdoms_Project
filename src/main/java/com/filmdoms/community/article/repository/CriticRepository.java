@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CriticRepository extends JpaRepository<Critic, Long> {
 
@@ -16,4 +17,6 @@ public interface CriticRepository extends JpaRepository<Critic, Long> {
             "LEFT JOIN FETCH c.mainImage " +
             "LEFT JOIN FETCH c.article.content")
     List<Critic> findAllWithArticleAuthorMainImageContent(Pageable pageable);
+
+    Optional<Critic> findByArticleId(Long articleId);
 }
