@@ -9,9 +9,15 @@ import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.CheckDuplicateResponseDto;
 import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
+import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
 import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.service.AccountService;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,12 +38,30 @@ public class AccountController {
 
     @PostMapping("/login")
     public Response<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+        return Response.success(accountService.login(requestDto.getEmail(), requestDto.getPassword()));
+    }
 
-        // 로그인 확인
-        String accessToken = accountService.login(requestDto.getEmail(), requestDto.getPassword());
+    private Optional<String> extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return Optional.of(authHeader.substring(7));
+        }
+        return Optional.empty();
+    }
 
-        // JWT 토큰 반환
-        return Response.success(new LoginResponseDto(accessToken));
+    @PostMapping("/refresh-token")
+    public Response<RefreshAccessTokenResponseDto> refreshAccessToken(HttpServletRequest request) {
+        String refreshToken = extractToken(request)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+        return Response.success(accountService.refreshAccessToken(refreshToken));
+    }
+
+    @PostMapping("/logout")
+    public Response<Void> logout(HttpServletRequest request) {
+        String refreshToken = extractToken(request)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+        accountService.logout(refreshToken);
+        return Response.success();
     }
 
     @PostMapping()
@@ -84,5 +108,4 @@ public class AccountController {
         accountService.deleteAccount(requestDto, accountDto);
         return Response.success();
     }
-
 }
