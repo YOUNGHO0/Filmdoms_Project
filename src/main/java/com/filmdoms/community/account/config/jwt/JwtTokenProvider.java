@@ -56,6 +56,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(subject);
         return Jwts.builder()
                 .setClaims(claims)
+                .setIssuedAt(new Date())
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
