@@ -37,7 +37,7 @@ public class ImageFileService {
             return;
         }
         File imageFile = imageFileRepository.findById(imageId)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
         FileContent fileContent = FileContent.builder()
                 .content(content)
                 .file(imageFile)
@@ -60,7 +60,7 @@ public class ImageFileService {
                     .map(id -> imageFileRepository.findById(id).get())
                     .collect(Collectors.toSet());
         } catch (NoSuchElementException e) {
-            throw new ApplicationException(ErrorCode.INVALID_IMAGE_ID);
+            throw new ApplicationException(ErrorCode.INVALID_FILE_ID);
         }
 
         //원래 가지고 있던 이미지 중 업데이트 목록에 없는 것들은 삭제

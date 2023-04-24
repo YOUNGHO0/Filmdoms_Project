@@ -286,7 +286,7 @@ class PostServiceTest {
             // THEN
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
-                    .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
+                    .hasMessage(ErrorCode.INVALID_FILE_ID.getMessage());
             then(postHeaderRepository).should().findByIdWithAuthorContentImage(requestHeaderId);
             then(imageFileRepository).should().findById(mockRequestDto.getMainImageId());
         }

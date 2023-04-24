@@ -20,8 +20,8 @@ public enum ErrorCode {
     REQUEST_PARSE_ERROR(HttpStatus.BAD_REQUEST, "요청 파싱 중 오류가 발생했습니다."),
     NO_MAIN_IMAGE_ERROR(HttpStatus.BAD_REQUEST, "메인 이미지가 전송되지 않았습니다."),
     S3_ERROR(HttpStatus.FORBIDDEN, "S3 업로드에 실패했습니다."),
-    INVALID_IMAGE_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 이미지 아이디입니다."),
-    NO_IMAGE_ERROR(HttpStatus.BAD_REQUEST, "이미지가 전달되지 않았습니다."),
+    INVALID_FILE_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 파일 아이디입니다."),
+    NO_FILE_ERROR(HttpStatus.BAD_REQUEST, "파일이 전달되지 않았습니다."),
     EMPTY_FILE_ERROR(HttpStatus.BAD_REQUEST, "비어 있는 파일입니다."),
     IMAGE_BELONG_TO_OTHER_POST(HttpStatus.BAD_REQUEST, "다른 게시물에 포함된 이미지입니다."),
     INVALID_POST_ID(HttpStatus.BAD_REQUEST, "존재하지 않는 게시물 아이디입니다."), //삭제 예정
@@ -39,7 +39,8 @@ public enum ErrorCode {
     MAIN_IMAGE_ID_NOT_IN_CONTENT_IMAGE_ID_LIST(HttpStatus.BAD_REQUEST, "메인 이미지 ID는 전체 이미지 ID 리스트에 포함되어야 합니다."),
     NOT_SOCIAL_LOGIN_ACCOUNT(HttpStatus.BAD_REQUEST, "소셜 로그인 계정이 아닙니다."),
     SOCIAL_LOGIN_ACCOUNT(HttpStatus.BAD_REQUEST, "소셜 로그인 계정입니다."),
-    INVALID_AUTHENTICATION_CODE(HttpStatus.BAD_REQUEST, "잘못된 인증 코드이거나 인증 코드가 만료되었습니다.");
+    INVALID_AUTHENTICATION_CODE(HttpStatus.BAD_REQUEST, "잘못된 인증 코드이거나 인증 코드가 만료되었습니다."),
+    INVALID_TAG(HttpStatus.BAD_REQUEST, "해당 카테고리에 존재하지 않는 태그입니다.");
 
     private final HttpStatus status;
     private final String message;

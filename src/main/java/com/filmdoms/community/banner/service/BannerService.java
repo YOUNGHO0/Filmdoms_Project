@@ -40,7 +40,7 @@ public class BannerService {
 
         log.info("이미지 호출");
         File file = fileRepository.findById(requestDto.getFileId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
         log.info("배너 생성");
         Banner banner = Banner.builder()
                 .author(accountRepository.getReferenceById(adminAccount.getId()))
@@ -63,7 +63,7 @@ public class BannerService {
         if (!Objects.equals(file.getId(), requestDto.getFileId())) {
             log.info("이미지 호출");
             file = fileRepository.findById(requestDto.getFileId())
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
         }
         log.info("배너 업데이트");
         banner.update(requestDto.getTitle(), file);
