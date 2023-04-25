@@ -169,7 +169,7 @@ public class AccountService {
         if (!Objects.equals(requestDto.getFileId(), profileImage.getId())) {
             log.info("요청 File 엔티티 호출");
             profileImage = fileRepository.findById(requestDto.getFileId())
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
         }
 
         log.info("Account 엔티티 수정");

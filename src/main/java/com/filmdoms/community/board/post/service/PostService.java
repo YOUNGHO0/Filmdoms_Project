@@ -80,7 +80,7 @@ public class PostService {
         }
         log.info("메인 이미지 호출");
         ImageFile mainImageFile = imageFileRepository.findById(requestDto.getMainImageId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_IMAGE_ID));
+                .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
         log.info("게시글 업데이트");
         header.update(requestDto.getCategory(), requestDto.getTitle(), requestDto.getContent(), mainImageFile);
         log.info("이미지 매핑");

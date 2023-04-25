@@ -4,9 +4,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.file.data.dto.response.FileUploadResponseDto;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import com.filmdoms.community.file.data.dto.response.ImageUploadResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,30 +30,30 @@ public class AmazonS3UploadService {
     private final AmazonS3 amazonS3;
     public final FileRepository fileRepository;
 
-    public ImageUploadResponseDto uploadAndSaveImages(List<MultipartFile> imageMultipartFiles) {
+    public FileUploadResponseDto uploadAndSaveFiles(List<MultipartFile> multipartFiles) {
 
-        if (imageMultipartFiles == null) {
-            throw new ApplicationException(ErrorCode.NO_IMAGE_ERROR); //발생할 가능성 없어 보임
+        if (multipartFiles == null) {
+            throw new ApplicationException(ErrorCode.NO_FILE_ERROR); //발생할 가능성 없어 보임
         }
 
-        List<Long> uploadedImageIds = new ArrayList<>();
+        List<File> uploadedFiles = new ArrayList<>();
 
-        for (MultipartFile imageMultipartFile : imageMultipartFiles) {
-            if (imageMultipartFile.isEmpty()) {
+        for (MultipartFile multipartFile : multipartFiles) {
+            if (multipartFile.isEmpty()) {
                 throw new ApplicationException(ErrorCode.EMPTY_FILE_ERROR); //이미지가 비어 있으면 예외 발생
             }
-            String originalFileName = imageMultipartFile.getOriginalFilename();
+            String originalFileName = multipartFile.getOriginalFilename();
             String uuidFileName = getUuidFileName(originalFileName);
-            uploadFile(imageMultipartFile, uuidFileName);
+            uploadFile(multipartFile, uuidFileName);
 
-            File imageFile = File.builder().originalFileName(originalFileName)
+            File uploadedFile = File.builder().originalFileName(originalFileName)
                     .uuidFileName(uuidFileName)
                     .build();
 
-            uploadedImageIds.add(fileRepository.save(imageFile).getId());
+            uploadedFiles.add(fileRepository.save(uploadedFile));
         }
 
-        return new ImageUploadResponseDto(uploadedImageIds);
+        return FileUploadResponseDto.from(uploadedFiles);
     }
 
     private String getUuidFileName(String originalFileName) {

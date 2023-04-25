@@ -91,7 +91,7 @@ public class BannerServiceTest {
             // THEN
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
-                    .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
+                    .hasMessage(ErrorCode.INVALID_FILE_ID.getMessage());
         }
     }
 
@@ -180,7 +180,7 @@ public class BannerServiceTest {
             // THEN
             assertThat(throwable)
                     .isInstanceOf(ApplicationException.class)
-                    .hasMessage(ErrorCode.INVALID_IMAGE_ID.getMessage());
+                    .hasMessage(ErrorCode.INVALID_FILE_ID.getMessage());
             then(bannerRepository).should().findByIdWithFile(requestBannerId);
             then(fileRepository).should().findById(mockRequestDto.getFileId());
         }

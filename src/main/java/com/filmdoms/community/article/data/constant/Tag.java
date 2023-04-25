@@ -1,5 +1,7 @@
 package com.filmdoms.community.article.data.constant;
 
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -21,4 +23,11 @@ public enum Tag {
 
     private final Category category;
     private final String description;
+
+    public void verifyCategory(Category category) {
+        if (this.category != category) {
+            throw new ApplicationException(ErrorCode.INVALID_TAG);
+        }
+    }
+
 }

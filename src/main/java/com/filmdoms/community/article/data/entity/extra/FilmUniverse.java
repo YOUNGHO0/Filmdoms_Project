@@ -40,12 +40,4 @@ public class FilmUniverse {
         this.startDate = startDate;
         this.endDate = endDate;
     }
-
-    public static FilmUniverse from(Article article, LocalDateTime startDate, LocalDateTime endDate) {
-        return  FilmUniverse.builder()
-                .article(article)
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
-    }
 }

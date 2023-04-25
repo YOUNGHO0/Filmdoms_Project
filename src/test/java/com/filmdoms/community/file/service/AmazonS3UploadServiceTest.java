@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.config.annotation.DataJpaTestWithJpaAuditing;
-import com.filmdoms.community.file.data.dto.response.ImageUploadResponseDto;
+import com.filmdoms.community.file.data.dto.response.FileUploadResponseDto;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @DataJpaTestWithJpaAuditing
-@DisplayName("이미지 업로드 서비스-리포지토리 통합 테스트")
+@DisplayName("파일 업로드 서비스-리포지토리 통합 테스트")
 class AmazonS3UploadServiceTest {
 
     @Autowired
@@ -53,12 +53,12 @@ class AmazonS3UploadServiceTest {
         when(amazonS3.getUrl(any(), any())).thenReturn(null);
 
         //when
-        ImageUploadResponseDto responseDto = amazonS3UploadService.uploadAndSaveImages(imageMultipartFiles);
+        FileUploadResponseDto responseDto = amazonS3UploadService.uploadAndSaveFiles(imageMultipartFiles);
 
         //then
         List<File> savedImageFiles = fileRepository.findAll();
         assertThat(savedImageFiles.size()).isEqualTo(5); //실제 이미지가 저장되는지 확인
-        assertThat(responseDto.getImageIds().size()).isEqualTo(5); //응답 DTO가 잘 생성되는지 확인
+        assertThat(responseDto.getUploadedFiles().size()).isEqualTo(5); //응답 DTO가 잘 생성되는지 확인
     }
 
     @Test
@@ -70,7 +70,7 @@ class AmazonS3UploadServiceTest {
         List<MultipartFile> imageMultipartFiles = Arrays.asList(emptyImage);
 
         //when
-        ApplicationException ex = assertThrows(ApplicationException.class, () -> amazonS3UploadService.uploadAndSaveImages(imageMultipartFiles));
+        ApplicationException ex = assertThrows(ApplicationException.class, () -> amazonS3UploadService.uploadAndSaveFiles(imageMultipartFiles));
 
         //then
         assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EMPTY_FILE_ERROR);
