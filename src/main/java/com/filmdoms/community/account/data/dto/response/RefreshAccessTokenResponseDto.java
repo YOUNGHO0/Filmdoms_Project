@@ -3,13 +3,13 @@ package com.filmdoms.community.account.data.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @Builder
-public class LoginResponseDto {
+public class RefreshAccessTokenResponseDto {
 
     private String accessToken;
-    private String refreshToken;
-
 }

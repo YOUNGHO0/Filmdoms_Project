@@ -1,5 +1,17 @@
 package com.filmdoms.community.account.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
@@ -8,12 +20,15 @@ import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
+import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,17 +38,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {AccountService.class})
 @ActiveProfiles("test")
@@ -48,6 +52,9 @@ class AccountServiceTest {
 
     @MockBean
     private AccountRepository accountRepository;
+
+    @MockBean
+    private RefreshTokenRepository refreshTokenRepository;
 
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
@@ -67,7 +74,7 @@ class AccountServiceTest {
             Account mockAccount = getMockAccount(email, password);
             when(accountRepository.findByEmail(email)).thenReturn(Optional.of(mockAccount));
             when(encoder.matches(password, mockAccount.getPassword())).thenReturn(true);
-            when(jwtTokenProvider.createToken(any())).thenReturn("mockJwtString");
+            when(jwtTokenProvider.createAccessToken(any())).thenReturn("mockJwtString");
 
             // When & Then
             assertDoesNotThrow(() -> accountService.login(email, password));
@@ -101,6 +108,66 @@ class AccountServiceTest {
             ApplicationException e = assertThrows(ApplicationException.class,
                     () -> accountService.login(email, password));
             assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("액세스 토큰 재발급 기능 테스트")
+    class aboutRefreshingAccessToken {
+        @Test
+        @DisplayName("토큰 재발급시, 올바른 리프레시 토큰을 입력하면, 새로운 액세스 토큰을 발급한다.")
+        void givenCorrectRefreshToken_whenRefreshingAccessToken_thenReturnsNewAccessToken() {
+            // Given
+            String refreshToken = "mockRefreshToken";
+            String key = "mockRedisKey";
+            String accessToken = "mockAccessToken";
+            when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
+            when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.of(refreshToken));
+            when(jwtTokenProvider.createAccessToken(key)).thenReturn(accessToken);
+
+            // When
+            RefreshAccessTokenResponseDto responseDto = accountService.refreshAccessToken(refreshToken);
+
+            // Then
+            assertThat(responseDto)
+                    .hasFieldOrPropertyWithValue("accessToken", accessToken);
+        }
+
+        @Test
+        @DisplayName("토큰 재발급시, 잘못된 리프레시 토큰을 입력하면, 예외를 반환한다.")
+        void givenWrongRefreshToken_whenRefreshingAccessToken_thenReturnsException() {
+            // Given
+            String refreshToken = "mockRefreshToken";
+            String key = "mockRedisKey";
+            String accessToken = "mockAccessToken";
+            when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
+            when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.empty());
+            when(jwtTokenProvider.createAccessToken(key)).thenReturn(accessToken);
+
+            // When & Then
+            ApplicationException e = assertThrows(ApplicationException.class,
+                    () -> accountService.refreshAccessToken(refreshToken));
+            assertEquals(ErrorCode.TOKEN_NOT_IN_DB, e.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("로그 아웃 기능 테스트")
+    class aboutLogOut {
+        @Test
+        @DisplayName("로그 아웃시, 올바른 리프레시 토큰을 입력하면, 해당 리프레시 토큰을 무효화 시킨다.")
+        void givenCorrectRefreshToken_whenLoggingOut_thenNullifiesRefreshToken() {
+            // Given
+            String refreshToken = "mockRefreshToken";
+            String key = "mockRedisKey";
+            when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
+            when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.of(refreshToken));
+
+            // When
+            accountService.logout(refreshToken);
+
+            // Then
+            then(refreshTokenRepository).should().deleteByKey(key);
         }
     }
 
