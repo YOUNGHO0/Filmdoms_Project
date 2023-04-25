@@ -29,7 +29,7 @@ public class BannerService {
 
     @Transactional(readOnly = true)
     public List<BannerResponseDto> getMainPageBanner() {
-        return bannerRepository.findAllByOrderByIdDesc()
+        return bannerRepository.findTop5ByOrderByIdDesc()
                 .stream()
                 .map(BannerResponseDto::from)
                 .toList();

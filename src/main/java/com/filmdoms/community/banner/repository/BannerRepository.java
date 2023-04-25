@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface BannerRepository extends JpaRepository<Banner, Long> {
 
-    List<Banner> findAllByOrderByIdDesc();
+    List<Banner> findTop5ByOrderByIdDesc();
 
     @Query("SELECT b FROM Banner b " +
             "LEFT JOIN FETCH b.file " +

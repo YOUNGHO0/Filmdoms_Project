@@ -1,32 +1,23 @@
 package com.filmdoms.community.account.controller;
 
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.account.data.dto.request.DeleteAccountRequestDto;
-import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
-import com.filmdoms.community.account.data.dto.request.LoginRequestDto;
-import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
-import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
-import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
-import com.filmdoms.community.account.data.dto.response.CheckDuplicateResponseDto;
-import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
-import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
-import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.data.dto.request.*;
+import com.filmdoms.community.account.data.dto.response.*;
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -34,7 +25,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     private final AccountService accountService;
+    private final PasswordEncoder passwordEncoder;
+    private final AccountRepository accountRepository;
+    @Value("${admin-password}")
+    private String password;
 
+    @GetMapping("/temp/admin")
+    public Response generateAdmin() {
+        Account account = Account.builder()
+                .nickname("admin")
+                .password(passwordEncoder.encode(password))
+                .role(AccountRole.ADMIN)
+                .email("testadmin@naver.com")
+                .build();
+        accountRepository.save(account);
+        return Response.success();
+    }
 
     @PostMapping("/login")
     public Response<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
