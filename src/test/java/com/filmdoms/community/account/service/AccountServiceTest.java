@@ -22,13 +22,18 @@ import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.account.data.entity.Movie;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
+import com.filmdoms.community.account.repository.FavoriteMovieRepository;
+import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -61,6 +66,12 @@ class AccountServiceTest {
 
     @MockBean
     private PasswordEncoder encoder;
+
+    @MockBean
+    private MovieRepository movieRepository;
+
+    @MockBean
+    private FavoriteMovieRepository favoriteMovieRepository;
 
     @Nested
     @DisplayName("로그인 기능 테스트")
@@ -201,16 +212,18 @@ class AccountServiceTest {
         @Test
         @DisplayName("계정 생성시, 올바른 요청이라면, 계정을 저장한다.")
         void givenValidRequest_whenCreatingAccount_thenSavesAccount() {
-
             // Given
+            List<String> favoriteMovies = List.of("ironman", "thor");
             JoinRequestDto requestDto = JoinRequestDto.builder()
                     .password("PassWord!0")
                     .email("random@email.com")
                     .nickname("JavaNoob")
+                    .favoriteMovies(favoriteMovies)
                     .build();
             given(accountRepository.existsByNickname(any())).willReturn(false);
             given(accountRepository.existsByEmail(any())).willReturn(false);
             given(fileRepository.findById(any())).willReturn(Optional.empty());
+            given(movieRepository.saveAll(any())).willReturn(getMockMovies(favoriteMovies));
 
             // When
             accountService.createAccount(requestDto);
@@ -281,13 +294,16 @@ class AccountServiceTest {
             File mockNewImage = mock(File.class);
             given(mockNewImage.getId()).willReturn(2L);
             given(mockNewImage.getUuidFileName()).willReturn("randomUuidFileName");
+            List<String> newFavoriteMovies = List.of("ironman", "thor");
 
             UpdateProfileRequestDto requestDto = UpdateProfileRequestDto.builder()
                     .fileId(2L)
                     .nickname("newNickname")
+                    .favoriteMovies(newFavoriteMovies)
                     .build();
             given(accountRepository.findByEmailWithImage(any())).willReturn(Optional.of(mockAccount));
             given(fileRepository.findById(any())).willReturn(Optional.of(mockNewImage));
+            given(movieRepository.saveAll(any())).willReturn(getMockMovies(newFavoriteMovies));
 
             // When
             AccountResponseDto responseDto = accountService.updateAccountProfile(requestDto, mockAccountDto);
@@ -297,6 +313,8 @@ class AccountServiceTest {
                     .hasFieldOrPropertyWithValue("nickname", "newNickname");
             assertThat(responseDto.getProfileImage())
                     .hasFieldOrPropertyWithValue("id", 2L);
+            assertThat(responseDto.getFavoriteMovies())
+                    .hasSameElementsAs(newFavoriteMovies);
         }
 
         @Test
@@ -450,5 +468,11 @@ class AccountServiceTest {
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
 
         return mockAccount;
+    }
+
+    private List<Movie> getMockMovies(List<String> movieNames) {
+        return movieNames.stream()
+                .map(Movie::new)
+                .collect(Collectors.toList());
     }
 }
