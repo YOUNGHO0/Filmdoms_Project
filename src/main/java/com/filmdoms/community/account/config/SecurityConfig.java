@@ -19,7 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@PropertySource(value = "classpath:oauth.yml", factory = YamlPropertySourceFactory.class)
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
