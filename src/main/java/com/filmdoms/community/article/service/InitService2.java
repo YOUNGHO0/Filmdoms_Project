@@ -58,22 +58,27 @@ public class InitService2 {
                 .toList();
 
         //critic 게시판 생성
+        File criticFile = initServiceGenerator.fileGenerator("a1d55b8b-ee40-42b0-8b4f-d18a3c5dd7a0.png", "criticFileName");
         for (int i = 0; i < 20; i++) {
             for (Tag tag : criticTagList) {
-                initServiceGenerator.articleGenerator("테스트 티이틀" + i + "번째",
+                Article article = initServiceGenerator.articleGenerator("테스트 티이틀" + i + "번째",
                         Category.CRITIC, tag, testAccount, false, "비평게시물" + i + "번째 태그 :" + tag + "내용");
+                initServiceGenerator.criticGenerator(article, criticFile);
             }
             for (Tag tag : criticTagList) {
-                initServiceGenerator.articleGenerator("테스트 티이틀 이미지있음" + i + "번째",
+                Article article = initServiceGenerator.articleGenerator("테스트 티이틀 이미지있음" + i + "번째",
                         Category.CRITIC, tag, testAccount, true, "비평게시물" + i + "번째 태그 :" + tag + "내용에 이미지 있음");
+                initServiceGenerator.criticGenerator(article, criticFile);
             }
             for (Tag tag : criticTagList) {
-                initServiceGenerator.articleGenerator("테스트 티이틀" + i + "번째",
+                Article article = initServiceGenerator.articleGenerator("테스트 티이틀" + i + "번째",
                         Category.CRITIC, tag, testAccount2, false, "비평게시물" + i + "번째 태그 :" + tag + "내용");
+                initServiceGenerator.criticGenerator(article, criticFile);
             }
             for (Tag tag : criticTagList) {
-                initServiceGenerator.articleGenerator("테스트 티이틀 이미지있음" + i + "번째",
+                Article article = initServiceGenerator.articleGenerator("테스트 티이틀 이미지있음" + i + "번째",
                         Category.CRITIC, tag, testAccount2, true, "비평게시물" + i + "번째 태그 :" + tag + "내용에 이미지 있음");
+                initServiceGenerator.criticGenerator(article, criticFile);
             }
         }
         List<Tag> filmUniverseTagList = Arrays.stream(Tag.values()) //게시판 태그만 추출
