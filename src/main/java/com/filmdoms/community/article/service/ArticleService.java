@@ -32,7 +32,6 @@ import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.vote.data.entity.VoteKey;
 import com.filmdoms.community.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +45,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
@@ -236,8 +234,6 @@ public class ArticleService {
                 articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
                 Page<MovieListResponseResponseDto> movieListResponseDtos = articles.map(MovieListResponseResponseDto::from);
                 return movieListResponseDtos;
-            case CRITIC:
-
             case FILM_UNIVERSE:
                 articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
                 Page<FilmUniverseListResponseResponseDto> filmUniverseDto = articles.map(FilmUniverseListResponseResponseDto::from);
