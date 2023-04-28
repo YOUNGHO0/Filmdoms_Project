@@ -27,10 +27,8 @@ import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
-import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import com.filmdoms.community.file.service.ImageFileService;
 import com.filmdoms.community.vote.data.entity.VoteKey;
 import com.filmdoms.community.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -178,7 +176,7 @@ public class ArticleService {
 
 
         Page<Article> articlesByCategory;
-
+        Page<Critic> critics;
         switch (category) {
             case MOVIE:
                 if (tag != null)
@@ -189,12 +187,11 @@ public class ArticleService {
                 return movieListDtos;
             case CRITIC:
                 if (tag != null)
-                    articlesByCategory = articleRepository.findArticlesByCategoryAndTag(category, tag, pageable);
+                    critics = criticRepository.getCriticsByTag(tag, pageable);
                 else
-                    articlesByCategory = articleRepository.findArticlesByCategory(category, pageable);
-                Page<CriticListResponseResponseDto> criticListDtos = articlesByCategory.map(
-                        CriticListResponseResponseDto::from);
-                return criticListDtos;
+                    critics = criticRepository.getCritics(pageable);
+                Page<CriticListResponseResponseDto> criticDtos = critics.map(CriticListResponseResponseDto::from);
+                return criticDtos;
             case FILM_UNIVERSE:
                 if (tag != null)
                     articlesByCategory = articleRepository.findArticlesByCategoryAndTag(category, tag, pageable);
@@ -237,10 +234,6 @@ public class ArticleService {
                 articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
                 Page<MovieListResponseResponseDto> movieListResponseDtos = articles.map(MovieListResponseResponseDto::from);
                 return movieListResponseDtos;
-            case CRITIC:
-                articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
-                Page<CriticListResponseResponseDto> criticListResponseDto = articles.map(CriticListResponseResponseDto::from);
-
             case FILM_UNIVERSE:
                 articles = articleRepository.findArticlesByKeyword(category, keyword, pageable);
                 Page<FilmUniverseListResponseResponseDto> filmUniverseDto = articles.map(FilmUniverseListResponseResponseDto::from);
@@ -257,10 +250,6 @@ public class ArticleService {
                 articles = articleRepository.findArticlesByNickname(category, authorName, pageable);
                 Page<MovieListResponseResponseDto> movieListResponseDtos = articles.map(MovieListResponseResponseDto::from);
                 return movieListResponseDtos;
-            case CRITIC:
-                articles = articleRepository.findArticlesByNickname(category, authorName, pageable);
-                Page<CriticListResponseResponseDto> criticListResponseDto = articles.map(CriticListResponseResponseDto::from);
-
             case FILM_UNIVERSE:
                 articles = articleRepository.findArticlesByNickname(category, authorName, pageable);
                 Page<FilmUniverseListResponseResponseDto> filmUniverseDto = articles.map(FilmUniverseListResponseResponseDto::from);

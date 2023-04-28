@@ -7,14 +7,16 @@ import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Announce;
+import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
+import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
-import com.filmdoms.community.file.data.entity.File;
-import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.file.data.entity.File;
+import com.filmdoms.community.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,7 @@ public class InitServiceGenerator {
     private final FilmUniverseRepository filmUniverseRepository;
     private final AnnounceRepository announceRepository;
     private final ArticleRepository articleRepository;
+    private final CriticRepository criticRepository;
 
     public File fileGenerator(String uuidFileName, String originalFileName) {
         File fileImage = File.builder() //게시글과 매핑될 디폴트 이미지 생성
@@ -96,6 +99,17 @@ public class InitServiceGenerator {
                 .build();
         filmUniverseRepository.save(filmUniverse);
         return filmUniverse;
+    }
+
+    public Critic criticGenerator(Article article, File mainImage) {
+
+        Critic critic = Critic.builder()
+                .article(article)
+                .mainImage(mainImage)
+                .build();
+        criticRepository.save(critic);
+        return critic;
+
     }
 
     public Announce announceGenerator(Article article) {
