@@ -60,4 +60,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             , countQuery = "SELECT count(a) from Article a inner join a.author where a.category =:categoryId and a.author.nickname =:nickname")
     Page<Article> findArticlesByNickname(@Param("categoryId") Category category, @Param("nickname") String nickname, Pageable pageable);
 
+    Page<Article> findByAuthorId(Long authorId, Pageable pageable);
 }
