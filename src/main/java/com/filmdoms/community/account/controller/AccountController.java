@@ -4,6 +4,8 @@ import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.request.*;
 import com.filmdoms.community.account.data.dto.response.*;
+import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
+import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -12,11 +14,15 @@ import com.filmdoms.community.account.service.AccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -97,6 +103,18 @@ public class AccountController {
             @AuthenticationPrincipal AccountDto accountDto) {
         accountService.updateAccountProfile(requestDto, accountDto);
         return Response.success();
+    }
+
+    @GetMapping("/profile/{accountId}/article")
+    public Response<ProfileArticleResponseDto> getProfileArticles(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileArticleResponseDto responseDto = accountService.getProfileArticles(accountId, pageable);
+        return Response.success(responseDto);
+    }
+
+    @GetMapping("/profile/{accountId}/comment")
+    public Response<ProfileCommentResponseDto> getProfileComments(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileCommentResponseDto responseDto = accountService.getProfileComments(accountId, pageable);
+        return Response.success(responseDto);
     }
 
     @PutMapping("/profile/password")
