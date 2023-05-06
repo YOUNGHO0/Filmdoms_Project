@@ -13,13 +13,13 @@ import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenRespon
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.data.entity.Movie;
 import com.filmdoms.community.account.data.entity.FavoriteMovie;
+import com.filmdoms.community.account.data.entity.Movie;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
-import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
+import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
@@ -27,12 +27,6 @@ import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,6 +34,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -294,12 +295,16 @@ public class AccountService {
     }
 
     public ProfileArticleResponseDto getProfileArticles(Long accountId, Pageable pageable) {
-        Page<Article> articlePage = articleRepository.findByAuthorId(accountId, pageable);
+        Account author = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Page<Article> articlePage = articleRepository.findByAuthor(author, pageable);
         return ProfileArticleResponseDto.from(articlePage);
     }
 
     public ProfileCommentResponseDto getProfileComments(Long accountId, Pageable pageable) {
-        Page<Comment> commentPage = commentRepository.findByAuthorIdWithArticle(accountId, pageable);
+        Account author = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Page<Comment> commentPage = commentRepository.findByAuthorWithArticle(author, pageable);
         return ProfileCommentResponseDto.from(commentPage);
     }
 }

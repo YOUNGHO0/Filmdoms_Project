@@ -1,5 +1,6 @@
 package com.filmdoms.community.comment.repository;
 
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.comment.data.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +21,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.article " +
-            "WHERE c.author.id = :authorId",
+            "WHERE c.author = :author",
             countQuery = "SELECT COUNT(c) FROM Comment c " +
-                    "WHERE c.author.id = :authorId")
-    Page<Comment> findByAuthorIdWithArticle(@Param("authorId") Long authorId, Pageable pageable);
+                    "WHERE c.author = :author")
+    Page<Comment> findByAuthorWithArticle(@Param("author") Account author, Pageable pageable);
 }
