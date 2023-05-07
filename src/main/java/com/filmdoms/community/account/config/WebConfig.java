@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000", "http://film-doms.vercel.app:80", "http://localhost:3030")
+                .allowedOrigins("http://localhost:3000", "http://film-doms.vercel.app:80", "http://localhost:3030","https://film-doms.vercel.app:80" )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(MAX_AGE_SECS);
