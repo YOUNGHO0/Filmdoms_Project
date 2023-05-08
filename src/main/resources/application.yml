@@ -65,7 +65,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/filmdoms
+    url: jdbc:mariadb://svc.sel4.cloudtype.app:30330/filmdoms
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
