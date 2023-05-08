@@ -65,7 +65,7 @@ public class JwtTokenProvider {
     public ResponseCookie createRefreshTokenCookie (String refreshToken) {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false) // TODO: 실서비스시엔 true 로 변경해야 함.
+                .secure(true)
                 .maxAge(TOKEN_VALID_MILLISECOND)
                 .sameSite("None")
                 .path("/api")
