@@ -3,13 +3,14 @@ package com.filmdoms.community.account.service;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
+import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.DeleteAccountRequestDto;
 import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
-import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
+import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -58,7 +59,7 @@ public class AccountService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public LoginResponseDto login(String email, String password) {
+    public LoginDto login(String email, String password) {
 
         log.info("가입 여부 확인");
         AccountDto accountDto = accountRepository.findByEmail(email)
@@ -78,14 +79,14 @@ public class AccountService {
         log.info("리프레시 토큰 저장 / 갱신");
         refreshTokenRepository.save(key, refreshToken);
 
-        return LoginResponseDto.builder()
+        return LoginDto.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(String.valueOf(accountDto.getId())))
                 .refreshToken(refreshToken)
                 .build();
     }
 
     @Transactional
-    public RefreshAccessTokenResponseDto refreshAccessToken(String refreshToken) {
+    public AccessTokenResponseDto refreshAccessToken(String refreshToken) {
 
         log.info("토큰 내 저장된 키 추출");
         String key = jwtTokenProvider.getSubject(refreshToken);
@@ -104,7 +105,7 @@ public class AccountService {
 
         log.info("새로운 엑세스 토큰 발급");
         String accessToken = jwtTokenProvider.createAccessToken(key);
-        return RefreshAccessTokenResponseDto.builder()
+        return AccessTokenResponseDto.builder()
                 .accessToken(accessToken)
                 .build();
     }

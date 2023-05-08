@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.data.dto.response;
+package com.filmdoms.community.account.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class RefreshAccessTokenResponseDto {
-
+public class LoginDto {
     private String accessToken;
+    private String refreshToken;
 }
