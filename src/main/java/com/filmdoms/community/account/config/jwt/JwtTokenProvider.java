@@ -30,6 +30,7 @@ public class JwtTokenProvider {
     private String secretKey;
     private byte[] keyBytes;
     private final long TOKEN_VALID_MILLISECOND = 1000L * 60 * 60;
+    private final long REFRESH_VALID_SECOND = 60L * 60 * 24 * 30;
 
     @PostConstruct // Bean 으로 주입되면서 실행
     private void init() {
@@ -66,7 +67,7 @@ public class JwtTokenProvider {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .maxAge(TOKEN_VALID_MILLISECOND)
+                .maxAge(REFRESH_VALID_SECOND) // 초 단위
                 .sameSite("None")
                 .path("/api")
                 .build();
