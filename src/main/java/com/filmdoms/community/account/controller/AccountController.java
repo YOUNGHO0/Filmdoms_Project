@@ -69,16 +69,12 @@ public class AccountController {
     }
 
     @PostMapping("/refresh-token")
-    public Response<AccessTokenResponseDto> refreshAccessToken(@RequestHeader("Cookie") String cookieHeader) {
-        String refreshToken = extractRefreshToken(cookieHeader)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+    public Response<AccessTokenResponseDto> refreshAccessToken(@CookieValue("refreshToken") String refreshToken) {
         return Response.success(accountService.refreshAccessToken(refreshToken));
     }
 
     @PostMapping("/logout")
-    public Response<Void> logout(@RequestHeader("Cookie") String cookieHeader) {
-        String refreshToken = extractRefreshToken(cookieHeader)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+    public Response<Void> logout(@CookieValue("refreshToken") String refreshToken) {
         accountService.logout(refreshToken);
         return Response.success();
     }
