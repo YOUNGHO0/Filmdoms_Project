@@ -1,16 +1,14 @@
 package com.filmdoms.community.account.exception;
 
 import com.filmdoms.community.account.data.dto.response.Response;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -51,6 +49,14 @@ public class GlobalControllerAdvice {
                 .collect(Collectors.toList());
         return ResponseEntity.status(ErrorCode.REQUEST_PARSE_ERROR.getStatus())
                 .body(Response.error(ErrorCode.REQUEST_PARSE_ERROR.name(), errors));
+    }
+
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<?> cookieExceptionHandler(
+            MissingRequestCookieException e) {
+        log.error("Error occurs: {}", e.toString());
+        return ResponseEntity.status(ErrorCode.TOKEN_NOT_FOUND.getStatus())
+                .body(Response.error(ErrorCode.TOKEN_NOT_FOUND.name(), ErrorCode.TOKEN_NOT_FOUND.getMessage()));
     }
 }
 

@@ -14,6 +14,7 @@ import java.security.Key;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -29,6 +30,7 @@ public class JwtTokenProvider {
     private String secretKey;
     private byte[] keyBytes;
     private final long TOKEN_VALID_MILLISECOND = 1000L * 60 * 60;
+    private final long REFRESH_VALID_SECOND = 60L * 60 * 24 * 30;
 
     @PostConstruct // Bean 으로 주입되면서 실행
     private void init() {
@@ -59,6 +61,16 @@ public class JwtTokenProvider {
                 .setIssuedAt(new Date())
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public ResponseCookie createRefreshTokenCookie (String refreshToken) {
+        return ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(REFRESH_VALID_SECOND) // 초 단위
+                .sameSite("None")
+                .path("/api")
+                .build();
     }
 
     // 토큰 인증 정보 조회

@@ -2,30 +2,33 @@ package com.filmdoms.community.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.filmdoms.community.account.config.SecurityConfig;
+import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.LoginRequestDto;
 import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
-import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
+import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
-import java.io.IOException;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -47,6 +50,12 @@ public class AccountControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private AccountService accountService;
+    @MockBean
+    private AccountRepository accountRepository;
+    @MockBean
+    private PasswordEncoder passwordEncoder;
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
     @Test
     @DisplayName("정상적으로 로그인시, 계정 정보를 반환한다.")
@@ -54,10 +63,15 @@ public class AccountControllerTest {
         // Given
         String email = "address@filmdoms.com";
         String password = "password";
-        LoginResponseDto responseDto = LoginResponseDto.builder()
+        LoginDto responseDto = LoginDto.builder()
                 .accessToken("mockAccessToken")
                 .refreshToken("mockRefreshToken")
                 .build();
+        when(jwtTokenProvider.createRefreshTokenCookie("mockRefreshToken"))
+                .thenReturn(ResponseCookie.from("refreshToken", "mockRefreshToken")
+                        .httpOnly(true)
+                        .maxAge(1000L * 60 * 60)
+                        .build());
         when(accountService.login(email, password)).thenReturn(responseDto);
 
         // When & Then
@@ -68,7 +82,14 @@ public class AccountControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'SUCCESS')]").exists())
                 .andExpect(jsonPath("$..result[?(@..accessToken)]").exists())
-                .andExpect(jsonPath("$..result[?(@..refreshToken)]").exists());
+                .andExpect(result -> {
+                    List<String> setCookieHeaders = result.getResponse().getHeaders(HttpHeaders.SET_COOKIE);
+                    assertThat(setCookieHeaders).isNotNull().hasSize(1);
+                    String setCookieHeaderValue = setCookieHeaders.get(0);
+                    assertThat(setCookieHeaderValue).contains("refreshToken");
+                    assertThat(setCookieHeaderValue).contains("HttpOnly");
+                    assertThat(setCookieHeaderValue).contains("Max-Age");
+                });
     }
 
     @Test
@@ -114,7 +135,7 @@ public class AccountControllerTest {
     void whenRefreshingAccessToken_thenReturnsNewAccessToken() throws Exception {
         // Given
         String refreshToken = "mockRefreshToken";
-        RefreshAccessTokenResponseDto responseDto = RefreshAccessTokenResponseDto.builder()
+        AccessTokenResponseDto responseDto = AccessTokenResponseDto.builder()
                 .accessToken("mockAccessToken")
                 .build();
         when(accountService.refreshAccessToken(refreshToken)).thenReturn(responseDto);

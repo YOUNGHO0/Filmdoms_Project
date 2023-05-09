@@ -20,7 +20,7 @@ import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
-import com.filmdoms.community.account.data.dto.response.RefreshAccessTokenResponseDto;
+import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.data.entity.Movie;
 import com.filmdoms.community.account.exception.ApplicationException;
@@ -29,6 +29,8 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
+import com.filmdoms.community.article.repository.ArticleRepository;
+import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import java.util.List;
@@ -51,27 +53,24 @@ class AccountServiceTest {
 
     @Autowired
     private AccountService accountService;
-
     @MockBean
     private FileRepository fileRepository;
-
     @MockBean
     private AccountRepository accountRepository;
-
     @MockBean
     private RefreshTokenRepository refreshTokenRepository;
-
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
-
     @MockBean
     private PasswordEncoder encoder;
-
     @MockBean
     private MovieRepository movieRepository;
-
     @MockBean
     private FavoriteMovieRepository favoriteMovieRepository;
+    @MockBean
+    private ArticleRepository articleRepository;
+    @MockBean
+    private CommentRepository commentRepository;
 
     @Nested
     @DisplayName("로그인 기능 테스트")
@@ -137,7 +136,7 @@ class AccountServiceTest {
             when(jwtTokenProvider.createAccessToken(key)).thenReturn(accessToken);
 
             // When
-            RefreshAccessTokenResponseDto responseDto = accountService.refreshAccessToken(refreshToken);
+            AccessTokenResponseDto responseDto = accountService.refreshAccessToken(refreshToken);
 
             // Then
             assertThat(responseDto)

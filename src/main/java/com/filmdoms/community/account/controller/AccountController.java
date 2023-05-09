@@ -1,7 +1,9 @@
 package com.filmdoms.community.account.controller;
 
+import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
+import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.*;
 import com.filmdoms.community.account.data.dto.response.*;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
@@ -12,17 +14,19 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,6 +37,7 @@ public class AccountController {
     private final AccountService accountService;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     @Value("${admin-password}")
     private String password;
 
@@ -49,29 +54,27 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public Response<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
-        return Response.success(accountService.login(requestDto.getEmail(), requestDto.getPassword()));
+    public Response<AccessTokenResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        LoginDto dto = accountService.login(requestDto.getEmail(), requestDto.getPassword());
+        ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return Response.success(AccessTokenResponseDto.from(dto));
     }
 
-    private Optional<String> extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return Optional.of(authHeader.substring(7));
-        }
-        return Optional.empty();
+    private Optional<String> extractRefreshToken(String cookieHeader) {
+        return Optional.ofNullable(cookieHeader).flatMap(header -> Arrays.stream(header.split("; "))
+                .filter(cookie -> cookie.startsWith("refreshToken="))
+                .findFirst()
+                .map(cookie -> cookie.substring("refreshToken=".length())));
     }
 
     @PostMapping("/refresh-token")
-    public Response<RefreshAccessTokenResponseDto> refreshAccessToken(HttpServletRequest request) {
-        String refreshToken = extractToken(request)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+    public Response<AccessTokenResponseDto> refreshAccessToken(@CookieValue("refreshToken") String refreshToken) {
         return Response.success(accountService.refreshAccessToken(refreshToken));
     }
 
     @PostMapping("/logout")
-    public Response<Void> logout(HttpServletRequest request) {
-        String refreshToken = extractToken(request)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_FOUND));
+    public Response<Void> logout(@CookieValue("refreshToken") String refreshToken) {
         accountService.logout(refreshToken);
         return Response.success();
     }
