@@ -30,9 +30,14 @@ public class EmailService {
     private static final String AUTH_CODE_KEY_PREFIX = "authCode:";
 
     public void sendTempPasswordEmail(String email) {
+
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+
         if (!optionalAccount.isPresent())
             throw new ApplicationException(ErrorCode.INVALID_EMAIL);
+        if (optionalAccount.get().isSocialLogin())
+            throw new ApplicationException(ErrorCode.SOCIAL_LOGIN_ACCOUNT);
+
         Account account = optionalAccount.get();
         String tempPassword = PasswordUtil.generateRandomPassword(10);
         account.updatePassword(tempPassword);
@@ -42,6 +47,8 @@ public class EmailService {
     }
 
     public void sendAuthCodeEmail(String email) {
+        // 소셜 로그인 이메일이나, 이미 가입된 이메일이 있는 경우 체크
+        checkAccountExistAndSocialLogin(email);
         String authCode = UUID.randomUUID().toString();
         redisUtil.setDataAndExpirationInMillis(AUTH_CODE_KEY_PREFIX + email, authCode, AUTH_CODE_EXPIRE_DURATION_IN_MILLISECONDS);
         String subject = "[필름덤즈] 인증 코드를 발송해 드립니다.";
@@ -52,7 +59,7 @@ public class EmailService {
     public EmailAuthDto verifyAuthCode(AuthCodeVerificationRequestDto requestDto) {
         String email = requestDto.getEmail();
         String authCode = requestDto.getAuthCode();
-        checkSocialLogin(requestDto.getEmail());
+        checkAccountExistAndSocialLogin(requestDto.getEmail());
         String foundValue = redisUtil.getData(AUTH_CODE_KEY_PREFIX + email);
         if (foundValue == null || !foundValue.equals(authCode)) {
             throw new ApplicationException(ErrorCode.INVALID_AUTHENTICATION_CODE);
@@ -65,13 +72,16 @@ public class EmailService {
         return EmailAuthDto.from(authenticatedEmailUuid);
     }
 
-
-    private void checkSocialLogin(String email) {
-        Optional<Account> accountOptional = accountRepository.findByEmail(email);
-        if (accountOptional.isPresent() && accountOptional.get().isSocialLogin()) {
-            throw new ApplicationException(ErrorCode.SOCIAL_LOGIN_ACCOUNT);
+    private void checkAccountExistAndSocialLogin(String email) {
+        // 계정이 존재하면 안되며, 계정이 존재하는 경우 소셜 로그인일 수 있음
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isPresent()) {
+            if (optionalAccount.get().isSocialLogin())
+                throw new ApplicationException(ErrorCode.SOCIAL_LOGIN_ACCOUNT);
+            throw new ApplicationException(ErrorCode.DUPLICATE_EMAIL);
         }
     }
+
 
     private String getAuthEmailContent(String authCode) {
         StringBuilder sb = new StringBuilder();
