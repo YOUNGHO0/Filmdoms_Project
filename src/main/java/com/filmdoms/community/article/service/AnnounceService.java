@@ -1,7 +1,11 @@
 package com.filmdoms.community.article.service;
 
+import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.exception.ApplicationException;
+import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.response.boardlist.AnnounceListResponseDto;
+import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Announce;
 import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
@@ -11,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -18,6 +24,25 @@ public class AnnounceService {
 
     private final AnnounceRepository announceRepository;
     private final ArticleRepository articleRepository;
+
+    public Response registerAnnounce(Long articleId) {
+
+        Article article = articleRepository.findById(articleId).get(); // 컨트롤러단에서 확인했기 때문에 없을수가 없음
+
+        Announce announce = Announce.builder()
+                .article(article)
+                .build();
+        announceRepository.save(announce);
+
+        return Response.success();
+    }
+
+    public Response unregisterAnnounce(Long articleId){
+
+        Announce announce = announceRepository.findAnnounceByArticleId(articleId).get();
+        announceRepository.delete(announce);
+        return Response.success();
+    }
 
     public Page<AnnounceListResponseDto> getAllAnnounceArticles(Pageable pageable) {
         Page<Announce> announces = announceRepository.findAllAnnounceList(pageable);
