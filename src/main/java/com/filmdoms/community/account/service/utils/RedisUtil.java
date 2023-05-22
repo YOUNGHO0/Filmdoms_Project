@@ -16,6 +16,10 @@ public class RedisUtil {
         return redisTemplate.opsForValue().get(key);
     }
 
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
     public void setDataAndExpirationInMillis(String key, String value, long millis) {
         redisTemplate.opsForValue().set(key, value, Duration.ofMillis(millis));
     }

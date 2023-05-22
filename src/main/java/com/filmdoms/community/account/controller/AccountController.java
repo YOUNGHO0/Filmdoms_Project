@@ -5,7 +5,10 @@ import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.*;
-import com.filmdoms.community.account.data.dto.response.*;
+import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
+import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
+import com.filmdoms.community.account.data.dto.response.CheckDuplicateResponseDto;
+import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -13,9 +16,8 @@ import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.filmdoms.community.account.service.utils.RedisUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +29,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @RestController
@@ -38,6 +41,7 @@ public class AccountController {
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
     @Value("${admin-password}")
     private String password;
 
@@ -81,7 +85,15 @@ public class AccountController {
 
     @PostMapping()
     public Response<Void> join(@RequestBody JoinRequestDto requestDto) {
-        accountService.createAccount(requestDto);
+
+        String foundKey = redisUtil.getData(requestDto.getEmailAuthUuid());
+        if (foundKey == null)  // 이메일 인증 미수행
+            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
+        if (!foundKey.equals(requestDto.getEmail())) // 이메일 인증은 시도했지만, 다른 이메일 가입시 시도한 이메일 인증임
+            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
+        else
+            accountService.createAccount(requestDto);
+
         return Response.success();
     }
 

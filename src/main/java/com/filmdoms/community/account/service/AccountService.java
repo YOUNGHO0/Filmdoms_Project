@@ -8,9 +8,8 @@ import com.filmdoms.community.account.data.dto.request.DeleteAccountRequestDto;
 import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
-import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
-import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
+import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -22,6 +21,7 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
+import com.filmdoms.community.account.service.utils.RedisUtil;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.comment.data.entity.Comment;
@@ -57,6 +57,7 @@ public class AccountService {
     private final FavoriteMovieRepository favoriteMovieRepository;
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
+    private final RedisUtil redisUtil;
 
     @Transactional
     public LoginDto login(String email, String password) {
@@ -174,6 +175,9 @@ public class AccountService {
                         .build())
                 .toList();
         favoriteMovieRepository.saveAll(favoriteMovies);
+
+        log.info("이메일 인증으로 사용한 uuid 삭제");
+        redisUtil.deleteKey(requestDto.getEmailAuthUuid());
     }
 
     // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요

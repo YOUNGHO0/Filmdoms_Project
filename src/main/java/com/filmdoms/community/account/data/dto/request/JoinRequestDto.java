@@ -1,22 +1,14 @@
 package com.filmdoms.community.account.data.dto.request;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.LIST_TOO_BIG;
-import static com.filmdoms.community.account.exception.ValidationMessage.CANNOT_BE_NULL;
-import static com.filmdoms.community.account.exception.ValidationMessage.UNMATCHED_EMAIL;
-import static com.filmdoms.community.account.exception.ValidationMessage.UNMATCHED_NICKNAME;
-import static com.filmdoms.community.account.exception.ValidationMessage.UNMATCHED_PASSWORD;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import java.util.List;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+import static com.filmdoms.community.account.exception.ValidationMessage.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,4 +35,8 @@ public class JoinRequestDto {
     @NotNull(message = "관심 영화는 " + CANNOT_BE_NULL)
     @Size(max = 5, message = "관심 영화 " + LIST_TOO_BIG)
     private List<String> favoriteMovies;
+
+    @NotNull(message = EMAIL_AUTH_ERROR)
+    private String emailAuthUuid;
+
 }

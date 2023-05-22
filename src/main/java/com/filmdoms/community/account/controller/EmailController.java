@@ -2,8 +2,8 @@ package com.filmdoms.community.account.controller;
 
 import com.filmdoms.community.account.data.dto.request.AuthCodeVerificationRequestDto;
 import com.filmdoms.community.account.data.dto.request.SimpleEmailRequestDto;
+import com.filmdoms.community.account.data.dto.response.EmailAuthDto;
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.account.data.dto.response.SimpleAccountResponseDto;
 import com.filmdoms.community.account.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +24,10 @@ public class EmailController {
     }
 
     @PostMapping("/auth-code/verification")
-    public Response<SimpleAccountResponseDto> verifyAuthCode(@RequestBody AuthCodeVerificationRequestDto requestDto) {
-        SimpleAccountResponseDto responseDto = emailService.verityAuthCode(requestDto);
-        return Response.success(responseDto);
+    public Response<EmailAuthDto> verifyAuthCode(@RequestBody AuthCodeVerificationRequestDto requestDto) {
+        EmailAuthDto emailAuthDto = emailService.verifyAuthCode(requestDto);
+
+        return Response.success(emailAuthDto);
     }
 
     @PostMapping("/temp-password")
