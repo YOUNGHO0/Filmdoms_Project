@@ -44,6 +44,9 @@ public enum ErrorCode {
     SOCIAL_LOGIN_ACCOUNT(HttpStatus.BAD_REQUEST, "소셜 로그인 계정입니다."),
     INVALID_AUTHENTICATION_CODE(HttpStatus.BAD_REQUEST, "잘못된 인증 코드이거나 인증 코드가 만료되었습니다."),
     INVALID_EMAIL_UUID(HttpStatus.BAD_REQUEST, "이메일 인증이 되지 않았습니다."),
+    ALREADY_REGISTERED_ANNOUNCE(HttpStatus.BAD_REQUEST,"이미 등록된 공지사항입니다"),
+    ALREADY_UNREGISTERED_ANNOUNCE(HttpStatus.BAD_REQUEST,"이미 등록해제된 공지사항입니다"),
+    INVALID_ANNOUNCE_ID(HttpStatus.BAD_REQUEST,"존재하지 않는 공지사항입니다"),
     INVALID_TAG(HttpStatus.BAD_REQUEST, "해당 카테고리에 존재하지 않는 태그입니다.");
 
     private final HttpStatus status;
