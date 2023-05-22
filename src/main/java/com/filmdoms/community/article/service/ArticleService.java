@@ -20,7 +20,6 @@ import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentM
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleResponseDto;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.article.data.entity.extra.Announce;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.AnnounceRepository;
@@ -207,18 +206,6 @@ public class ArticleService {
 
     }
 
-    public Page<AnnounceListResponseDto> getAllAnnounceArticles(Pageable pageable) {
-        Page<Announce> announces = announceRepository.findAllAnnounceList(pageable);
-        Page<AnnounceListResponseDto> announceListResponseDtos = announces.map(AnnounceListResponseDto::from);
-        return announceListResponseDtos;
-    }
-
-    public Page<AnnounceListResponseDto> getAnnounceArticlesByCategory(Category category, Pageable pageable) {
-
-        Page<Announce> announces = announceRepository.findAnnounceListByCategory(category, pageable);
-        Page<AnnounceListResponseDto> announceListResponseDtos = announces.map(AnnounceListResponseDto::from);
-        return announceListResponseDtos;
-    }
 
     public List<TopFiveArticleResponseDto> getTopFiveArticles() {
         List<Article> top5Articles = articleRepository.getTop5Articles();
