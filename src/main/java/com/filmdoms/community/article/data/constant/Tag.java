@@ -13,7 +13,7 @@ public enum Tag {
     DRAMA(Category.MOVIE, "드라마"),
     EVENT(Category.MOVIE, "이벤트"),
     GOODS(Category.MOVIE, "굿즈"),
-    OUTSIDE_ACTIVITY(Category.FILM_UNIVERSE, "대외활동"),
+    SUPPORTERS(Category.FILM_UNIVERSE, "대외활동"),
     COMPETITION(Category.FILM_UNIVERSE, "공모전"),
     CLUB(Category.FILM_UNIVERSE, "동아리"),
     CRITIC_ACTOR(Category.CRITIC, "배우비평"),
