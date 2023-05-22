@@ -139,7 +139,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void createAccount(JoinRequestDto requestDto) {
+    public LoginDto createAccount(JoinRequestDto requestDto) {
 
         log.info("닉네임 중복 확인");
         if (isNicknameDuplicate(requestDto.getNickname())) {
@@ -178,6 +178,8 @@ public class AccountService {
 
         log.info("이메일 인증으로 사용한 uuid 삭제");
         redisUtil.deleteKey(requestDto.getEmailAuthUuid());
+
+        return login(requestDto.getEmail(), requestDto.getPassword());
     }
 
     // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요
