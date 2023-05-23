@@ -16,7 +16,7 @@ public class Announce {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @JoinColumn(name = "article_id", nullable = false)
-    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     Article article;
 
     @Builder

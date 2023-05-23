@@ -6,7 +6,6 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.request.create.ParentCreateRequestDto;
-import com.filmdoms.community.article.data.dto.response.boardlist.AnnounceListResponseDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.ParentBoardListResponseDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.RecentListResponseDto;
 import com.filmdoms.community.article.data.dto.response.create.ArticleCreateResponseDto;
@@ -84,17 +83,6 @@ public class ArticleController {
 
     }
 
-    @GetMapping("/article/announce")
-    public Response getAllAnnounceArticles(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<AnnounceListResponseDto> announceArticles = articleService.getAllAnnounceArticles(pageable);
-        return Response.success(announceArticles);
-    }
-
-    @GetMapping("/article/{category}/announce")
-    public Response getAnnounceArticlesByCategory(@PathVariable Category category, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<AnnounceListResponseDto> announceArticles = articleService.getAnnounceArticlesByCategory(category, pageable);
-        return Response.success(announceArticles);
-    }
 
     @GetMapping("/article/{category}")
     public Response getBoardCategoryList(@PathVariable Category category, @RequestParam(required = false) Tag tag, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {

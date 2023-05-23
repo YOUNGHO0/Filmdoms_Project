@@ -253,7 +253,7 @@ public class InitService {
                     .containsImage(false)
                     .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
                     .build();
-
+            articleRepository.save(article);
             Announce announce = Announce.builder()
                     .article(article)
                     .build();
@@ -271,7 +271,7 @@ public class InitService {
                     .containsImage(false)
                     .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
                     .build();
-
+            articleRepository.save(article);
             Announce announce = Announce.builder()
                     .article(article)
                     .build();
