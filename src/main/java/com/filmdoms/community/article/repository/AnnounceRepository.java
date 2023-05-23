@@ -26,6 +26,6 @@ public interface AnnounceRepository extends JpaRepository<Announce, Long> {
             , countQuery = "SELECT count(a) from Announce a inner join a.article where a.article.category =:categoryId")
     Page<Announce> findAnnounceListByCategory(@Param("categoryId") Category category, Pageable pageable);
 
-    @Query(value = "Select a from Announce a inner join fetch a.article where a.article.id =:announceId")
+    @Query(value = "Select a from Announce a inner join a.article where a.article.id =:announceId")
     Optional<Announce> findAnnounceByArticleId(@Param("announceId") Long id);
 }
