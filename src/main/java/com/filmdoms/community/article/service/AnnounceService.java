@@ -27,6 +27,10 @@ public class AnnounceService {
 
     public Response registerAnnounce(Long articleId) {
 
+        Optional<Announce> optionalAnnounce = announceRepository.findAnnounceByArticleId(articleId);
+        if (optionalAnnounce.isPresent())
+            throw new ApplicationException(ErrorCode.ALREADY_REGISTERED_ANNOUNCE);
+
         Article article = articleRepository.findById(articleId).get(); // 컨트롤러단에서 확인했기 때문에 없을수가 없음
 
         Announce announce = Announce.builder()
@@ -37,7 +41,11 @@ public class AnnounceService {
         return Response.success();
     }
 
-    public Response unregisterAnnounce(Long articleId){
+    public Response unregisterAnnounce(Long articleId) {
+
+        Optional<Announce> optionalAnnounce = announceRepository.findAnnounceByArticleId(articleId);
+        if (optionalAnnounce.isEmpty())
+            throw new ApplicationException(ErrorCode.ALREADY_UNREGISTERED_ANNOUNCE);
 
         Announce announce = announceRepository.findAnnounceByArticleId(articleId).get();
         announceRepository.delete(announce);

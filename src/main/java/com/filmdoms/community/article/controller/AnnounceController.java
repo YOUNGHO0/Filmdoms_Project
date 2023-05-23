@@ -9,8 +9,6 @@ import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.request.announce.AnnounceRegisterDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.AnnounceListResponseDto;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.article.data.entity.extra.Announce;
-import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.service.AnnounceService;
 import lombok.RequiredArgsConstructor;
@@ -30,25 +28,18 @@ public class AnnounceController {
 
     private final AnnounceService announceService;
     private final ArticleRepository articleRepository;
-    private final AnnounceRepository announceRepository;
+
 
     @PostMapping("/article/announce")
     public Response registerAnnounce(@RequestBody AnnounceRegisterDto dto, @AuthenticationPrincipal AccountDto accountDto) {
         checkArticleExistAndAuthority(dto, accountDto); // 실제로 등록된 게시글이 있는지와, 요청한 유저의 권한을 확인합니다.
-        Optional<Announce> optionalAnnounce = announceRepository.findAnnounceByArticleId(dto.getArticleId());
-        if (optionalAnnounce.isPresent())
-            throw new ApplicationException(ErrorCode.ALREADY_REGISTERED_ANNOUNCE);
 
         return announceService.registerAnnounce(dto.getArticleId());
     }
 
     @DeleteMapping("/article/announce")
-    public Response unregisterAnnounce(@RequestBody AnnounceRegisterDto dto, @AuthenticationPrincipal AccountDto accountDto)
-    {
+    public Response unregisterAnnounce(@RequestBody AnnounceRegisterDto dto, @AuthenticationPrincipal AccountDto accountDto) {
         checkArticleExistAndAuthority(dto, accountDto);
-        Optional<Announce> optionalAnnounce = announceRepository.findAnnounceByArticleId(dto.getArticleId());
-        if (optionalAnnounce.isEmpty())
-            throw new ApplicationException(ErrorCode.ALREADY_UNREGISTERED_ANNOUNCE);
 
         return announceService.unregisterAnnounce(dto.getArticleId());
 
