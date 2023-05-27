@@ -29,14 +29,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,7 +70,7 @@ public class AccountService {
         }
 
         log.info("저장된 토큰 존재 여부 확인, 없다면 생성");
-        String key = UUID.nameUUIDFromBytes(email.getBytes()).toString();
+        String key = accountDto.getEmail();
         String refreshToken = refreshTokenRepository.findByKey(key)
                 .orElseGet(() -> jwtTokenProvider.createRefreshToken(key));
 
@@ -101,8 +101,14 @@ public class AccountService {
         log.info("리프레시 토큰 갱신");
         refreshTokenRepository.save(key, refreshToken);
 
+        Optional<Account> optionalAccount = accountRepository.findByEmail(key);
+        if (optionalAccount.isEmpty()) {
+            throw new ApplicationException(ErrorCode.AUTHENTICATION_ERROR);
+        }
+        Account account = optionalAccount.get();
         log.info("새로운 엑세스 토큰 발급");
-        String accessToken = jwtTokenProvider.createAccessToken(key);
+        String accessToken = jwtTokenProvider.createAccessToken(account.getId().toString());
+
         return AccessTokenResponseDto.builder()
                 .accessToken(accessToken)
                 .build();
