@@ -16,7 +16,7 @@ public enum ErrorCode {
     AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "토큰이 첨부되지 않았습니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
-    TOKEN_NOT_IN_DB(HttpStatus.NOT_FOUND, "저장된 리프레시 토큰을 찾지 못했습니다. 만료되었거나, 액세스 토큰을 잘못 보내지 않았는지 확인해주세요."),
+    TOKEN_NOT_IN_DB(HttpStatus.BAD_REQUEST, "저장된 리프레시 토큰을 찾지 못했습니다. 만료되었거나, 액세스 토큰을 잘못 보내지 않았는지 확인해주세요."),
     URI_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 URI가 존재하지 않습니다."),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 주소의 게시판이 존재하지 않습니다."),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 주소의 태그가 존재하지 않습니다."),
