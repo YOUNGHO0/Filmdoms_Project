@@ -47,7 +47,6 @@ public class AccountController {
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisUtil redisUtil;
     @Value("${admin-password}")
     private String password;
 
@@ -91,18 +90,10 @@ public class AccountController {
 
     @PostMapping()
     public Response<AccessTokenResponseDto> join(@RequestBody JoinRequestDto requestDto, HttpServletResponse response) {
-
-        String foundKey = redisUtil.getData(requestDto.getEmailAuthUuid());
-        if (foundKey == null)  // 이메일 인증 미수행
-            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
-        if (!foundKey.equals(requestDto.getEmail())) // 이메일 인증은 시도했지만, 다른 이메일 가입시 시도한 이메일 인증임
-            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
-
         LoginDto dto = accountService.createAccount(requestDto);
         ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return Response.success(AccessTokenResponseDto.from(dto));
-
     }
 
     @PostMapping("/oauth")
