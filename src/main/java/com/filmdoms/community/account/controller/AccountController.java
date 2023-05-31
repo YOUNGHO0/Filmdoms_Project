@@ -18,7 +18,9 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
 import com.filmdoms.community.account.service.utils.RedisUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,11 +29,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
@@ -99,6 +105,19 @@ public class AccountController {
 
     }
 
+    @PostMapping("/oauth")
+    public Response addInformationToSocialLoginAccount(@RequestBody @Valid OAuthJoinRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) throws MethodArgumentNotValidException {
+        List<String> favoriteMovies = requestDto.getFavoriteMovies();
+        if (duplicateExistsInMovieNameList(favoriteMovies)) {
+            bindingResult.rejectValue("favoriteMovies", "duplicate");
+        }
+        if (bindingResult.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, bindingResult);
+        }
+        accountService.addInformationToSocialLoginAccount(requestDto, accountDto);
+        return Response.success();
+    }
+
     @GetMapping("/check/nickname")
     public Response<CheckDuplicateResponseDto> isUsernameDuplicate(@RequestParam String nickname) {
         return Response.success(new CheckDuplicateResponseDto(accountService.isNicknameDuplicate(nickname)));
@@ -148,5 +167,9 @@ public class AccountController {
             @AuthenticationPrincipal AccountDto accountDto) {
         accountService.deleteAccount(requestDto, accountDto);
         return Response.success();
+    }
+
+    private boolean duplicateExistsInMovieNameList(List<String> favoriteMovies) {
+        return favoriteMovies.size() != favoriteMovies.stream().distinct().count();
     }
 }
