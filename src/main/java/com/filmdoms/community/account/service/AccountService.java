@@ -136,14 +136,7 @@ public class AccountService {
     }
 
     @Transactional
-    public LoginDto createAccount(JoinRequestDto requestDto) {
-
-        String foundKey = redisUtil.getData(requestDto.getEmailAuthUuid());
-
-        // 이메일 인증을 수행하지 않았거나, 이메일 인증은 시도했지만 다른 이메일 가입시 시도한 이메일 인증임
-        if (foundKey == null || !foundKey.equals(requestDto.getEmail())) {
-            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
-        }
+    public void createAccount(JoinRequestDto requestDto) {
 
         log.info("닉네임 중복 확인");
         if (isNicknameDuplicate(requestDto.getNickname())) {
@@ -153,6 +146,13 @@ public class AccountService {
         log.info("이메일 중복 확인");
         if (isEmailDuplicate(requestDto.getEmail())) {
             throw new ApplicationException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
+        String foundKey = redisUtil.getData(requestDto.getEmailAuthUuid());
+
+        // 이메일 인증을 수행하지 않았거나, 이메일 인증은 시도했지만 다른 이메일 가입시 시도한 이메일 인증임
+        if (foundKey == null || !foundKey.equals(requestDto.getEmail())) {
+            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
         }
 
         log.info("Account 엔티티 생성");
@@ -182,8 +182,6 @@ public class AccountService {
 
         log.info("이메일 인증으로 사용한 uuid 삭제");
         redisUtil.deleteKey(requestDto.getEmailAuthUuid());
-
-        return login(requestDto.getEmail(), requestDto.getPassword());
     }
 
     // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요

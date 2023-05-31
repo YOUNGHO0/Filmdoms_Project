@@ -90,7 +90,8 @@ public class AccountController {
 
     @PostMapping()
     public Response<AccessTokenResponseDto> join(@RequestBody JoinRequestDto requestDto, HttpServletResponse response) {
-        LoginDto dto = accountService.createAccount(requestDto);
+        accountService.createAccount(requestDto);
+        LoginDto dto = accountService.login(requestDto.getEmail(), requestDto.getPassword());
         ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return Response.success(AccessTokenResponseDto.from(dto));
