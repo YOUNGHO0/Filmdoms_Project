@@ -12,10 +12,13 @@ import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
 import java.util.List;
+
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,7 +40,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(
         controllers = AccountController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
+        excludeAutoConfiguration = {
+                SecurityAutoConfiguration.class,
+                OAuth2ClientAutoConfiguration.class
+        },
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)})
 @ActiveProfiles("test")
@@ -143,7 +149,7 @@ public class AccountControllerTest {
         // When & Then
         mockMvc.perform(post("/api/v1/account/refresh-token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + refreshToken)
+                        .cookie(new Cookie("refreshToken", refreshToken))
                 ).andDo(print())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'SUCCESS')]").exists())
                 .andExpect(jsonPath("$..result[?(@..accessToken)]").exists());
@@ -159,7 +165,7 @@ public class AccountControllerTest {
         // When & Then
         mockMvc.perform(post("/api/v1/account/logout")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + refreshToken)
+                        .cookie(new Cookie("refreshToken", refreshToken))
                 ).andDo(print())
                 .andExpect(jsonPath("$.[?(@.resultCode == 'SUCCESS')]").exists());
     }

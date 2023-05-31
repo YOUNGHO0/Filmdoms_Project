@@ -9,8 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
@@ -29,6 +28,7 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
+import com.filmdoms.community.account.service.utils.RedisUtil;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.file.data.entity.File;
@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -71,6 +72,8 @@ class AccountServiceTest {
     private ArticleRepository articleRepository;
     @MockBean
     private CommentRepository commentRepository;
+    @MockBean
+    private RedisUtil redisUtil;
 
     @Nested
     @DisplayName("로그인 기능 테스트")
@@ -212,17 +215,20 @@ class AccountServiceTest {
         @DisplayName("계정 생성시, 올바른 요청이라면, 계정을 저장한다.")
         void givenValidRequest_whenCreatingAccount_thenSavesAccount() {
             // Given
+            String email = "random@email.com";
             List<String> favoriteMovies = List.of("ironman", "thor");
             JoinRequestDto requestDto = JoinRequestDto.builder()
                     .password("PassWord!0")
-                    .email("random@email.com")
+                    .email(email)
                     .nickname("JavaNoob")
                     .favoriteMovies(favoriteMovies)
+                    .emailAuthUuid("randomUuid")
                     .build();
             given(accountRepository.existsByNickname(any())).willReturn(false);
             given(accountRepository.existsByEmail(any())).willReturn(false);
             given(fileRepository.findById(any())).willReturn(Optional.empty());
             given(movieRepository.saveAll(any())).willReturn(getMockMovies(favoriteMovies));
+            doReturn(email).when(redisUtil).getData(any());
 
             // When
             accountService.createAccount(requestDto);

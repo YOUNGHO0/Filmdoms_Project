@@ -1,6 +1,7 @@
 package com.filmdoms.community.account.service;
 
 import com.filmdoms.community.account.data.dto.request.AuthCodeVerificationRequestDto;
+import com.filmdoms.community.account.data.dto.response.EmailAuthDto;
 import com.filmdoms.community.account.data.dto.response.SimpleAccountResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
@@ -40,21 +41,14 @@ class EmailServiceTest {
         //given
         String email = "address@domain.com";
         String authCode = "sampleAuthCode";
-        String mockAccountNickname = "nickname";
-        Account mockAccount = Account.builder()
-                .nickname(mockAccountNickname)
-                .email(email)
-                .build();
-        ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
-        Mockito.when(accountRepository.findByEmail(email)).thenReturn(Optional.ofNullable(mockAccount));
+        Mockito.when(accountRepository.findByEmail(email)).thenReturn(Optional.empty());
         Mockito.when(redisUtil.getData(Mockito.any())).thenReturn(authCode);
         AuthCodeVerificationRequestDto requestDto = new AuthCodeVerificationRequestDto(email, authCode);
 
         //when
-//        SimpleAccountResponseDto responseDto = emailService.verityAuthCode(requestDto);
-//
-//        //then
-//        Assertions.assertThat(responseDto.getId()).isEqualTo(1L);
-//        Assertions.assertThat(responseDto.getNickname()).isEqualTo(mockAccountNickname);
+        EmailAuthDto emailAuthDto = emailService.verifyAuthCode(requestDto);
+
+        //then
+        Assertions.assertThat(emailAuthDto.getUuid()).isNotBlank();
     }
 }

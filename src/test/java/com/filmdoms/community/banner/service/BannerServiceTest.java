@@ -33,6 +33,11 @@ import static org.mockito.Mockito.mock;
 @SpringBootTest(classes = {BannerService.class})
 @ActiveProfiles("test")
 @DisplayName("비즈니스 로직 - 배너 서비스")
+/**
+ * 이 테스트는
+ * spring.config.additional-location=classpath:config/mail/,classpath:config/oauth/,classpath:config/redis/,classpath:config/s3/
+ * 를 환경변수로 설정해야 작동함
+ */
 public class BannerServiceTest {
 
     @Autowired
