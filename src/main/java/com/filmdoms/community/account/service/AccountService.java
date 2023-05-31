@@ -4,10 +4,7 @@ import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
-import com.filmdoms.community.account.data.dto.request.DeleteAccountRequestDto;
-import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
-import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
-import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
+import com.filmdoms.community.account.data.dto.request.*;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
@@ -313,5 +310,30 @@ public class AccountService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
         Page<Comment> commentPage = commentRepository.findByAuthorWithArticle(author, pageable);
         return ProfileCommentResponseDto.from(commentPage);
+    }
+
+    public void addInformationToSocialLoginAccount(OAuthJoinRequestDto requestDto, AccountDto accountDto) {
+
+        if (isNicknameDuplicate(requestDto.getNickname())) {
+            throw new ApplicationException(ErrorCode.DUPLICATE_NICKNAME);
+        }
+
+        Account account = accountRepository.findById(accountDto.getId())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        if (!account.isSocialLogin()) {
+            throw new ApplicationException(ErrorCode.NOT_SOCIAL_LOGIN_ACCOUNT);
+        }
+
+        account.updateNicknameAndChangeRoleToUser(requestDto.getNickname());
+
+        List<Movie> movies = findOrCreateFavoriteMovies(requestDto.getFavoriteMovies());
+        List<FavoriteMovie> favoriteMovies = movies.stream()
+                .map(movie -> FavoriteMovie.builder()
+                        .movie(movie)
+                        .account(account)
+                        .build())
+                .toList();
+        favoriteMovieRepository.saveAll(favoriteMovies);
     }
 }
