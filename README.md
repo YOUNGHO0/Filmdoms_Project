@@ -14,7 +14,7 @@
 
 2023.02.04 - (진행중)
 
-## 백엔드 세부사항 (마지막 업데이트: 23.04.07.)
+## 백엔드 세부사항 (마지막 업데이트: 23.05.23.)
 * [ERD](https://www.erdcloud.com/d/FwbkjZwxj7yPCBfxp)
 * [API 명세](https://www.notion.so/Backend-API-1-f2a7140af5e9490ba92802b4b58acebf)
 
