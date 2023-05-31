@@ -15,6 +15,10 @@ logging:
       springframework:
         core:
           LocalVariableTableParameterNameDiscoverer: error
+
+spring:
+  messages:
+    basename: errors
 ---
 
 spring:
