@@ -17,7 +17,7 @@ import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 
-@Import({SecurityConfig.class, JwtTokenProvider.class, TokenAuthenticationService.class, CustomOAuthSuccessHandler.class})
+@Import({SecurityConfig.class, JwtTokenProvider.class, TokenAuthenticationService.class})
 @TestPropertySource(properties = {
         "JWT_KEY=aKeyThatIsVeryLongToBeUsedForJWTKEY"
 })
@@ -25,6 +25,9 @@ public class TestSecurityConfig {
 
     @MockBean
     private AccountRepository accountRepository;
+
+    @MockBean
+    private CustomOAuthSuccessHandler customOAuthSuccessHandler;
 
     @BeforeTestMethod
     public void securitySetUp() {

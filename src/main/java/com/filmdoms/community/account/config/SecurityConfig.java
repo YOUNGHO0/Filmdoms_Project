@@ -44,14 +44,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/account/oauth").hasRole("GUEST")
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/email/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/banner/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().permitAll())
 
                 // H2 DB 사용을 위해, x-frame-options 동일 출처 허용

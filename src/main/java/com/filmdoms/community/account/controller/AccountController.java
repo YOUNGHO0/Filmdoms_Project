@@ -18,7 +18,9 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
 import com.filmdoms.community.account.service.utils.RedisUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,11 +29,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/account")
 @RequiredArgsConstructor
@@ -41,7 +47,6 @@ public class AccountController {
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RedisUtil redisUtil;
     @Value("${admin-password}")
     private String password;
 
@@ -85,18 +90,24 @@ public class AccountController {
 
     @PostMapping()
     public Response<AccessTokenResponseDto> join(@RequestBody JoinRequestDto requestDto, HttpServletResponse response) {
-
-        String foundKey = redisUtil.getData(requestDto.getEmailAuthUuid());
-        if (foundKey == null)  // 이메일 인증 미수행
-            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
-        if (!foundKey.equals(requestDto.getEmail())) // 이메일 인증은 시도했지만, 다른 이메일 가입시 시도한 이메일 인증임
-            throw new ApplicationException(ErrorCode.INVALID_EMAIL_UUID);
-
-        LoginDto dto = accountService.createAccount(requestDto);
+        accountService.createAccount(requestDto);
+        LoginDto dto = accountService.login(requestDto.getEmail(), requestDto.getPassword());
         ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return Response.success(AccessTokenResponseDto.from(dto));
+    }
 
+    @PostMapping("/oauth")
+    public Response addInformationToSocialLoginAccount(@RequestBody @Valid OAuthJoinRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) throws MethodArgumentNotValidException {
+        List<String> favoriteMovies = requestDto.getFavoriteMovies();
+        if (duplicateExistsInMovieNameList(favoriteMovies)) {
+            bindingResult.rejectValue("favoriteMovies", "duplicate");
+        }
+        if (bindingResult.hasErrors()) {
+            throw new MethodArgumentNotValidException(null, bindingResult);
+        }
+        accountService.addInformationToSocialLoginAccount(requestDto, accountDto);
+        return Response.success();
     }
 
     @GetMapping("/check/nickname")
@@ -148,5 +159,9 @@ public class AccountController {
             @AuthenticationPrincipal AccountDto accountDto) {
         accountService.deleteAccount(requestDto, accountDto);
         return Response.success();
+    }
+
+    private boolean duplicateExistsInMovieNameList(List<String> favoriteMovies) {
+        return favoriteMovies.size() != favoriteMovies.stream().distinct().count();
     }
 }

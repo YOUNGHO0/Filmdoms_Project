@@ -74,4 +74,9 @@ public class Account extends BaseTimeEntity {
         this.nickname = nickname;
         this.profileImage = profileImage;
     }
+
+    public void updateNicknameAndChangeRoleToUser(String nickname) {
+        this.nickname = nickname;
+        this.accountRole = AccountRole.USER;
+    }
 }

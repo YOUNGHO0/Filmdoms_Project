@@ -4,6 +4,7 @@ import com.filmdoms.community.account.data.entity.Account;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
@@ -20,5 +21,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a FROM Account a " +
             "LEFT JOIN FETCH a.profileImage " +
             "WHERE a.email = :email")
-    Optional<Account> findByEmailWithImage(String email);
+    Optional<Account> findByEmailWithImage(@Param("email") String email);
 }
