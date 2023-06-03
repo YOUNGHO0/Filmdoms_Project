@@ -8,7 +8,6 @@ import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -46,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/oauth").hasRole("GUEST")
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/account/profile").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/email/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")
@@ -79,7 +79,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(Arrays.asList("https://film-doms.vercel.app","http://localhost:*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://film-doms.vercel.app", "http://localhost:*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

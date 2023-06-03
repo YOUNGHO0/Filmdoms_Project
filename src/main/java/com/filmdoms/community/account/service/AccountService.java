@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,7 +69,7 @@ public class AccountService {
         }
 
         log.info("저장된 토큰 존재 여부 확인, 없다면 생성");
-        String key = UUID.nameUUIDFromBytes(email.getBytes()).toString();
+        String key = accountDto.getId().toString();
         String refreshToken = refreshTokenRepository.findByKey(key)
                 .orElseGet(() -> jwtTokenProvider.createRefreshToken(key));
 
@@ -87,7 +86,13 @@ public class AccountService {
     public AccessTokenResponseDto refreshAccessToken(String refreshToken) {
 
         log.info("토큰 내 저장된 키 추출");
-        String key = jwtTokenProvider.getSubject(refreshToken);
+        String key;
+        try {
+            key = jwtTokenProvider.getSubject(refreshToken);
+        } catch (Exception e) {
+            throw new ApplicationException(ErrorCode.INVALID_TOKEN);
+        }
+        log.info("{}", key);
 
         log.info("키로 저장된 토큰 호출");
         String savedToken = refreshTokenRepository.findByKey(key)
@@ -103,6 +108,7 @@ public class AccountService {
 
         log.info("새로운 엑세스 토큰 발급");
         String accessToken = jwtTokenProvider.createAccessToken(key);
+
         return AccessTokenResponseDto.builder()
                 .accessToken(accessToken)
                 .build();
