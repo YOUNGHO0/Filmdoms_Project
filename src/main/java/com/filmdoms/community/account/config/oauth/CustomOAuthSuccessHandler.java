@@ -48,27 +48,43 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             return;
         }
 
-        String email = resolveEmailFromAuthentication(oAuth2AuthenticationToken);
-        Account account = accountRepository.findByEmail(email)
-                .orElseGet(() -> createGuestAccountWithEmail(email)); //가입된 이메일이 아닌 경우 GUEST 등급의 Account 생성
-        checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
+        try {
+            String email = resolveEmailFromAuthentication(oAuth2AuthenticationToken);
+            Account account = accountRepository.findByEmail(email)
+                    .orElseGet(() -> createGuestAccountWithEmail(email)); //가입된 이메일이 아닌 경우 GUEST 등급의 Account 생성
+            checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
 
-        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
-        ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromEmail(email);
-        OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
-        OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
+            String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
+            ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromEmail(email);
+            OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
+            OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
 
-        //Response 객체에 응답을 세팅
-        response.setStatus(HttpServletResponse.SC_OK);
+            //Response 객체에 응답을 세팅
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+            response.getWriter()
+                    .write(
+                            objectMapper.writeValueAsString(
+                                    Response.success(responseDto)
+                            )
+                    );
+        } catch (ApplicationException e) {
+            createApplicationExceptionResponse(response, e);
+        }
+    }
+
+    private void createApplicationExceptionResponse(HttpServletResponse response, ApplicationException e) throws IOException {
+        response.setStatus(e.getErrorCode().getStatus().value());
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
         response.getWriter()
                 .write(
-                objectMapper.writeValueAsString(
-                        Response.success(responseDto)
-                )
-        );
+                        objectMapper.writeValueAsString(
+                                Response.error(e.getErrorCode().name())
+                        )
+                );
     }
 
     private ResponseCookie resolveRefreshTokenCookieFromEmail(String email) {
