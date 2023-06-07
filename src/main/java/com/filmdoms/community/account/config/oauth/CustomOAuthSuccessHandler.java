@@ -55,7 +55,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
 
             String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
-            ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromEmail(email);
+            ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromAccount(account);
             OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
             OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
 
@@ -87,8 +87,8 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 );
     }
 
-    private ResponseCookie resolveRefreshTokenCookieFromEmail(String email) {
-        String refreshTokenKey = UUID.nameUUIDFromBytes(email.getBytes()).toString();
+    private ResponseCookie resolveRefreshTokenCookieFromAccount(Account account) {
+        String refreshTokenKey = String.valueOf(account.getId());
         String refreshToken = refreshTokenRepository.findByKey(refreshTokenKey)
                 .orElseGet(() -> jwtTokenProvider.createRefreshToken(refreshTokenKey));
         refreshTokenRepository.save(refreshTokenKey, refreshToken);
