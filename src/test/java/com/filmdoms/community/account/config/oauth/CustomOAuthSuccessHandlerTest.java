@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {
@@ -138,8 +137,8 @@ class CustomOAuthSuccessHandlerTest {
     }
 
     @Test
-    @DisplayName("소셜 로그인 계정이 아닌 경우 에러 발생")
-    void NotSocialLoginAccount() {
+    @DisplayName("소셜 로그인 계정이 아닌 경우 에러 응답 발생")
+    void NotSocialLoginAccount() throws IOException {
         //given
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -152,8 +151,9 @@ class CustomOAuthSuccessHandlerTest {
         doReturn(Optional.ofNullable(mockAccount)).when(accountRepository).findByEmail(testEmail);
 
         //when & then
-        ApplicationException exception = assertThrows(ApplicationException.class, () -> customOAuthSuccessHandler.handle(request, response, authentication));
-        assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.NOT_SOCIAL_LOGIN_ACCOUNT);
+        customOAuthSuccessHandler.handle(request, response, authentication);
+        String responseContent = response.getContentAsString();
+        assertThat(responseContent).contains(ErrorCode.NOT_SOCIAL_LOGIN_ACCOUNT.name());
     }
 
     private Account createMockAccount(String email, AccountRole role, boolean isSocialLogin) {
