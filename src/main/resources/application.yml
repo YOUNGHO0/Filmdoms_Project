@@ -5,6 +5,11 @@ server:
   error:
     whitelabel:
       enabled: false
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
 
 domain: ${DOMAIN}
 admin-password: ${ADMIN}
@@ -69,7 +74,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://svc.sel4.cloudtype.app:30330/filmdoms
+    url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/filmdoms
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
