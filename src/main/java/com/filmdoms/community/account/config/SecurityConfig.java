@@ -2,6 +2,8 @@ package com.filmdoms.community.account.config;
 
 import com.filmdoms.community.account.config.jwt.JwtAuthenticationFilter;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.config.oauth.CustomOAuth2AuthorizationRequestResolver;
+import com.filmdoms.community.account.config.oauth.CustomOAuthFailureHandler;
 import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
 import com.filmdoms.community.account.exception.CustomAccessDeniedHandler;
 import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
@@ -27,6 +29,8 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuthSuccessHandler customOAuthSuccessHandler;
+    private final CustomOAuthFailureHandler customOAuthFailureHandler;
+    private final CustomOAuth2AuthorizationRequestResolver customOAuth2AuthorizationRequestResolver;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -69,8 +73,12 @@ public class SecurityConfig {
                         OAuth2LoginAuthenticationFilter.class)
 
                 //oauth 관련 설정
-                .oauth2Login()
-                .successHandler(customOAuthSuccessHandler);
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(authorization -> authorization
+                                .authorizationRequestResolver(customOAuth2AuthorizationRequestResolver))
+                        .successHandler(customOAuthSuccessHandler)
+                        .failureHandler(customOAuthFailureHandler)
+                );
 
         return http.build();
     }
