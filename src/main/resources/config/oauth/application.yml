@@ -8,3 +8,4 @@ spring:
             client-secret: ${OAUTH_GOOGLE_CLIENT_SECRET}
             scope: email
             redirect-uri: ${OAUTH_GOOGLE_REDIRECT_URI}
+            redirect-path: /auth/google
