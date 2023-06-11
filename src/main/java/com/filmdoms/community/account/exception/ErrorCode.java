@@ -47,7 +47,8 @@ public enum ErrorCode {
     ALREADY_REGISTERED_ANNOUNCE(HttpStatus.BAD_REQUEST,"이미 등록된 공지사항입니다"),
     ALREADY_UNREGISTERED_ANNOUNCE(HttpStatus.BAD_REQUEST,"이미 등록해제된 공지사항입니다"),
     INVALID_ANNOUNCE_ID(HttpStatus.BAD_REQUEST,"존재하지 않는 공지사항입니다"),
-    INVALID_TAG(HttpStatus.BAD_REQUEST, "해당 카테고리에 존재하지 않는 태그입니다.");
+    INVALID_TAG(HttpStatus.BAD_REQUEST, "해당 카테고리에 존재하지 않는 태그입니다."),
+    SOCIAL_LOGIN_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "소셜 로그인에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;
