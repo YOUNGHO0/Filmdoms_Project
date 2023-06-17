@@ -6,6 +6,9 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.data.entity.Movie;
 import com.filmdoms.community.account.data.entity.FavoriteMovie;
 import com.filmdoms.community.file.data.dto.response.FileResponseDto;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -17,13 +20,14 @@ import lombok.Getter;
 public class AccountResponseDto {
 
     private Long id;
+
+    private Long registeredAt;
     private String nickname;
     private String email;
     private AccountRole accountRole;
     private AccountStatus accountStatus;
     private boolean isSocialLogin;
     private FileResponseDto profileImage;
-
     private List<String> favoriteMovies;
 
     private AccountResponseDto(Account account, List<FavoriteMovie> favoriteMovies) {
@@ -34,6 +38,7 @@ public class AccountResponseDto {
         this.accountStatus = account.getAccountStatus();
         this.isSocialLogin = account.isSocialLogin();
         this.profileImage = FileResponseDto.from(account.getProfileImage());
+        this.registeredAt = ZonedDateTime.of(account.getDateCreated(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.favoriteMovies = favoriteMovies.stream()
                 .map(FavoriteMovie::getMovie)
                 .map(Movie::getName)
