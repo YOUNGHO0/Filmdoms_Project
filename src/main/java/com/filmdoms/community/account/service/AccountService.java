@@ -5,6 +5,9 @@ import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.*;
+import com.filmdoms.community.account.data.dto.request.profile.UpdateFavoriteMoviesDto;
+import com.filmdoms.community.account.data.dto.request.profile.UpdateNicknameRequestDto;
+import com.filmdoms.community.account.data.dto.request.profile.UpdateProfileImageRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
@@ -214,6 +217,61 @@ public class AccountService {
     }
 
     @Transactional
+    public void updateNickname(UpdateNicknameRequestDto dto, AccountDto accountDto) {
+        Account account = accountRepository.findByEmail(accountDto.getEmail())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        account.updateNickname(dto.getNewNickname());
+
+    }
+
+    @Transactional
+    public AccountResponseDto updateFavoriteMovie(UpdateFavoriteMoviesDto dto, AccountDto accountDto) {
+        Account account = accountRepository.findByEmail(accountDto.getEmail())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
+
+        log.info("요청 관심 영화 호출 / 생성");
+        List<FavoriteMovie> requestedFavoriteMovies = findOrCreateFavoriteMovies(dto.getFavoriteMovies()).stream()
+                .map(movie -> FavoriteMovie.builder()
+                        .movie(movie)
+                        .account(account)
+                        .build())
+                .toList();
+
+        log.info("기존 관심 영화에 없는 엔티티 연결");
+        requestedFavoriteMovies.stream()
+                .filter(requestedFavoriteMovie -> !favoriteMovies.contains(requestedFavoriteMovie))
+                .forEach(favoriteMovieRepository::save);
+
+        log.info("요청 관심 영화에 없는 엔티티 삭제");
+        favoriteMovies.stream()
+                .filter(favoriteMovie -> !requestedFavoriteMovies.contains(favoriteMovie))
+                .forEach(favoriteMovieRepository::delete);
+
+        return AccountResponseDto.from(account, requestedFavoriteMovies);
+
+    }
+
+    @Transactional
+    public void updateProfileImage(UpdateProfileImageRequestDto requestDto, AccountDto accountDto) {
+        Account account = accountRepository.findByEmailWithImage(accountDto.getEmail())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        File profileImage = account.getProfileImage();
+        if (!Objects.equals(requestDto.getImageId(), profileImage.getId())) {
+            log.info("요청 File 엔티티 호출");
+            profileImage = fileRepository.findById(requestDto.getImageId())
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+        }
+
+        account.updateProfileImage(profileImage);
+
+
+    }
+
+    @Transactional
     public AccountResponseDto updateAccountProfile(UpdateProfileRequestDto requestDto, AccountDto accountDto) {
 
         log.info("Account 엔티티 호출");
@@ -228,7 +286,7 @@ public class AccountService {
         }
 
         log.info("Account 엔티티 수정");
-        account.updateProfile(requestDto.getNickname(), profileImage);
+        //account.updateProfile(requestDto.getNickname(), profileImage);
 
         log.info("요청 관심 영화 호출 / 생성");
         List<FavoriteMovie> requestedFavoriteMovies = findOrCreateFavoriteMovies(requestDto.getFavoriteMovies()).stream()
