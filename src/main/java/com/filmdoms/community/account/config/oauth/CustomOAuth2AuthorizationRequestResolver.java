@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 @Slf4j
 @Component
-public final class CustomOAuth2AuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
+public class CustomOAuth2AuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
 
     private static String oauth2GoogleRedirectPath;
 

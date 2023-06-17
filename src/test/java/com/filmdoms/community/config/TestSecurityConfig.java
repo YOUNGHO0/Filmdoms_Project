@@ -2,6 +2,8 @@ package com.filmdoms.community.config;
 
 import com.filmdoms.community.account.config.SecurityConfig;
 import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.config.oauth.CustomOAuth2AuthorizationRequestResolver;
+import com.filmdoms.community.account.config.oauth.CustomOAuthFailureHandler;
 import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.entity.Account;
@@ -28,6 +30,12 @@ public class TestSecurityConfig {
 
     @MockBean
     private CustomOAuthSuccessHandler customOAuthSuccessHandler;
+
+    @MockBean
+    CustomOAuthFailureHandler customOAuthFailureHandler;
+
+    @MockBean
+    CustomOAuth2AuthorizationRequestResolver customOAuth2AuthorizationRequestResolver;
 
     @BeforeTestMethod
     public void securitySetUp() {
