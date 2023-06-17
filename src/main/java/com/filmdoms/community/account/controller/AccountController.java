@@ -5,6 +5,9 @@ import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.*;
+import com.filmdoms.community.account.data.dto.request.profile.UpdateFavoriteMoviesDto;
+import com.filmdoms.community.account.data.dto.request.profile.UpdateNicknameRequestDto;
+import com.filmdoms.community.account.data.dto.request.profile.UpdateProfileImageRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.CheckDuplicateResponseDto;
@@ -12,11 +15,8 @@ import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
-import com.filmdoms.community.account.service.utils.RedisUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -125,11 +125,38 @@ public class AccountController {
         return Response.success(accountService.readAccount(accountDto));
     }
 
-    @PutMapping("/profile")
-    public Response<Void> updateProfile(
-            @RequestBody UpdateProfileRequestDto requestDto,
+//    @PutMapping("/profile")
+//    public Response<Void> updateProfile(
+//            @RequestBody UpdateProfileRequestDto requestDto,
+//            @AuthenticationPrincipal AccountDto accountDto) {
+//        accountService.updateAccountProfile(requestDto, accountDto);
+//        return Response.success();
+//    }
+
+    @PutMapping("/profile/nickname")
+    public Response<Void> updateNickname(
+            @RequestBody UpdateNicknameRequestDto requestDto,
             @AuthenticationPrincipal AccountDto accountDto) {
-        accountService.updateAccountProfile(requestDto, accountDto);
+
+        accountService.updateNickname(requestDto, accountDto);
+        return Response.success();
+    }
+
+    @PutMapping("/profile/favoritemovie")
+    public Response<AccountResponseDto> updateFavoriteMovie(
+            @RequestBody UpdateFavoriteMoviesDto requestDto,
+            @AuthenticationPrincipal AccountDto accountDto) {
+
+        return Response.success(accountService.updateFavoriteMovie(requestDto, accountDto));
+
+    }
+
+    @PutMapping("/profile/profileimage")
+    public Response<Void> updateProfileImage(
+            @RequestBody UpdateProfileImageRequestDto requestDto,
+            @AuthenticationPrincipal AccountDto accountDto) {
+
+        accountService.updateProfileImage(requestDto, accountDto);
         return Response.success();
     }
 
