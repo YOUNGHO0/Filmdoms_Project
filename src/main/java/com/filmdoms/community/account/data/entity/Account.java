@@ -4,14 +4,13 @@ import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.constant.AccountStatus;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "account", indexes = {
@@ -70,8 +69,11 @@ public class Account extends BaseTimeEntity {
         this.password = password;
     }
 
-    public void updateProfile(String nickname, File profileImage) {
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateProfileImage(File profileImage) {
         this.profileImage = profileImage;
     }
 
