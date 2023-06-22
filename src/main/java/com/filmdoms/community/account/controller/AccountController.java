@@ -125,14 +125,6 @@ public class AccountController {
         return Response.success(accountService.readAccount(accountDto));
     }
 
-//    @PutMapping("/profile")
-//    public Response<Void> updateProfile(
-//            @RequestBody UpdateProfileRequestDto requestDto,
-//            @AuthenticationPrincipal AccountDto accountDto) {
-//        accountService.updateAccountProfile(requestDto, accountDto);
-//        return Response.success();
-//    }
-
     @PutMapping("/profile/nickname")
     public Response<Void> updateNickname(
             @RequestBody UpdateNicknameRequestDto requestDto,
