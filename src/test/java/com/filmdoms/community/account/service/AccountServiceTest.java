@@ -468,7 +468,6 @@ class AccountServiceTest {
                 .email(email)
                 .role(AccountRole.USER)
                 .isSocialLogin(false)
-                .profileImage(mockOriginalImage)
                 .build();
         ReflectionTestUtils.setField(mockAccount, Account.class, "id", 1L, Long.class);
 

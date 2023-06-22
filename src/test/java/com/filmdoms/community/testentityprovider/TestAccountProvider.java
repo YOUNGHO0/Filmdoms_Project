@@ -26,7 +26,6 @@ public class TestAccountProvider {
                 .email("test_email_" + count + "@filmdoms.com")
                 .password("test_password")
                 .role(AccountRole.USER)
-                .profileImage(profileImage)
                 .build();
         return account;
     }
