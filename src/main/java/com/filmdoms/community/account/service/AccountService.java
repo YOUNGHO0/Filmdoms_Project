@@ -222,11 +222,10 @@ public class AccountService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         account.updateNickname(dto.getNewNickname());
-
     }
 
     @Transactional
-    public AccountResponseDto updateFavoriteMovie(UpdateFavoriteMoviesDto dto, AccountDto accountDto) {
+    public void updateFavoriteMovie(UpdateFavoriteMoviesDto dto, AccountDto accountDto) {
         Account account = accountRepository.findByEmail(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
@@ -249,9 +248,6 @@ public class AccountService {
         favoriteMovies.stream()
                 .filter(favoriteMovie -> !requestedFavoriteMovies.contains(favoriteMovie))
                 .forEach(favoriteMovieRepository::delete);
-
-        return AccountResponseDto.from(account, requestedFavoriteMovies);
-
     }
 
     @Transactional
@@ -267,8 +263,6 @@ public class AccountService {
         }
 
         account.updateProfileImage(profileImage);
-
-
     }
 
     @Transactional
