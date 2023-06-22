@@ -171,7 +171,6 @@ public class AccountService {
                 .nickname(requestDto.getNickname())
                 .email(requestDto.getEmail())
                 .role(AccountRole.USER)
-                .profileImage(getDefaultImage())
                 .build();
 
         log.info("Account 엔티티 저장");
@@ -193,16 +192,6 @@ public class AccountService {
         redisUtil.deleteKey(requestDto.getEmailAuthUuid());
     }
 
-    // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요
-    private File getDefaultImage() {
-        return fileRepository.findById(1L).orElseGet(() -> fileRepository.save(
-                        File.builder()
-                                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
-                                .originalFileName("original_file_name")
-                                .build()
-                )
-        );
-    }
 
     public AccountResponseDto readAccount(AccountDto accountDto) {
 
