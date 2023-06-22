@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config.jwt;
+package com.filmdoms.community.config.jwt;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.service.TokenAuthenticationService;

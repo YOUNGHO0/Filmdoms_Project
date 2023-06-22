@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config;
+package com.filmdoms.community.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

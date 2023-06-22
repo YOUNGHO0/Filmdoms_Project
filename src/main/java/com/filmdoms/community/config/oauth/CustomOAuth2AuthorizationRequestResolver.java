@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config.oauth;
+package com.filmdoms.community.config.oauth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

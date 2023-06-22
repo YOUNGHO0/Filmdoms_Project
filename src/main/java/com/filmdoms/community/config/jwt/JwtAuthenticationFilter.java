@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config.jwt;
+package com.filmdoms.community.config.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,11 +1,10 @@
-package com.filmdoms.community.account.config.oauth;
+package com.filmdoms.community.config.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.constant.OAuthType;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;

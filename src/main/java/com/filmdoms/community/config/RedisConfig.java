@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config;
+package com.filmdoms.community.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

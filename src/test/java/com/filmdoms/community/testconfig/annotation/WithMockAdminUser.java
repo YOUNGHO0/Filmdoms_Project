@@ -1,4 +1,4 @@
-package com.filmdoms.community.config.annotation;
+package com.filmdoms.community.testconfig.annotation;
 
 import org.springframework.security.test.context.support.WithMockUser;
 

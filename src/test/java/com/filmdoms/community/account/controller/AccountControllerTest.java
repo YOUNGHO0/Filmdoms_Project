@@ -1,11 +1,10 @@
 package com.filmdoms.community.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.account.config.SecurityConfig;
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.SecurityConfig;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.dto.LoginDto;
 import com.filmdoms.community.account.data.dto.request.LoginRequestDto;
-import com.filmdoms.community.account.data.dto.response.LoginResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
@@ -16,7 +15,6 @@ import java.util.List;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;

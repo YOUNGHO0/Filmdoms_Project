@@ -8,7 +8,7 @@ import com.filmdoms.community.board.post.data.dto.PostBriefDto;
 import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
 import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.service.PostService;
-import com.filmdoms.community.config.TestSecurityConfig;
+import com.filmdoms.community.testconfig.TestSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
-package com.filmdoms.community.account.config;
+package com.filmdoms.community.config;
 
-import com.filmdoms.community.account.config.jwt.JwtAuthenticationFilter;
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
-import com.filmdoms.community.account.config.oauth.CustomOAuth2AuthorizationRequestResolver;
-import com.filmdoms.community.account.config.oauth.CustomOAuthFailureHandler;
-import com.filmdoms.community.account.config.oauth.CustomOAuthSuccessHandler;
+import com.filmdoms.community.config.jwt.JwtAuthenticationFilter;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.oauth.CustomOAuth2AuthorizationRequestResolver;
+import com.filmdoms.community.config.oauth.CustomOAuthFailureHandler;
+import com.filmdoms.community.config.oauth.CustomOAuthSuccessHandler;
 import com.filmdoms.community.account.exception.CustomAccessDeniedHandler;
 import com.filmdoms.community.account.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;

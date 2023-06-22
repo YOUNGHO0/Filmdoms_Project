@@ -1,7 +1,7 @@
-package com.filmdoms.community.account.config.oauth;
+package com.filmdoms.community.config.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.constant.OAuthType;
 import com.filmdoms.community.account.data.dto.response.OAuthResponseDto;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Component

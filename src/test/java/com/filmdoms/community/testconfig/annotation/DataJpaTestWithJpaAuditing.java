@@ -1,6 +1,6 @@
-package com.filmdoms.community.config.annotation;
+package com.filmdoms.community.testconfig.annotation;
 
-import com.filmdoms.community.account.config.JpaConfig;
+import com.filmdoms.community.config.JpaConfig;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;

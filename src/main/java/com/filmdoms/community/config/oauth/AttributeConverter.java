@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config.oauth;
+package com.filmdoms.community.config.oauth;
 
 import java.util.Map;
 

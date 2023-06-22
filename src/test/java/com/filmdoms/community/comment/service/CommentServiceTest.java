@@ -16,7 +16,7 @@ import com.filmdoms.community.comment.data.entity.CommentVote;
 import com.filmdoms.community.comment.data.entity.CommentVoteKey;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.comment.repository.CommentVoteRepository;
-import com.filmdoms.community.config.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.testconfig.annotation.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.testentityprovider.TestAccountProvider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

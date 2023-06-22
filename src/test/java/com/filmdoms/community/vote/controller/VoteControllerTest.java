@@ -2,7 +2,7 @@ package com.filmdoms.community.vote.controller;
 
 import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.account.exception.ErrorCode;
-import com.filmdoms.community.config.TestSecurityConfig;
+import com.filmdoms.community.testconfig.TestSecurityConfig;
 import com.filmdoms.community.vote.data.dto.VoteResponseDto;
 import com.filmdoms.community.vote.service.VoteService;
 import org.junit.jupiter.api.DisplayName;

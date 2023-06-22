@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.config;
+package com.filmdoms.community.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
