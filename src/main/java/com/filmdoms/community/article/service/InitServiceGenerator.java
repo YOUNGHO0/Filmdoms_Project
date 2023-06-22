@@ -49,7 +49,6 @@ public class InitServiceGenerator {
         Account user = Account.builder() //게시글, 댓글과 매핑될 Account 생성
                 .nickname(nickname)
                 .role(role)
-                .profileImage(progfileImage) //프로필 이미지를 디폴트 이미지로 세팅
                 .build();
         accountRepository.save(user);
         return user;

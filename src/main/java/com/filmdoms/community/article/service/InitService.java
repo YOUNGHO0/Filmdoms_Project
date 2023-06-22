@@ -60,7 +60,6 @@ public class InitService {
                 .email("admin@filmdoms.com")
                 .nickname("ironman")
                 .role(AccountRole.ADMIN)
-                .profileImage(defaultImage) //프로필 이미지를 디폴트 이미지로 세팅
                 .build();
         accountRepository.save(admin);
 
