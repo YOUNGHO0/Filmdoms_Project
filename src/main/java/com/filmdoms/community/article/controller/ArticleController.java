@@ -2,7 +2,7 @@ package com.filmdoms.community.article.controller;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.request.create.ParentCreateRequestDto;

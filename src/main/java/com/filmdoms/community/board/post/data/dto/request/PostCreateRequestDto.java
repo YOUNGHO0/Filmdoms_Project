@@ -1,12 +1,11 @@
 package com.filmdoms.community.board.post.data.dto.request;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.CONTENT_NOT_BLANK;
-import static com.filmdoms.community.account.exception.ValidationMessage.CONTENT_SIZE;
-import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_NOT_BLANK;
-import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_SIZE;
+import static com.filmdoms.community.exception.ValidationMessage.CONTENT_NOT_BLANK;
+import static com.filmdoms.community.exception.ValidationMessage.CONTENT_SIZE;
+import static com.filmdoms.community.exception.ValidationMessage.TITLE_NOT_BLANK;
+import static com.filmdoms.community.exception.ValidationMessage.TITLE_SIZE;
 
 import com.filmdoms.community.board.post.data.constants.PostCategory;
-import com.filmdoms.community.imagefile.data.entitiy.ImageFile;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.Set;

@@ -1,8 +1,8 @@
 package com.filmdoms.community.board.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.board.post.data.constants.PostCategory;
 import com.filmdoms.community.board.post.data.dto.PostBriefDto;
 import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;

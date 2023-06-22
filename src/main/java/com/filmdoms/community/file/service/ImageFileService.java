@@ -1,7 +1,7 @@
 package com.filmdoms.community.file.service;
 
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.article.data.entity.Content;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.data.entity.FileContent;

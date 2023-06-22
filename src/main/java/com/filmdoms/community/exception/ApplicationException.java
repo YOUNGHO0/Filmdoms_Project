@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.exception;
+package com.filmdoms.community.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

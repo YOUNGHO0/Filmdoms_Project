@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.UNMATCHED_NICKNAME;
+import static com.filmdoms.community.exception.ValidationMessage.UNMATCHED_NICKNAME;
 
 @Getter
 public class UpdateNicknameRequestDto {

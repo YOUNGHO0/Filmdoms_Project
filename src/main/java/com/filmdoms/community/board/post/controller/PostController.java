@@ -2,14 +2,12 @@ package com.filmdoms.community.board.post.controller;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.account.exception.ApplicationException;
 import com.filmdoms.community.board.post.data.dto.request.PostCreateRequestDto;
 import com.filmdoms.community.board.post.data.dto.request.PostUpdateRequestDto;
 import com.filmdoms.community.board.post.data.dto.response.PostCreateResponseDto;
 import com.filmdoms.community.board.post.data.dto.response.PostMainPageResponseDto;
 import com.filmdoms.community.board.post.data.dto.response.PostUpdateResponseDto;
 import com.filmdoms.community.board.post.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,10 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/post")

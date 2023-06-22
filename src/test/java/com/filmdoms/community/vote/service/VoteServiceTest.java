@@ -2,8 +2,8 @@ package com.filmdoms.community.vote.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;

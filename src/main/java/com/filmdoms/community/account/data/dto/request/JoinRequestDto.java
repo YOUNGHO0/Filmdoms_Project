@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.*;
+import static com.filmdoms.community.exception.ValidationMessage.*;
 
 @AllArgsConstructor
 @NoArgsConstructor

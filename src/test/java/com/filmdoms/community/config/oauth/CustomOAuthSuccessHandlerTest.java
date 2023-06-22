@@ -5,7 +5,7 @@ import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.constant.OAuthType;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.TokenAuthenticationService;

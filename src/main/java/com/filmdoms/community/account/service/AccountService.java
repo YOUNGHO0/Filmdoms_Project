@@ -15,8 +15,8 @@ import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentRe
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.data.entity.FavoriteMovie;
 import com.filmdoms.community.account.data.entity.Movie;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;

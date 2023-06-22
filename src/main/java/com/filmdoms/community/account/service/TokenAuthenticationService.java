@@ -1,8 +1,8 @@
 package com.filmdoms.community.account.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

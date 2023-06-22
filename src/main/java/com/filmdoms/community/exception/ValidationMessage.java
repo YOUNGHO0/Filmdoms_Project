@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.exception;
+package com.filmdoms.community.exception;
 
 public class ValidationMessage {
 

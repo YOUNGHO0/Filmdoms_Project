@@ -1,4 +1,4 @@
-package com.filmdoms.community.account.exception;
+package com.filmdoms.community.exception;
 
 import com.filmdoms.community.account.data.dto.response.FieldErrorResponseDto;
 import com.filmdoms.community.account.data.dto.response.Response;

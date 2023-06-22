@@ -1,6 +1,6 @@
 package com.filmdoms.community.account.data.dto.request;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.UNMATCHED_PASSWORD;
+import static com.filmdoms.community.exception.ValidationMessage.UNMATCHED_PASSWORD;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
