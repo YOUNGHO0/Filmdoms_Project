@@ -53,16 +53,19 @@ public class Account extends BaseTimeEntity {
 
     @JoinColumn(name = "file_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private File profileImage;
+    private File profileImage = File.builder()
+            .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
+            .originalFileName("original_file_name")
+            .build();
 
     @Builder
-    private Account(String nickname, String password, AccountRole role, String email, boolean isSocialLogin, File profileImage) {
+    private Account(String nickname, String password, AccountRole role, String email, boolean isSocialLogin) {
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.accountRole = Optional.ofNullable(role).orElse(AccountRole.USER);
         this.isSocialLogin = isSocialLogin;
-        this.profileImage = profileImage;
+
     }
 
     public void updatePassword(String password) {
