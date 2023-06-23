@@ -1,9 +1,9 @@
 package com.filmdoms.community.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
-import com.filmdoms.community.config.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
+import com.filmdoms.community.testconfig.annotation.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.file.data.dto.response.FileUploadResponseDto;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;

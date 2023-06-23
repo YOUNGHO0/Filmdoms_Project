@@ -1,8 +1,8 @@
 package com.filmdoms.community.banner.data.dto.request;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.IMAGE_REQUIRED;
-import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_NOT_BLANK;
-import static com.filmdoms.community.account.exception.ValidationMessage.TITLE_SIZE;
+import static com.filmdoms.community.exception.ValidationMessage.IMAGE_REQUIRED;
+import static com.filmdoms.community.exception.ValidationMessage.TITLE_NOT_BLANK;
+import static com.filmdoms.community.exception.ValidationMessage.TITLE_SIZE;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

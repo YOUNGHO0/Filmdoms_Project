@@ -1,6 +1,6 @@
 package com.filmdoms.community.account.service;
 
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
@@ -15,8 +15,8 @@ import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentRe
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.data.entity.FavoriteMovie;
 import com.filmdoms.community.account.data.entity.Movie;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
@@ -222,11 +222,10 @@ public class AccountService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         account.updateNickname(dto.getNewNickname());
-
     }
 
     @Transactional
-    public AccountResponseDto updateFavoriteMovie(UpdateFavoriteMoviesDto dto, AccountDto accountDto) {
+    public void updateFavoriteMovie(UpdateFavoriteMoviesDto dto, AccountDto accountDto) {
         Account account = accountRepository.findByEmail(accountDto.getEmail())
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
@@ -249,9 +248,6 @@ public class AccountService {
         favoriteMovies.stream()
                 .filter(favoriteMovie -> !requestedFavoriteMovies.contains(favoriteMovie))
                 .forEach(favoriteMovieRepository::delete);
-
-        return AccountResponseDto.from(account, requestedFavoriteMovies);
-
     }
 
     @Transactional
@@ -267,8 +263,6 @@ public class AccountService {
         }
 
         account.updateProfileImage(profileImage);
-
-
     }
 
     @Transactional

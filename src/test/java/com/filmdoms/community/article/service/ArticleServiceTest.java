@@ -15,7 +15,7 @@ import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
-import com.filmdoms.community.config.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.testconfig.annotation.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.testentityprovider.TestAccountProvider;

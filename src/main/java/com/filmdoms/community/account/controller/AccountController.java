@@ -1,6 +1,6 @@
 package com.filmdoms.community.account.controller;
 
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
@@ -143,12 +143,12 @@ public class AccountController {
     }
 
     @PutMapping("/profile/favoritemovie")
-    public Response<AccountResponseDto> updateFavoriteMovie(
+    public Response<Void> updateFavoriteMovie(
             @RequestBody UpdateFavoriteMoviesDto requestDto,
             @AuthenticationPrincipal AccountDto accountDto) {
 
-        return Response.success(accountService.updateFavoriteMovie(requestDto, accountDto));
-
+        accountService.updateFavoriteMovie(requestDto, accountDto);
+        return Response.success();
     }
 
     @PutMapping("/profile/profileimage")

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-import static com.filmdoms.community.account.exception.ValidationMessage.LIST_TOO_BIG;
+import static com.filmdoms.community.exception.ValidationMessage.LIST_TOO_BIG;
 
 @Getter
 public class UpdateFavoriteMoviesDto {

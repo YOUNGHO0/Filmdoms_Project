@@ -1,8 +1,8 @@
 package com.filmdoms.community.article.service;
 
 import com.filmdoms.community.account.data.dto.response.Response;
-import com.filmdoms.community.account.exception.ApplicationException;
-import com.filmdoms.community.account.exception.ErrorCode;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.dto.response.boardlist.AnnounceListResponseDto;
 import com.filmdoms.community.article.data.entity.Article;

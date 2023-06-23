@@ -1,6 +1,6 @@
 package com.filmdoms.community.account.service;
 
-import com.filmdoms.community.account.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.request.OAuthJoinRequestDto;
@@ -11,7 +11,7 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.utils.RedisUtil;
-import com.filmdoms.community.config.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.testconfig.annotation.DataJpaTestWithJpaAuditing;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
