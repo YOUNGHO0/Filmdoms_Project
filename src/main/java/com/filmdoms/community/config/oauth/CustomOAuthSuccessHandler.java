@@ -1,16 +1,17 @@
 package com.filmdoms.community.config.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.filmdoms.community.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.data.DefaultProfileImage;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.constant.OAuthType;
 import com.filmdoms.community.account.data.dto.response.OAuthResponseDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
+    private final DefaultProfileImage defaultProfileImage;
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
@@ -112,6 +114,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .email(email)
                 .role(AccountRole.GUEST)
                 .isSocialLogin(true)
+                .profileImage(defaultProfileImage.getDefaultProfileImage())
                 .build();
         return accountRepository.save(account);
     }
