@@ -52,7 +52,7 @@ public class Account extends BaseTimeEntity {
     private boolean isSocialLogin;
 
     @JoinColumn(name = "file_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     private File profileImage;
 
     @Builder
