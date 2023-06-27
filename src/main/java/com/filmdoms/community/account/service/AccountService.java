@@ -1,6 +1,6 @@
 package com.filmdoms.community.account.service;
 
-import com.filmdoms.community.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.account.data.DefaultProfileImage;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
@@ -15,8 +15,6 @@ import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentRe
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.data.entity.FavoriteMovie;
 import com.filmdoms.community.account.data.entity.Movie;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
@@ -26,6 +24,9 @@ import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,7 @@ public class AccountService {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
     private final RedisUtil redisUtil;
+    private final DefaultProfileImage defaultProfileImage;
 
     @Transactional
     public LoginDto login(String email, String password) {
@@ -171,7 +173,7 @@ public class AccountService {
                 .nickname(requestDto.getNickname())
                 .email(requestDto.getEmail())
                 .role(AccountRole.USER)
-                .profileImage(getDefaultImage())
+                .profileImage(defaultProfileImage.getDefaultProfileImage())
                 .build();
 
         log.info("Account 엔티티 저장");
@@ -193,16 +195,6 @@ public class AccountService {
         redisUtil.deleteKey(requestDto.getEmailAuthUuid());
     }
 
-    // TODO: 프로필 기본 이미지 어떻게 처리할 지 상의 필요
-    private File getDefaultImage() {
-        return fileRepository.findById(1L).orElseGet(() -> fileRepository.save(
-                        File.builder()
-                                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
-                                .originalFileName("original_file_name")
-                                .build()
-                )
-        );
-    }
 
     public AccountResponseDto readAccount(AccountDto accountDto) {
 
