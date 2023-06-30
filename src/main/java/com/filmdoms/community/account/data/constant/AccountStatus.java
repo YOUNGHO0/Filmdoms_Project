@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AccountStatus {
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    DELETED
 }
