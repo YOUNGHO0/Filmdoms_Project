@@ -81,4 +81,8 @@ public class Account extends BaseTimeEntity {
         this.nickname = nickname;
         this.accountRole = AccountRole.USER;
     }
+
+    public void updateStatusToDeleted() {
+        this.accountStatus = AccountStatus.DELETED;
+    }
 }
