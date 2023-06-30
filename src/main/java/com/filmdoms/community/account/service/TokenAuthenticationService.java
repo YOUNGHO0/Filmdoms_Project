@@ -1,6 +1,7 @@
 package com.filmdoms.community.account.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
@@ -26,8 +27,12 @@ public class TokenAuthenticationService {
         } catch (NumberFormatException e) {
             throw new ApplicationException(ErrorCode.USER_NOT_FOUND);
         }
-        return accountRepository.findById(accountId)
-                .map(AccountDto::from)
+
+        Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        AccountService.checkAccountStatus(account);
+
+        return AccountDto.from(account);
     }
 }
