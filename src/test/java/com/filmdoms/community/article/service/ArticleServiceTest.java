@@ -15,11 +15,16 @@ import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
-import com.filmdoms.community.testconfig.annotation.DataJpaTestWithJpaAuditing;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.comment.service.CommentService;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import com.filmdoms.community.testconfig.annotation.DataJpaTestWithJpaAuditing;
 import com.filmdoms.community.testentityprovider.TestAccountProvider;
+import com.filmdoms.community.testentityprovider.TestCommentProvider;
 import com.filmdoms.community.testentityprovider.TestFileProvider;
+import com.filmdoms.community.vote.service.VoteService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
@@ -29,11 +34,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTestWithJpaAuditing
-@Import({ArticleService.class})
+@Import({ArticleService.class, CommentService.class, VoteService.class})
 @ActiveProfiles("test")
 @DisplayName("게시글 서비스 통합 테스트")
 class ArticleServiceTest {
@@ -55,6 +61,15 @@ class ArticleServiceTest {
 
     @Autowired
     CriticRepository criticRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
+
+    @Autowired
+    CommentService commentService;
+
+    @Autowired
+    VoteService voteService;
 
     @PersistenceContext
     EntityManager em;
@@ -163,5 +178,96 @@ class ArticleServiceTest {
         assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
         assertThat(article.getAuthor().getId()).isEqualTo(testAuthor.getId());
         assertThat(critic.getMainImage().getId()).isEqualTo(requestDto.getMainImageId());
+    }
+
+    @Test
+    @DisplayName("영화 게시판 - 정상 요청에 대해 게시글 삭제가 이루어진다.")
+    void deleteArticleCategoryMovie() {
+        //given
+        Account testAuthor = TestAccountProvider.get();
+        Account voter = TestAccountProvider.get();
+        accountRepository.saveAll(List.of(testAuthor, voter));
+
+        Article article = Article.builder()
+                .title("test title")
+                .author(testAuthor)
+                .category(Category.MOVIE)
+                .tag(Tag.MOVIE)
+                .content("test content")
+                .containsImage(false)
+                .build();
+        articleRepository.save(article);
+
+        Comment parentComment = TestCommentProvider.get(testAuthor, article, null);
+        Comment childComment1 = TestCommentProvider.get(testAuthor, article, parentComment);
+        Comment childComment2 = TestCommentProvider.get(testAuthor, article, parentComment);
+        commentRepository.saveAll(List.of(parentComment, childComment1, childComment2));
+
+        AccountDto voterAccountDto = AccountDto.from(voter);
+        voteService.toggleVote(voterAccountDto, article.getId());
+        commentService.toggleCommentVote(parentComment.getId(), voterAccountDto);
+        commentService.toggleCommentVote(childComment1.getId(), voterAccountDto);
+        commentService.toggleCommentVote(childComment2.getId(), voterAccountDto);
+        em.flush();
+        em.clear();
+
+        //when
+        articleService.deleteArticle(Category.MOVIE, article.getId(), AccountDto.from(testAuthor));
+        em.flush();
+        em.clear();
+
+        //then
+        assertThat(articleRepository.findById(article.getId()).isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("필름 유니버스 게시판 - 정상 요청에 대해 게시글 삭제가 이루어진다.")
+    void deleteArticleCategoryFilmUniverse() {
+        //given
+        Account testAuthor = TestAccountProvider.get();
+        Account voter = TestAccountProvider.get();
+        accountRepository.saveAll(List.of(testAuthor, voter));
+
+        Article article = Article.builder()
+                .title("test title")
+                .author(testAuthor)
+                .category(Category.FILM_UNIVERSE)
+                .tag(Tag.CLUB)
+                .content("test content")
+                .containsImage(false)
+                .build();
+
+        File mainImageFile = TestFileProvider.get();
+        fileRepository.save(mainImageFile);
+
+        FilmUniverse filmUniverse = FilmUniverse.builder()
+                .article(article)
+                .startDate(LocalDateTime.of(2023, 7, 1, 0, 0))
+                .endDate(LocalDateTime.of(2023, 8, 1, 0, 0))
+                .mainImage(mainImageFile)
+                .build();
+
+        filmUniverseRepository.save(filmUniverse);
+
+        Comment parentComment = TestCommentProvider.get(testAuthor, article, null);
+        Comment childComment1 = TestCommentProvider.get(testAuthor, article, parentComment);
+        Comment childComment2 = TestCommentProvider.get(testAuthor, article, parentComment);
+        commentRepository.saveAll(List.of(parentComment, childComment1, childComment2));
+
+        AccountDto voterAccountDto = AccountDto.from(voter);
+        voteService.toggleVote(voterAccountDto, article.getId());
+        commentService.toggleCommentVote(parentComment.getId(), voterAccountDto);
+        commentService.toggleCommentVote(childComment1.getId(), voterAccountDto);
+        commentService.toggleCommentVote(childComment2.getId(), voterAccountDto);
+        em.flush();
+        em.clear();
+
+        //when
+        articleService.deleteArticle(Category.FILM_UNIVERSE, article.getId(), AccountDto.from(testAuthor));
+        em.flush();
+        em.clear();
+
+        //then
+        assertThat(articleRepository.findById(article.getId()).isEmpty()).isTrue();
     }
 }
