@@ -2,6 +2,9 @@ package com.filmdoms.community.article.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.comment.repository.CommentVoteRepository;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
@@ -39,6 +42,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +57,8 @@ public class ArticleService {
     private final FileRepository fileRepository;
     private final VoteRepository voteRepository;
     private final AccountRepository accountRepository;
-    private final AnnounceRepository announceRepository;
+    private final CommentRepository commentRepository;
+    private final CommentVoteRepository commentVoteRepository;
 
     public ArticleCreateResponseDto createArticle(ParentCreateRequestDto requestDto, AccountDto accountDto) {
         //카테고리, 태그 확인
@@ -247,4 +253,69 @@ public class ArticleService {
     }
 
 
+    public void deleteArticle(Category category, Long articleId, AccountDto accountDto) {
+
+        if (category == Category.MOVIE) {
+            Article article = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            checkCategory(article, category);
+            checkPermission(article, accountDto);
+            deleteArticleComments(article);
+            deleteArticleVotes(article);
+            articleRepository.delete(article);
+
+        } else if (category == Category.FILM_UNIVERSE) {
+            FilmUniverse filmUniverse = filmUniverseRepository.findByArticleIdWithArticle(articleId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            Article article = filmUniverse.getArticle();
+            checkCategory(article, category);
+            checkPermission(article, accountDto);
+            deleteArticleComments(article);
+            deleteArticleVotes(article);
+            filmUniverseRepository.delete(filmUniverse);
+
+        } else if (category == Category.CRITIC) {
+            Critic critic = criticRepository.findByArticleIdWithArticle(articleId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            Article article = critic.getArticle();
+            checkCategory(article, category);
+            checkPermission(article, accountDto);
+            deleteArticleComments(article);
+            deleteArticleVotes(article);
+            criticRepository.delete(critic);
+        }
+    }
+
+    private void deleteArticleComments(Article article) {
+        List<Comment> comments = commentRepository.findByArticle(article);
+        //댓글의 연관 Vote 객체 삭제
+        deleteCommentsVotes(comments);
+
+        Map<Boolean, List<Comment>> isParentCommentToCommentList = comments.stream()
+                .collect(Collectors.partitioningBy(comment -> comment.getParentComment() == null));
+        //자식 댓글부터 삭제
+        commentRepository.deleteAll(isParentCommentToCommentList.get(false));
+        //부모 댓글 삭제
+        commentRepository.deleteAll(isParentCommentToCommentList.get(true));
+    }
+
+    private void deleteArticleVotes(Article article) {
+        voteRepository.deleteByArticle(article);
+    }
+
+    private void deleteCommentsVotes(List<Comment> comments) {
+        commentVoteRepository.deleteByComments(comments);
+    }
+
+    private void checkPermission(Article article, AccountDto accountDto) {
+        if (!Objects.equals(article.getAuthor().getId(), accountDto.getId())) {
+            throw new ApplicationException(ErrorCode.INVALID_PERMISSION);
+        }
+    }
+
+    private void checkCategory(Article article, Category category) {
+        if (article.getCategory() != category) {
+            throw new ApplicationException(ErrorCode.INVALID_ARTICLE_ID);
+        }
+    }
 }
