@@ -60,6 +60,11 @@ public class CommentService {
                 throw new ApplicationException(ErrorCode.INVALID_PARENT_COMMENT_ID);
             }
 
+            //최상위 댓글인지 확인
+            if (parentComment.getParentComment() != null) {
+                throw new ApplicationException(ErrorCode.INVALID_PARENT_COMMENT_ID);
+            }
+
             //부모 댓글이 INACTIVE, DELETED인 경우 댓글 생성 불가능하게 할지 결정 필요
         }
 
