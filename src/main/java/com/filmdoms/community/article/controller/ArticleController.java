@@ -62,6 +62,18 @@ public class ArticleController {
         return Response.success(dto);
     }
 
+    @PutMapping("/article/{category}/{articleId}")
+    public Response<Void> update(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
+
+        return Response.success();
+    }
+
+    @DeleteMapping("/article/{category}/{articleId}")
+    public Response<Void> delete(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
+        articleService.deleteArticle(category, articleId, accountDto);
+        return Response.success();
+    }
+
     @GetMapping("/article/init-data")
     public Response initData(@RequestParam(defaultValue = "10") int limit) {
         initService.makeArticleData(limit);
