@@ -25,7 +25,7 @@ public class Critic {
     private Article article;
 
     @JoinColumn(name = "file_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private File mainImage;
 
     @Builder
