@@ -64,17 +64,18 @@ public class AccountService {
     public LoginDto login(String email, String password) {
 
         log.info("가입 여부 확인");
-        AccountDto accountDto = accountRepository.findByEmail(email)
-                .map(AccountDto::from)
+        Account account = accountRepository.findByEmail(email)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
         log.info("비밀번호를 암호화 시켜 저장된 비밀번호와 대조");
-        if (!passwordEncoder.matches(password, accountDto.getPassword())) {
+        if (!passwordEncoder.matches(password, account.getPassword())) {
             throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
+        checkAccountStatus(account);
+
         log.info("저장된 토큰 존재 여부 확인, 없다면 생성");
-        String key = accountDto.getId().toString();
+        String key = account.getId().toString();
         String refreshToken = refreshTokenRepository.findByKey(key)
                 .orElseGet(() -> jwtTokenProvider.createRefreshToken(key));
 
@@ -82,7 +83,7 @@ public class AccountService {
         refreshTokenRepository.save(key, refreshToken);
 
         return LoginDto.builder()
-                .accessToken(jwtTokenProvider.createAccessToken(String.valueOf(accountDto.getId())))
+                .accessToken(jwtTokenProvider.createAccessToken(String.valueOf(account.getId())))
                 .refreshToken(refreshToken)
                 .build();
     }
@@ -327,7 +328,8 @@ public class AccountService {
         }
 
         log.info("Account 엔티티 삭제");
-        accountRepository.delete(account);
+        //accountRepository.delete(account);
+        account.updateStatusToDeleted();
     }
 
     private List<Movie> findOrCreateFavoriteMovies(List<String> movieNames) {
@@ -390,5 +392,12 @@ public class AccountService {
                         .build())
                 .toList();
         favoriteMovieRepository.saveAll(favoriteMovies);
+    }
+
+    public static void checkAccountStatus(Account account) {
+        switch (account.getAccountStatus()) {
+            case INACTIVE -> throw new ApplicationException(ErrorCode.INACTIVE_ACCOUNT);
+            case DELETED -> throw new ApplicationException(ErrorCode.DELETED_ACCOUNT);
+        }
     }
 }
