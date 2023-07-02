@@ -73,4 +73,11 @@ public class Article extends BaseTimeEntity {
     public int removeVote() {
         return --voteCount;
     }
+
+    public void update(String title, Tag tag, String content, boolean containsImage) {
+        this.title = title;
+        this.tag = tag;
+        this.content.updateContent(content);
+        this.containsImage = containsImage;
+    }
 }

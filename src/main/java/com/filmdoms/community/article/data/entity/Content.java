@@ -27,4 +27,8 @@ public class Content {
     Content(String content) {
         this.content = content;
     }
+
+    void updateContent(String content) {
+        this.content = content;
+    }
 }
