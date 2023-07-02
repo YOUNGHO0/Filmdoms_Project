@@ -2,6 +2,7 @@ package com.filmdoms.community.article.controller;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.article.data.dto.request.update.ParentUpdateRequestDto;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
@@ -63,8 +64,8 @@ public class ArticleController {
     }
 
     @PutMapping("/article/{category}/{articleId}")
-    public Response<Void> update(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
-
+    public Response<Void> update(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto, @RequestBody ParentUpdateRequestDto requestDto) {
+        articleService.updateArticle(category, articleId, accountDto, requestDto);
         return Response.success();
     }
 
