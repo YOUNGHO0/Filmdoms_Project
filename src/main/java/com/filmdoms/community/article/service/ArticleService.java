@@ -2,6 +2,10 @@ package com.filmdoms.community.article.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
+import com.filmdoms.community.article.data.dto.request.update.ArticleUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.CriticUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.FilmUniverseUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.ParentUpdateRequestDto;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.comment.repository.CommentVoteRepository;
@@ -25,7 +29,6 @@ import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleR
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
-import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
@@ -44,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,7 +77,8 @@ public class ArticleService {
         if (requestDto instanceof FilmUniverseCreateRequestDto) {
             FilmUniverseCreateRequestDto filmUniverseCreateRequestDto = (FilmUniverseCreateRequestDto) requestDto;
             Long mainImageId = filmUniverseCreateRequestDto.getMainImageId();
-            File mainImageFile = fileRepository.findById(mainImageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+            File mainImageFile = fileRepository.findById(mainImageId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
             FilmUniverse filmUniverse = filmUniverseCreateRequestDto.toEntity(article, mainImageFile);
             filmUniverseRepository.save(filmUniverse);
         }
@@ -81,7 +86,8 @@ public class ArticleService {
         if (requestDto instanceof CriticCreateRequestDto) {
             CriticCreateRequestDto criticCreateRequestDto = (CriticCreateRequestDto) requestDto;
             Long mainImageId = criticCreateRequestDto.getMainImageId();
-            File mainImageFile = fileRepository.findById(mainImageId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+            File mainImageFile = fileRepository.findById(mainImageId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
             Critic critic = criticCreateRequestDto.toEntity(article, mainImageFile);
             criticRepository.save(critic);
         }
@@ -317,5 +323,69 @@ public class ArticleService {
         if (article.getCategory() != category) {
             throw new ApplicationException(ErrorCode.INVALID_ARTICLE_ID);
         }
+    }
+
+    public void updateArticle(Category category, Long articleId, AccountDto accountDto, ParentUpdateRequestDto requestDto) {
+        //URI의 category와 JSON 내부의 category가 일치하는지 확인
+        if (requestDto.getCategory() != category) {
+            throw new ApplicationException(ErrorCode.CATEGORY_DOES_NOT_MATCH);
+        }
+
+        if (category == Category.MOVIE) {
+            Article article = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            checkCategory(article, category);
+            checkTag(requestDto, category);
+            checkPermission(article, accountDto);
+
+            ArticleUpdateRequestDto articleUpdateRequestDto = (ArticleUpdateRequestDto) requestDto;
+            articleUpdateRequestDto.updateEntity(article);
+
+        } else if (category == Category.FILM_UNIVERSE) {
+            FilmUniverse filmUniverse = filmUniverseRepository.findByArticleIdWithArticle(articleId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            Article article = filmUniverse.getArticle();
+            checkCategory(article, category);
+            checkTag(requestDto, category);
+            checkPermission(article, accountDto);
+
+            FilmUniverseUpdateRequestDto filmUniverseUpdateRequestDto = (FilmUniverseUpdateRequestDto) requestDto;
+            filmUniverseUpdateRequestDto.updateEntity(article);
+
+            File mainImage = fileRepository.findById(filmUniverseUpdateRequestDto.getMainImageId())
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+            File previousMainImage = filmUniverse.getMainImage();
+            filmUniverseUpdateRequestDto.updateEntity(filmUniverse, mainImage);
+
+            //메인 이미지가 바뀌었다면 기존 이미지는 삭제함
+            if (mainImage != previousMainImage) {
+                fileRepository.delete(previousMainImage);
+            }
+
+        } else if (category == Category.CRITIC) {
+            Critic critic = criticRepository.findByArticleIdWithArticle(articleId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
+            Article article = critic.getArticle();
+            checkCategory(article, category);
+            checkTag(requestDto, category);
+            checkPermission(article, accountDto);
+
+            CriticUpdateRequestDto criticUpdateRequestDto = (CriticUpdateRequestDto) requestDto;
+            criticUpdateRequestDto.updateEntity(article);
+
+            File mainImage = fileRepository.findById(criticUpdateRequestDto.getMainImageId())
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
+            File previousMainImage = critic.getMainImage();
+            criticUpdateRequestDto.updateEntity(critic, mainImage);
+
+            if (mainImage != previousMainImage) {
+                fileRepository.delete(previousMainImage);
+            }
+        }
+    }
+
+    //requestDto의 tag가 category와 매치되는지 확인
+    private void checkTag(ParentUpdateRequestDto requestDto, Category category) {
+        requestDto.getTag().verifyCategory(category);
     }
 }
