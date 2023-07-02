@@ -39,5 +39,8 @@ public interface CriticRepository extends JpaRepository<Critic, Long> {
             , countQuery = "SELECT count(c) from Critic c inner join c.article where c.article.tag =:tagId")
     Page<Critic> getCriticsByTag(@Param("tagId") Tag tag, Pageable pageable);
 
-
+    @Query("SELECT c FROM Critic c " +
+            "LEFT JOIN FETCH c.article " +
+            "WHERE c.article.id = :articleId")
+    Optional<Critic> findByArticleIdWithArticle(@Param("articleId") Long articleId);
 }

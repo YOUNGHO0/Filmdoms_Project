@@ -23,7 +23,7 @@ public class FilmUniverse {
     private Article article;
 
     @JoinColumn(name = "file_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private File mainImage;
 
     private LocalDateTime startDate;
