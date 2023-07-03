@@ -1,6 +1,5 @@
 package com.filmdoms.community.account.controller;
 
-import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
@@ -17,6 +16,7 @@ import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentRe
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.AccountService;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -125,14 +125,6 @@ public class AccountController {
         return Response.success(accountService.readAccount(accountDto));
     }
 
-//    @PutMapping("/profile")
-//    public Response<Void> updateProfile(
-//            @RequestBody UpdateProfileRequestDto requestDto,
-//            @AuthenticationPrincipal AccountDto accountDto) {
-//        accountService.updateAccountProfile(requestDto, accountDto);
-//        return Response.success();
-//    }
-
     @PutMapping("/profile/nickname")
     public Response<Void> updateNickname(
             @RequestBody UpdateNicknameRequestDto requestDto,
@@ -186,6 +178,12 @@ public class AccountController {
             @AuthenticationPrincipal AccountDto accountDto) {
         accountService.deleteAccount(requestDto, accountDto);
         return Response.success();
+    }
+
+    @GetMapping("/profile/{accountId}")
+    public Response getUserAccount(@PathVariable Long accountId) {
+        AccountResponseDto accountResponseDto = accountService.readAccount(accountId);
+        return Response.success(accountResponseDto);
     }
 
     private boolean duplicateExistsInMovieNameList(List<String> favoriteMovies) {
