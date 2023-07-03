@@ -7,10 +7,7 @@ import com.filmdoms.community.account.data.dto.request.*;
 import com.filmdoms.community.account.data.dto.request.profile.UpdateFavoriteMoviesDto;
 import com.filmdoms.community.account.data.dto.request.profile.UpdateNicknameRequestDto;
 import com.filmdoms.community.account.data.dto.request.profile.UpdateProfileImageRequestDto;
-import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
-import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
-import com.filmdoms.community.account.data.dto.response.CheckDuplicateResponseDto;
-import com.filmdoms.community.account.data.dto.response.Response;
+import com.filmdoms.community.account.data.dto.response.*;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -182,7 +179,7 @@ public class AccountController {
 
     @GetMapping("/profile/{accountId}")
     public Response getUserAccount(@PathVariable Long accountId) {
-        AccountResponseDto accountResponseDto = accountService.readAccount(accountId);
+        PublicAccountResponseDto accountResponseDto = accountService.readAccount(accountId);
         return Response.success(accountResponseDto);
     }
 
