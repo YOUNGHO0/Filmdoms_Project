@@ -208,6 +208,15 @@ public class AccountService {
         return AccountResponseDto.from(account, favoriteMovies);
     }
 
+    public AccountResponseDto readAccount(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
+
+        return AccountResponseDto.from(account, favoriteMovies);
+    }
+
     @Transactional
     public void updateNickname(UpdateNicknameRequestDto dto, AccountDto accountDto) {
         Account account = accountRepository.findByEmail(accountDto.getEmail())
