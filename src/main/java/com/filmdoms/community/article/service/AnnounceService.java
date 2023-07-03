@@ -27,6 +27,10 @@ public class AnnounceService {
 
     public Response registerAnnounce(Long articleId) {
 
+        Optional<Article> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty())
+            throw new ApplicationException(ErrorCode.INVALID_ARTICLE_ID);
+
         Optional<Announce> optionalAnnounce = announceRepository.findAnnounceByArticleId(articleId);
         if (optionalAnnounce.isPresent())
             throw new ApplicationException(ErrorCode.ALREADY_REGISTERED_ANNOUNCE);
@@ -42,6 +46,10 @@ public class AnnounceService {
     }
 
     public Response unregisterAnnounce(Long articleId) {
+
+        Optional<Article> optionalArticle = articleRepository.findById(articleId);
+        if (optionalArticle.isEmpty())
+            throw new ApplicationException(ErrorCode.INVALID_ARTICLE_ID);
 
         Optional<Announce> optionalAnnounce = announceRepository.findAnnounceByArticleId(articleId);
         if (optionalAnnounce.isEmpty())
