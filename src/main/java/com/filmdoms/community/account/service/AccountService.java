@@ -10,6 +10,7 @@ import com.filmdoms.community.account.data.dto.request.profile.UpdateNicknameReq
 import com.filmdoms.community.account.data.dto.request.profile.UpdateProfileImageRequestDto;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
+import com.filmdoms.community.account.data.dto.response.PublicAccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileArticleResponseDto;
 import com.filmdoms.community.account.data.dto.response.profile.ProfileCommentResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
@@ -207,6 +208,15 @@ public class AccountService {
         List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
 
         return AccountResponseDto.from(account, favoriteMovies);
+    }
+
+    public PublicAccountResponseDto readAccount(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
+
+        return PublicAccountResponseDto.from(account, favoriteMovies);
     }
 
     @Transactional
