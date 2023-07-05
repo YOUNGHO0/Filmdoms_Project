@@ -73,4 +73,8 @@ public class Article extends BaseTimeEntity {
     public int removeVote() {
         return --voteCount;
     }
+
+    public int addView() {
+        return ++view;
+    }
 }

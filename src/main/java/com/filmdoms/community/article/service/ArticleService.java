@@ -133,6 +133,7 @@ public class ArticleService {
 
             List<File> images = fileRepository.findByArticleId(articleId);
             boolean isVoted = getArticleVoteStatus(accountDto, article);
+            article.addView();
 
             return ArticleDetailResponseDto.from(article, images, isVoted);
 
@@ -141,6 +142,7 @@ public class ArticleService {
 
             List<File> images = fileRepository.findByArticleId(articleId);
             boolean isVoted = getArticleVoteStatus(accountDto, notice.getArticle());
+            notice.getArticle().addView();
 
             return FilmUniverseDetailResponseDto.from(notice, images, isVoted);
         }
