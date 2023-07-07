@@ -17,6 +17,7 @@ import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleR
 import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.article.service.InitService;
 import com.filmdoms.community.article.service.InitService2;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -64,7 +65,7 @@ public class ArticleController {
     }
 
     @PutMapping("/article/{category}/{articleId}")
-    public Response<Void> update(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto, @RequestBody ParentUpdateRequestDto requestDto) {
+    public Response<Void> update(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto, @RequestBody @Valid ParentUpdateRequestDto requestDto) {
         articleService.updateArticle(category, articleId, accountDto, requestDto);
         return Response.success();
     }
