@@ -73,4 +73,12 @@ public class Article extends BaseTimeEntity {
     public int removeVote() {
         return --voteCount;
     }
+
+    public void changePostStatusToDeleted() {
+        this.status = PostStatus.DELETED;
+    }
+
+    public void changePostStatusToActive() {
+        this.status = PostStatus.ACTIVE;
+    }
 }
