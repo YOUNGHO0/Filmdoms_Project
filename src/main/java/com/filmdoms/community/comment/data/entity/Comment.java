@@ -73,6 +73,8 @@ public class Comment extends BaseTimeEntity {
         this.status = CommentStatus.DELETED;
     }
 
+    public void changeStatusToActive() { this.status = CommentStatus.ACTIVE; }
+
     public int removeVote() {
         return --voteCount;
     }

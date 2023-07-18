@@ -74,7 +74,15 @@ public class Article extends BaseTimeEntity {
         return --voteCount;
     }
 
+    public void changePostStatusToDeleted() {
+        this.status = PostStatus.DELETED;
+    }
+
+    public void changePostStatusToActive() {
+        this.status = PostStatus.ACTIVE;
+      
     public int addView() {
         return ++view;
+
     }
 }

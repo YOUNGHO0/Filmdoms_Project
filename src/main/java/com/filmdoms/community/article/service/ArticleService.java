@@ -2,11 +2,6 @@ package com.filmdoms.community.article.service;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.comment.data.entity.Comment;
-import com.filmdoms.community.comment.repository.CommentRepository;
-import com.filmdoms.community.comment.repository.CommentVoteRepository;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
@@ -25,10 +20,14 @@ import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleR
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
-import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
+import com.filmdoms.community.comment.data.entity.Comment;
+import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.comment.repository.CommentVoteRepository;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.vote.data.entity.VoteKey;
@@ -136,20 +135,18 @@ public class ArticleService {
                 throw new ApplicationException(ErrorCode.INVALID_ARTICLE_ID); //해당 카테고리에는 요청으로 온 id의 Article이 없으므로 게시물 id 관련 오류가 발생
             }
 
-            List<File> images = fileRepository.findByArticleId(articleId);
             boolean isVoted = getArticleVoteStatus(accountDto, article);
             article.addView();
 
-            return ArticleDetailResponseDto.from(article, images, isVoted);
+            return ArticleDetailResponseDto.from(article, isVoted);
 
         } else if (category == Category.FILM_UNIVERSE) { //총 3번의 쿼리가 나감
             FilmUniverse notice = filmUniverseRepository.findByArticleIdWithArticleAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
 
-            List<File> images = fileRepository.findByArticleId(articleId);
             boolean isVoted = getArticleVoteStatus(accountDto, notice.getArticle());
             notice.getArticle().addView();
 
-            return FilmUniverseDetailResponseDto.from(notice, images, isVoted);
+            return FilmUniverseDetailResponseDto.from(notice, isVoted);
         }
 
         throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND);

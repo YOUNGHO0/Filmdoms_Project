@@ -21,8 +21,10 @@ import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.utils.RedisUtil;
+import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
+import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
@@ -38,6 +40,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -60,6 +63,7 @@ public class AccountService {
     private final CommentRepository commentRepository;
     private final RedisUtil redisUtil;
     private final DefaultProfileImage defaultProfileImage;
+    private final ArticleService articleService;
 
     @Transactional
     public LoginDto login(String email, String password) {
@@ -337,9 +341,35 @@ public class AccountService {
             throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
-        log.info("Account 엔티티 삭제");
-        //accountRepository.delete(account);
-        account.updateStatusToDeleted();
+        log.info("기존 게시글,댓글 deleted처리");
+        List<Article> articles = articleRepository.findByAuthor(account);
+        for (Article article : articles) {
+            article.changePostStatusToDeleted();
+        }
+        List<Comment> commentList = commentRepository.findByAuthor(account);
+        for (Comment comment : commentList) {
+            comment.changeStatusToDeleted();
+        }
+
+        account.updateStatusToDeleted(LocalDateTime.now());
+
+    }
+
+    @Transactional
+    public void deleteExpiredAccount(Account account) {
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
+        favoriteMovieRepository.deleteAll(favoriteMovies);
+
+        List<Article> articles = articleRepository.findByAuthor(account);
+
+        for (Article article : articles) {
+            Category category = article.getCategory();
+            Long id = article.getId();
+            articleService.deleteArticle(category, id, AccountDto.from(account));
+        }
+        accountRepository.delete(account);
+
+
     }
 
     private List<Movie> findOrCreateFavoriteMovies(List<String> movieNames) {
