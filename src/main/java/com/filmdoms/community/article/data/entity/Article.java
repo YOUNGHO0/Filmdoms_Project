@@ -80,5 +80,9 @@ public class Article extends BaseTimeEntity {
 
     public void changePostStatusToActive() {
         this.status = PostStatus.ACTIVE;
+      
+    public int addView() {
+        return ++view;
+
     }
 }

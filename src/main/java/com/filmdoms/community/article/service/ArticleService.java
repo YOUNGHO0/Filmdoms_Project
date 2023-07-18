@@ -136,6 +136,7 @@ public class ArticleService {
             }
 
             boolean isVoted = getArticleVoteStatus(accountDto, article);
+            article.addView();
 
             return ArticleDetailResponseDto.from(article, isVoted);
 
@@ -143,6 +144,7 @@ public class ArticleService {
             FilmUniverse notice = filmUniverseRepository.findByArticleIdWithArticleAuthorProfileImageContent(articleId).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_ARTICLE_ID));
 
             boolean isVoted = getArticleVoteStatus(accountDto, notice.getArticle());
+            notice.getArticle().addView();
 
             return FilmUniverseDetailResponseDto.from(notice, isVoted);
         }
