@@ -42,6 +42,8 @@ public class Account extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
+    private LocalDateTime deleteRegisteredDate = null;
+
     @Column(name = "login_fail_count")
     private int loginFailCount = 0;
 
@@ -82,7 +84,8 @@ public class Account extends BaseTimeEntity {
         this.accountRole = AccountRole.USER;
     }
 
-    public void updateStatusToDeleted() {
+    public void updateStatusToDeleted(LocalDateTime localDateTime) {
         this.accountStatus = AccountStatus.DELETED;
+        this.deleteRegisteredDate = localDateTime;
     }
 }
