@@ -6,6 +6,7 @@ import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.file.data.entity.File;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CriticCreateRequestDto extends ParentCreateRequestDto {
 
+    @NotNull
     private Long mainImageId;
 
     //테스트 용도

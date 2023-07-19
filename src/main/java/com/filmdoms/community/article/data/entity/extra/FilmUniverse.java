@@ -40,4 +40,10 @@ public class FilmUniverse {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    public void update(File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
+        this.mainImage = mainImage;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

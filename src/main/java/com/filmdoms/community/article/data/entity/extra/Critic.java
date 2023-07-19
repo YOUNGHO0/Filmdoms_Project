@@ -36,4 +36,8 @@ public class Critic {
         this.article = article;
         this.mainImage = mainImage;
     }
+
+    public void update(File mainImage) {
+        this.mainImage = mainImage;
+    }
 }

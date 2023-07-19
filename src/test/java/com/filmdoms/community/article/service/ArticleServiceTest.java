@@ -8,6 +8,8 @@ import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.request.create.ArticleCreateRequestDto;
 import com.filmdoms.community.article.data.dto.request.create.CriticCreateRequestDto;
 import com.filmdoms.community.article.data.dto.request.create.FilmUniverseCreateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.ArticleUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.FilmUniverseUpdateRequestDto;
 import com.filmdoms.community.article.data.dto.response.create.ArticleCreateResponseDto;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.data.entity.extra.Critic;
@@ -269,5 +271,84 @@ class ArticleServiceTest {
 
         //then
         assertThat(articleRepository.findById(article.getId()).isEmpty()).isTrue();
+    }
+
+    @Test
+    @DisplayName("영화 게시판 - 정상 요청에 대해 게시글 수정이 이루어진다.")
+    void updateArticleCategoryMovie() {
+        //given
+        Account testAuthor = TestAccountProvider.get();
+        accountRepository.save(testAuthor);
+
+        Article article = Article.builder()
+                .title("previous title")
+                .author(testAuthor)
+                .category(Category.MOVIE)
+                .tag(Tag.MOVIE)
+                .content("previous content")
+                .containsImage(false)
+                .build();
+        articleRepository.save(article);
+
+        ArticleUpdateRequestDto requestDto = new ArticleUpdateRequestDto("updated title", Category.MOVIE, Tag.OTT, "updated content", true);
+
+        //when
+        articleService.updateArticle(Category.MOVIE, article.getId(), AccountDto.from(testAuthor), requestDto);
+
+        //then
+        assertThat(article.getTitle()).isEqualTo(requestDto.getTitle());
+        assertThat(article.getTag()).isEqualTo(requestDto.getTag());
+        assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
+        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
+    }
+
+    @Test
+    @DisplayName("필름 유니버스 게시판 - 정상 요청에 대해 게시글 수정이 이루어진다.")
+    void updateArticleCategoryFilmUniverse() {
+        //given
+        Account testAuthor = TestAccountProvider.get();
+        accountRepository.save(testAuthor);
+
+        Article article = Article.builder()
+                .title("previous title")
+                .author(testAuthor)
+                .category(Category.FILM_UNIVERSE)
+                .tag(Tag.CLUB)
+                .content("previous content")
+                .containsImage(true)
+                .build();
+
+        File previousMainImageFile = TestFileProvider.get();
+        File updateMainImageFile = TestFileProvider.get();
+        fileRepository.saveAll(List.of(previousMainImageFile, updateMainImageFile));
+
+        LocalDateTime previousStartDate = LocalDateTime.of(2023, 7, 1, 0, 0);
+        LocalDateTime previousEndDate = LocalDateTime.of(2023, 8, 1, 0, 0);
+
+        FilmUniverse filmUniverse = FilmUniverse.builder()
+                .article(article)
+                .startDate(previousStartDate)
+                .endDate(previousEndDate)
+                .mainImage(previousMainImageFile)
+                .build();
+
+        filmUniverseRepository.save(filmUniverse);
+
+        LocalDateTime updateStartDate = LocalDateTime.of(2023, 9, 1, 0, 0);
+        LocalDateTime updateEndDate = LocalDateTime.of(2023, 10, 1, 0, 0);
+
+        FilmUniverseUpdateRequestDto requestDto = new FilmUniverseUpdateRequestDto("updated title", Category.FILM_UNIVERSE, Tag.COMPETITION, "updated content", true, updateStartDate, updateEndDate, updateMainImageFile.getId());
+
+        //when
+        articleService.updateArticle(Category.FILM_UNIVERSE, article.getId(), AccountDto.from(testAuthor), requestDto);
+
+        //then
+        assertThat(article.getTitle()).isEqualTo(requestDto.getTitle());
+        assertThat(article.getTag()).isEqualTo(requestDto.getTag());
+        assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
+        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
+        assertThat(filmUniverse.getStartDate()).isEqualTo(requestDto.getStartAt());
+        assertThat(filmUniverse.getEndDate()).isEqualTo(requestDto.getEndAt());
+        assertThat(filmUniverse.getMainImage().getId()).isEqualTo(requestDto.getMainImageId());
     }
 }
