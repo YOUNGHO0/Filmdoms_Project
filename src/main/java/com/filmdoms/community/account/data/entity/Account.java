@@ -88,4 +88,10 @@ public class Account extends BaseTimeEntity {
         this.accountStatus = AccountStatus.DELETED;
         this.deleteRegisteredDate = localDateTime;
     }
+
+    public void updateStatusToActive(){
+        this.accountStatus = AccountStatus.ACTIVE;
+        this.deleteRegisteredDate = null;
+
+    }
 }
