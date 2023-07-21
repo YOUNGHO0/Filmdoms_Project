@@ -30,8 +30,8 @@ public class AccountStatusCheck {
             case INACTIVE:
                 throw new ApplicationException(ErrorCode.INACTIVE_ACCOUNT);
             case DELETED:
-                articleRepository.updateArticlesPostStatus(account, PostStatus.DELETED);
-                commentRepository.updateCommentPostStatus(account, CommentStatus.DELETED);
+                articleRepository.updateArticlesPostStatus(account, PostStatus.ACTIVE);
+                commentRepository.updateCommentPostStatus(account, CommentStatus.ACTIVE);
                 account.updateStatusToActive();
                 accountRepository.save(account);
                 break;
