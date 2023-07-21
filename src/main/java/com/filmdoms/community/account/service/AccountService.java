@@ -345,17 +345,10 @@ public class AccountService {
         }
 
         log.info("기존 게시글,댓글 deleted처리");
-        List<Article> articles = articleRepository.findByAuthor(account);
-        for (Article article : articles) {
-            article.changePostStatusToDeleted();
-        }
-        List<Comment> commentList = commentRepository.findByAuthor(account);
-        for (Comment comment : commentList) {
-            comment.changeStatusToDeleted();
-        }
-
+        articleRepository.updateArticlesPostStatus(account, PostStatus.DELETED);
+        commentRepository.updateCommentPostStatus(account, CommentStatus.DELETED);
         account.updateStatusToDeleted(LocalDateTime.now());
-
+        accountRepository.save(account);
     }
 
     @Transactional
