@@ -10,6 +10,8 @@ import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.AccountService;
+import com.filmdoms.community.account.service.AccountStatusCheck;
+import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
@@ -40,6 +42,9 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
     private final DefaultProfileImage defaultProfileImage;
+    private final ArticleRepository articleRepository;
+    private final AccountService accountService;
+    private final AccountStatusCheck accountStatusCheck;
 
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
@@ -55,7 +60,7 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             Account account = accountRepository.findByEmail(email)
                     .orElseGet(() -> createGuestAccountWithEmail(email)); //가입된 이메일이 아닌 경우 GUEST 등급의 Account 생성
             checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
-            AccountService.checkAccountStatus(account);
+            accountStatusCheck.checkAccountStatus(account);
 
             String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
             ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromAccount(account);

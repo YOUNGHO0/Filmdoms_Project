@@ -22,9 +22,11 @@ import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.utils.RedisUtil;
 import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.constant.PostStatus;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.service.ArticleService;
+import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
@@ -64,6 +66,7 @@ public class AccountService {
     private final RedisUtil redisUtil;
     private final DefaultProfileImage defaultProfileImage;
     private final ArticleService articleService;
+    private final AccountStatusCheck accountStatusCheck;
 
     @Transactional
     public LoginDto login(String email, String password) {
@@ -77,7 +80,7 @@ public class AccountService {
             throw new ApplicationException(ErrorCode.INVALID_PASSWORD);
         }
 
-        checkAccountStatus(account);
+        accountStatusCheck.checkAccountStatus(account);
 
         log.info("저장된 토큰 존재 여부 확인, 없다면 생성");
         String key = account.getId().toString();
@@ -342,17 +345,10 @@ public class AccountService {
         }
 
         log.info("기존 게시글,댓글 deleted처리");
-        List<Article> articles = articleRepository.findByAuthor(account);
-        for (Article article : articles) {
-            article.changePostStatusToDeleted();
-        }
-        List<Comment> commentList = commentRepository.findByAuthor(account);
-        for (Comment comment : commentList) {
-            comment.changeStatusToDeleted();
-        }
-
+        articleRepository.updateArticlesPostStatus(account, PostStatus.DELETED);
+        commentRepository.updateCommentPostStatus(account, CommentStatus.DELETED);
         account.updateStatusToDeleted(LocalDateTime.now());
-
+        accountRepository.save(account);
     }
 
     @Transactional
@@ -434,10 +430,5 @@ public class AccountService {
         favoriteMovieRepository.saveAll(favoriteMovies);
     }
 
-    public static void checkAccountStatus(Account account) {
-        switch (account.getAccountStatus()) {
-            case INACTIVE -> throw new ApplicationException(ErrorCode.INACTIVE_ACCOUNT);
-            case DELETED -> throw new ApplicationException(ErrorCode.DELETED_ACCOUNT);
-        }
-    }
+
 }

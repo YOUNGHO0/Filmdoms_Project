@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 public class TokenAuthenticationService {
 
     private final AccountRepository accountRepository;
+    private final AccountStatusCheck accountStatusCheck;
+
 
     /**
      * 유저 ID로 계정 정보를 찾는다.
@@ -31,7 +33,7 @@ public class TokenAuthenticationService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        AccountService.checkAccountStatus(account);
+        accountStatusCheck.checkAccountStatus(account);
 
         return AccountDto.from(account);
     }

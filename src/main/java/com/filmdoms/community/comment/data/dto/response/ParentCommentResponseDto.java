@@ -1,5 +1,6 @@
 package com.filmdoms.community.comment.data.dto.response;
 
+import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import com.filmdoms.community.comment.data.entity.Comment;
 import lombok.Getter;
 
@@ -33,7 +34,7 @@ public class ParentCommentResponseDto extends CommentResponseDto {
                 .collect(partitioningBy(comment -> comment.getParentComment() == null, toList())); //부모 댓글 여부로 분류
         //isParentComment={true=부모댓글 리스트(생성순 정렬), false=자식댓글 리스트(생성순 정렬)}
 
-        Map<Comment, List<CommentResponseDto>> parentToChildren = isParentComment.get(false).stream()
+        Map<Comment, List<CommentResponseDto>> parentToChildren = isParentComment.get(false).stream().filter(comment -> comment.getStatus() == CommentStatus.ACTIVE)
                 .collect(groupingBy(Comment::getParentComment, mapping(CommentResponseDto::from, toList()))); //자식 댓글을 부모 댓글을 키로 그룹화하고, DTO로 변환
         //parentToChildren={ 부모댓글1=부모댓글1의 자식댓글 DTO 리스트, 부모댓글2=부모댓글2의 자식댓글 DTO 리스트, ...} (자식댓글이 없는 부모댓글은 값으로 null을 가짐)
 

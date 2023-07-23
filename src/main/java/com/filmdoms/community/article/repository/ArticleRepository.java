@@ -2,11 +2,13 @@ package com.filmdoms.community.article.repository;
 
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.article.data.constant.Category;
+import com.filmdoms.community.article.data.constant.PostStatus;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +17,7 @@ import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("Select a from Article a where a.category =:category and a.status ='ACTIVE'")
-    List<Article> findByCategory(@Param("category")Category category, Pageable pageable);
+    List<Article> findByCategory(@Param("category") Category category, Pageable pageable);
 
     //JPA 기본 제공 findAll 메서드는 페이지 객체를 반환하므로 필요 없는 count 쿼리가 나감 -> 리스트를 반환하는 메서드를 따로 만듦
     @Query("SELECT a FROM Article a where a.status = 'ACTIVE'")
@@ -65,4 +67,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Page<Article> findByAuthor(Account author, Pageable pageable);
 
     List<Article> findByAuthor(Account account);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Article a SET a.status =:postStatus WHERE a.author =:author")
+    void updateArticlesPostStatus(@Param("author") Account author, @Param("postStatus") PostStatus postStatus);
+
 }
