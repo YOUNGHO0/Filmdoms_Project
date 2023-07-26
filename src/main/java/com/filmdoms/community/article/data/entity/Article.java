@@ -80,6 +80,7 @@ public class Article extends BaseTimeEntity {
         this.tag = tag;
         this.content.updateContent(content);
         this.containsImage = containsImage;
+    }
 
     public void changePostStatusToDeleted() {
         this.status = PostStatus.DELETED;
