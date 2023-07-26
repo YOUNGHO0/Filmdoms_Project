@@ -75,6 +75,11 @@ public class Comment extends BaseTimeEntity {
 
     public void changeStatusToActive() { this.status = CommentStatus.ACTIVE; }
 
+    public void deleteContentAndAuthor(){
+        this.content = "삭제된 댓글입니다.";
+        this.author = null;
+    }
+
     public int removeVote() {
         return --voteCount;
     }
