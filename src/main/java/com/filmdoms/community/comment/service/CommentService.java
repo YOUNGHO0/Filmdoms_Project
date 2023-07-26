@@ -3,8 +3,6 @@ package com.filmdoms.community.comment.service;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
@@ -12,21 +10,24 @@ import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import com.filmdoms.community.comment.data.dto.request.CommentCreateRequestDto;
 import com.filmdoms.community.comment.data.dto.request.CommentUpdateRequestDto;
-import com.filmdoms.community.comment.data.dto.response.DetailPageCommentResponseDto;
 import com.filmdoms.community.comment.data.dto.response.CommentCreateResponseDto;
 import com.filmdoms.community.comment.data.dto.response.CommentVoteResponseDto;
+import com.filmdoms.community.comment.data.dto.response.DetailPageCommentResponseDto;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.data.entity.CommentVote;
 import com.filmdoms.community.comment.data.entity.CommentVoteKey;
 import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.comment.repository.CommentVoteRepository;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -118,14 +119,25 @@ public class CommentService {
 
         //자식 댓글의 경우 별도 확인 없이 삭제
         if (comment.getParentComment() != null) {
-            commentRepository.delete(comment);
+            //DELETED 상태인 부모 댓글의 하나뿐인 자식 댓글이 삭제된 경우 삭제 처리
+            // 자식 댓글 삭제시 부모 댓글이 삭제된 댓글이면 같이 삭제
+            Comment parentComment = comment.getParentComment();
+            if (parentComment.getAuthor() == null) {
+                List<Comment> parentChildCommentList = commentRepository.findByParentComment(parentComment);
+                if (parentChildCommentList.size() == 1 && parentChildCommentList.get(0) == comment) {
+                    commentRepository.delete(comment);
+                    commentRepository.delete(parentComment);
+                } else {
+                    commentRepository.delete(comment);
+                }
+            }
             return;
-        } //DELETED 상태인 부모 댓글의 하나뿐인 자식 댓글이 삭제된 경우 추가 처리를 해줄지 결정 필요
-
+        }
         //부모 댓글의 경우
         if (commentRepository.existsByParentComment(comment)) {
-            //자식 댓글이 있으면 DELETED로 변경
-            comment.changeStatusToDeleted();
+            //자식 댓글이 있으면 게시글 내용은 삭제된 댓글입니다.와 작성자 Null처리
+            comment.deleteContentAndAuthor();
+            commentRepository.save(comment);
         } else {
             //자식 댓글이 없으면 삭제
             commentRepository.delete(comment);
