@@ -13,10 +13,12 @@ import lombok.NoArgsConstructor;
 public class AccessTokenResponseDto {
 
     private String accessToken;
+    private Long expiredAt;
 
     public static AccessTokenResponseDto from(LoginDto dto) {
         return AccessTokenResponseDto.builder()
                 .accessToken(dto.getAccessToken())
+                .expiredAt(dto.getExpiredAt())
                 .build();
     }
 }
