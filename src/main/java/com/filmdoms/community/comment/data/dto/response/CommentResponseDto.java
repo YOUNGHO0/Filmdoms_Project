@@ -33,7 +33,10 @@ public class CommentResponseDto {
             this.content = comment.getContent();
             this.status = comment.getStatus();
             this.likes = comment.getVoteCount();
-            this.author = DetailPageAccountResponseDto.from(comment.getAuthor());
+            if (comment.getAuthor() != null)
+                this.author = DetailPageAccountResponseDto.from(comment.getAuthor());
+            else
+                this.author = null;
         } else {
             this.content = "삭제된 댓글입니다.";
             this.status = comment.getStatus();
