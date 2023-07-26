@@ -125,10 +125,12 @@ public class AccountService {
         refreshTokenRepository.save(key, refreshToken);
 
         log.info("새로운 엑세스 토큰 발급");
-        String accessToken = jwtTokenProvider.createAccessToken(key).getJwtToken();
+        JwtAndExpiredAtDto jwtAndExpiredAtDto = jwtTokenProvider.createAccessToken(key);
+
 
         return AccessTokenResponseDto.builder()
-                .accessToken(accessToken)
+                .accessToken(jwtAndExpiredAtDto.getJwtToken())
+                .expiredAt(jwtAndExpiredAtDto.getExpiredAt())
                 .build();
     }
 
