@@ -1,29 +1,15 @@
 package com.filmdoms.community.account.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
-
-import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.request.DeleteAccountRequestDto;
 import com.filmdoms.community.account.data.dto.request.JoinRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdatePasswordRequestDto;
 import com.filmdoms.community.account.data.dto.request.UpdateProfileRequestDto;
-import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.dto.response.AccessTokenResponseDto;
+import com.filmdoms.community.account.data.dto.response.AccountResponseDto;
 import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.account.data.entity.Movie;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
@@ -31,13 +17,12 @@ import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.utils.RedisUtil;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
+import com.filmdoms.community.config.jwt.JwtTokenProvider;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,6 +32,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {AccountService.class})
 @ActiveProfiles("test")
@@ -88,7 +86,7 @@ class AccountServiceTest {
             Account mockAccount = getMockAccount(email, password);
             when(accountRepository.findByEmail(email)).thenReturn(Optional.of(mockAccount));
             when(encoder.matches(password, mockAccount.getPassword())).thenReturn(true);
-            when(jwtTokenProvider.createAccessToken(any())).thenReturn("mockJwtString");
+            when(jwtTokenProvider.createAccessToken(any())).thenReturn(new JwtAndExpiredAtDto("mockjwt", 1000));
 
             // When & Then
             assertDoesNotThrow(() -> accountService.login(email, password));
@@ -137,7 +135,7 @@ class AccountServiceTest {
             String accessToken = "mockAccessToken";
             when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
             when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.of(refreshToken));
-            when(jwtTokenProvider.createAccessToken(key)).thenReturn(accessToken);
+            when(jwtTokenProvider.createAccessToken(key)).thenReturn(new JwtAndExpiredAtDto(accessToken, 110000));
 
             // When
             AccessTokenResponseDto responseDto = accountService.refreshAccessToken(refreshToken);
@@ -156,7 +154,7 @@ class AccountServiceTest {
             String accessToken = "mockAccessToken";
             when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
             when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.empty());
-            when(jwtTokenProvider.createAccessToken(key)).thenReturn(accessToken);
+            when(jwtTokenProvider.createAccessToken(key)).thenReturn(new JwtAndExpiredAtDto(accessToken, 11000));
 
             // When & Then
             ApplicationException e = assertThrows(ApplicationException.class,

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class LoginDto {
+    private long expiredAt;
     private String accessToken;
     private String refreshToken;
 }

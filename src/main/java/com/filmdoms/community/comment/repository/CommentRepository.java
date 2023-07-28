@@ -33,6 +33,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findByAuthor(Account account);
 
+    List<Comment> findByParentComment(Comment parentComment);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Comment c SET c.status =:commentStatus WHERE c.author =:author")
