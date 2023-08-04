@@ -3,13 +3,14 @@ package com.filmdoms.community.account.service;
 import com.filmdoms.community.account.data.dto.request.AuthCodeVerificationRequestDto;
 import com.filmdoms.community.account.data.dto.response.EmailAuthDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.account.service.utils.PasswordUtil;
 import com.filmdoms.community.account.service.utils.RedisUtil;
+import com.filmdoms.community.exception.ApplicationException;
+import com.filmdoms.community.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class EmailService {
     private final AccountRepository accountRepository;
     private final AsyncEmailSendService asyncEmailSendService;
     private final RedisUtil redisUtil;
+    private final PasswordEncoder passwordEncoder;
     private static final long AUTH_CODE_EXPIRE_DURATION_IN_MILLISECONDS = 10 * 60 * 1000L;
     private static final long TEMPORARY_EMAIL_AUTH_IN_MILLISECONDS = 10 * 60 * 1000L;
     private static final String AUTH_CODE_KEY_PREFIX = "authCode:";
@@ -40,7 +42,7 @@ public class EmailService {
 
         Account account = optionalAccount.get();
         String tempPassword = PasswordUtil.generateRandomPassword(10);
-        account.updatePassword(tempPassword);
+        account.updatePassword(passwordEncoder.encode(tempPassword));
         String subject = "[필름덤즈] 임시 비밀번호를 발송해 드립니다.";
         String content = getTempPasswordEmailContent(tempPassword);
         asyncEmailSendService.sendEmail(email, subject, content, true, false);
