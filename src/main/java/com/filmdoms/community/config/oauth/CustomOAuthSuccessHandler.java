@@ -71,7 +71,11 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+            //refresh 토큰 세팅
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+            //access 토큰 세팅
+            ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(accessToken);
+            response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
             response.getWriter()
                     .write(
                             objectMapper.writeValueAsString(
