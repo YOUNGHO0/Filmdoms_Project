@@ -2,7 +2,6 @@ package com.filmdoms.community.config.jwt;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.service.TokenAuthenticationService;
-import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -44,7 +43,7 @@ public class JwtTokenProvider {
     }
 
     // 액세스 토큰 생성
-    public JwtAndExpiredAtDto createAccessToken(String subject) {
+    public String createAccessToken(String subject) {
         Claims claims = Jwts.claims().setSubject(subject);
         Date now = new Date();
         String jwt = Jwts.builder()
@@ -53,7 +52,7 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime() + TOKEN_VALID_MILLISECOND))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
-        return new JwtAndExpiredAtDto(jwt, now.getTime() + TOKEN_VALID_MILLISECOND);
+        return jwt;
     }
 
     // 리프레시 토큰 생성
@@ -71,6 +70,16 @@ public class JwtTokenProvider {
                 .httpOnly(true)
                 .secure(true)
                 .maxAge(REFRESH_VALID_SECOND) // 초 단위
+                .sameSite("None")
+                .path("/api")
+                .build();
+    }
+
+    public ResponseCookie createAccessTokenCookie(String accessToken) {
+        return ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(TOKEN_VALID_MILLISECOND / 1000) // 초 단위
                 .sameSite("None")
                 .path("/api")
                 .build();
