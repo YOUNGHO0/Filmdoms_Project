@@ -17,7 +17,6 @@ import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.utils.RedisUtil;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.comment.repository.CommentRepository;
-import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
@@ -86,7 +85,7 @@ class AccountServiceTest {
             Account mockAccount = getMockAccount(email, password);
             when(accountRepository.findByEmail(email)).thenReturn(Optional.of(mockAccount));
             when(encoder.matches(password, mockAccount.getPassword())).thenReturn(true);
-            when(jwtTokenProvider.createAccessToken(any())).thenReturn(new JwtAndExpiredAtDto("mockjwt", 1000));
+            when(jwtTokenProvider.createAccessToken(any())).thenReturn("MockJwt");
 
             // When & Then
             assertDoesNotThrow(() -> accountService.login(email, password));
@@ -135,7 +134,7 @@ class AccountServiceTest {
             String accessToken = "mockAccessToken";
             when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
             when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.of(refreshToken));
-            when(jwtTokenProvider.createAccessToken(key)).thenReturn(new JwtAndExpiredAtDto(accessToken, 110000));
+            when(jwtTokenProvider.createAccessToken(key)).thenReturn("MockJwt");
 
             // When
             AccessTokenResponseDto responseDto = accountService.refreshAccessToken(refreshToken);
@@ -154,7 +153,7 @@ class AccountServiceTest {
             String accessToken = "mockAccessToken";
             when(jwtTokenProvider.getSubject(refreshToken)).thenReturn(key);
             when(refreshTokenRepository.findByKey(key)).thenReturn(Optional.empty());
-            when(jwtTokenProvider.createAccessToken(key)).thenReturn(new JwtAndExpiredAtDto(accessToken, 11000));
+            when(jwtTokenProvider.createAccessToken(key)).thenReturn("MockJwt");
 
             // When & Then
             ApplicationException e = assertThrows(ApplicationException.class,
