@@ -29,7 +29,6 @@ import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
-import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
@@ -44,8 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -92,11 +89,10 @@ public class AccountService {
 
         log.info("리프레시 토큰 저장 / 갱신");
         refreshTokenRepository.save(key, refreshToken);
-        JwtAndExpiredAtDto jwtAndExpiredAtDto = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
         return LoginDto.builder()
-                .accessToken(jwtAndExpiredAtDto.getJwtToken())
+                .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .expiredAt(jwtAndExpiredAtDto.getExpiredAt())
                 .build();
     }
 
@@ -125,12 +121,11 @@ public class AccountService {
         refreshTokenRepository.save(key, refreshToken);
 
         log.info("새로운 엑세스 토큰 발급");
-        JwtAndExpiredAtDto jwtAndExpiredAtDto = jwtTokenProvider.createAccessToken(key);
+        String accessToken = jwtTokenProvider.createAccessToken(key);
 
 
         return AccessTokenResponseDto.builder()
-                .accessToken(jwtAndExpiredAtDto.getJwtToken())
-                .expiredAt(jwtAndExpiredAtDto.getExpiredAt())
+                .accessToken(accessToken)
                 .build();
     }
 
