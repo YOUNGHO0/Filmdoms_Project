@@ -19,8 +19,8 @@ public class DefaultProfileImage {
     public void init() {
 
         File file = File.builder()
-                .uuidFileName("7f5fb6d2-40fa-4e3d-81e6-a013af6f4f23.png")
-                .originalFileName("original_file_name")
+                .uuidFileName("8ffbe57a-741e-46a2-bbda-f507ed6c51fb.png")
+                .originalFileName("profile")
                 .build();
         defaultProfileImage = fileRepository.save(file);
 
