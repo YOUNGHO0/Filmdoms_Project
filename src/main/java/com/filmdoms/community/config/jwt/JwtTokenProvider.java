@@ -71,6 +71,7 @@ public class JwtTokenProvider {
                 .secure(true)
                 .maxAge(REFRESH_VALID_SECOND) // 초 단위
                 .sameSite("None")
+                .domain(".filmdoms.studio")
                 .path("/")
                 .build();
     }
@@ -81,6 +82,7 @@ public class JwtTokenProvider {
                 .secure(true)
                 .maxAge(TOKEN_VALID_MILLISECOND / 1000) // 초 단위
                 .sameSite("None")
+                .domain(".filmdoms.studio")
                 .path("/")
                 .build();
     }
