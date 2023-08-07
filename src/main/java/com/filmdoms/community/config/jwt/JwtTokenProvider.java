@@ -8,20 +8,24 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenProvider {
 
     private final TokenAuthenticationService tokenAuthenticationService;
@@ -105,9 +109,16 @@ public class JwtTokenProvider {
 
     // HTTP 헤더에서 Token 값 추출
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            Optional<Cookie> accessTokenCookie = Arrays.stream(cookies)
+                    .filter(cookie -> "accessToken".equals(cookie.getName()))
+                    .findFirst();
+            if (accessTokenCookie.isPresent()) {
+                return accessTokenCookie.get().getValue();
+            }
         }
         return null;
     }
