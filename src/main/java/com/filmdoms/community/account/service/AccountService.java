@@ -106,7 +106,7 @@ public class AccountService {
         } catch (Exception e) {
             throw new ApplicationException(ErrorCode.INVALID_TOKEN);
         }
-        log.info("{}", key);
+        log.info("키값 {}", key);
 
         log.info("키로 저장된 토큰 호출");
         String savedToken = refreshTokenRepository.findByKey(key)
@@ -141,6 +141,7 @@ public class AccountService {
 
         log.info("저장된 토큰과 대조");
         if (!Objects.equals(savedToken, refreshToken)) {
+            log.info("저장된 토큰 :{}, 현재 리프레시 토큰 : {}", savedToken, refreshToken);
             throw new ApplicationException(ErrorCode.INVALID_TOKEN);
         }
 

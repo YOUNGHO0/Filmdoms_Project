@@ -91,6 +91,28 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    public ResponseCookie deleteRefreshTokenCookie() {
+        return ResponseCookie.from("refreshToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/")
+                .build();
+    }
+
+    public ResponseCookie deleteAccessTokenCookie() {
+        return ResponseCookie.from("accessToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/")
+                .build();
+    }
+
     // 토큰 인증 정보 조회
     public UsernamePasswordAuthenticationToken getAuthentication(String token) {
         AccountDto accountDto = tokenAuthenticationService.findAccountBySubject(getSubject(token));

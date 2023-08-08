@@ -88,8 +88,15 @@ public class AccountController {
     }
 
     @PostMapping("/logout")
-    public Response<Void> logout(@CookieValue("refreshToken") String refreshToken) {
+    public Response<Void> logout(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
         accountService.logout(refreshToken);
+
+        // 쿠키 삭제 진행
+        ResponseCookie refreshTokenCookie = jwtTokenProvider.deleteRefreshTokenCookie();
+        ResponseCookie accessTokenCookie = jwtTokenProvider.deleteAccessTokenCookie();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
         return Response.success();
     }
 
