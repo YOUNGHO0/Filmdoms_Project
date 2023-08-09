@@ -14,7 +14,7 @@ public class Content {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", length = 10000)
+    @Column(name = "content", length = 50000)
     private String content;
 
     Content(String content) {
