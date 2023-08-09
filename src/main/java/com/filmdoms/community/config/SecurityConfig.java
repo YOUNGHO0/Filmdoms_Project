@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/article/announce").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
 
                 // H2 DB 사용을 위해, x-frame-options 동일 출처 허용
