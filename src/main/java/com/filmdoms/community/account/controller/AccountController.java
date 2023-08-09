@@ -104,8 +104,10 @@ public class AccountController {
     public Response<AccessTokenResponseDto> join(@RequestBody JoinRequestDto requestDto, HttpServletResponse response) {
         accountService.createAccount(requestDto);
         LoginDto dto = accountService.login(requestDto.getEmail(), requestDto.getPassword());
-        ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        ResponseCookie refreshTokenCookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(dto.getAccessToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         return Response.success(AccessTokenResponseDto.from(dto));
     }
 
