@@ -2,9 +2,11 @@ package com.filmdoms.community.article.data.entity.extra;
 
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -22,16 +24,14 @@ public class FilmUniverse {
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     private Article article;
 
-    @JoinColumn(name = "file_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private File mainImage;
+    private String mainImage;
 
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
 
     @Builder
-    private FilmUniverse(Article article, File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
+    private FilmUniverse(Article article, String mainImage, LocalDateTime startDate, LocalDateTime endDate) {
         if (article.getCategory() != Category.FILM_UNIVERSE || article.getTag().getCategory() != Category.FILM_UNIVERSE) {
             throw new IllegalArgumentException("Wrong article category or tag");
         }
@@ -41,7 +41,7 @@ public class FilmUniverse {
         this.endDate = endDate;
     }
 
-    public void update(File mainImage, LocalDateTime startDate, LocalDateTime endDate) {
+    public void update(String mainImage, LocalDateTime startDate, LocalDateTime endDate) {
         this.mainImage = mainImage;
         this.startDate = startDate;
         this.endDate = endDate;
