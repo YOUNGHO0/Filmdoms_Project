@@ -1,5 +1,6 @@
 package com.filmdoms.community.account.controller;
 
+import com.filmdoms.community.account.data.DefaultProfileImage;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
@@ -44,6 +45,7 @@ public class AccountController {
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final DefaultProfileImage defaultProfileImage;
     @Value("${admin-password}")
     private String password;
 
@@ -51,6 +53,7 @@ public class AccountController {
     public Response generateAdmin() {
         Account account = Account.builder()
                 .nickname("admin")
+                .profileImage(defaultProfileImage.getDefaultProfileImage())
                 .password(passwordEncoder.encode(password))
                 .role(AccountRole.ADMIN)
                 .email("testadmin@naver.com")
