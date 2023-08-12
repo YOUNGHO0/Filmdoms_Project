@@ -52,6 +52,8 @@ public enum ErrorCode {
     INACTIVE_ACCOUNT(HttpStatus.BAD_REQUEST, "비활성화된 계정입니다."),
     DELETED_ACCOUNT(HttpStatus.BAD_REQUEST, "삭제된 계정입니다."),
     DELETED_COMMENT(HttpStatus.BAD_REQUEST,"이미 삭제된 댓글입니다"),
+    MORE_IMAGE_REQUIRED(HttpStatus.BAD_REQUEST,"최소 3장의 이미지를 넣어주세요"),
+    NO_IMAGE(HttpStatus.BAD_REQUEST,"이미지를 첨부해 주세요"),
     CATEGORY_DOES_NOT_MATCH(HttpStatus.BAD_REQUEST, "카테고리가 일치하지 않습니다.");
 
 
