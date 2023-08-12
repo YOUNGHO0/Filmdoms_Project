@@ -13,9 +13,8 @@ public interface FilmUniverseRepository extends JpaRepository<FilmUniverse, Long
 
     @Query("SELECT f FROM FilmUniverse f " +
             "LEFT JOIN FETCH f.article " +
-            "LEFT JOIN FETCH f.article.author " +
-            "LEFT JOIN FETCH f.mainImage where f.article.status ='ACTIVE'")
-    List<FilmUniverse> findAllWithArticleAuthorMainImage(Pageable pageable);
+            "LEFT JOIN FETCH f.article.author where f.article.status ='ACTIVE'")
+    List<FilmUniverse> findAllWithArticleAuthor(Pageable pageable);
     @Query("SELECT f FROM FilmUniverse f " +
             "LEFT JOIN FETCH f.article " +
             "LEFT JOIN FETCH f.article.author.profileImage " +
