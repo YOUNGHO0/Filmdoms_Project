@@ -33,8 +33,6 @@ import com.filmdoms.community.comment.repository.CommentRepository;
 import com.filmdoms.community.comment.repository.CommentVoteRepository;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
-import com.filmdoms.community.file.data.entity.File;
-import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.vote.data.entity.VoteKey;
 import com.filmdoms.community.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,7 +58,6 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final FilmUniverseRepository filmUniverseRepository;
     private final CriticRepository criticRepository;
-    private final FileRepository fileRepository;
     private final VoteRepository voteRepository;
     private final AccountRepository accountRepository;
     private final CommentRepository commentRepository;
@@ -76,19 +75,22 @@ public class ArticleService {
 
         if (requestDto instanceof FilmUniverseCreateRequestDto) {
             FilmUniverseCreateRequestDto filmUniverseCreateRequestDto = (FilmUniverseCreateRequestDto) requestDto;
-            Long mainImageId = filmUniverseCreateRequestDto.getMainImageId();
-            File mainImageFile = fileRepository.findById(mainImageId)
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
-            FilmUniverse filmUniverse = filmUniverseCreateRequestDto.toEntity(article, mainImageFile);
+
+            List<String> urlList = parseImage(filmUniverseCreateRequestDto.getContent());
+            if (urlList.isEmpty())
+                throw new ApplicationException(ErrorCode.NO_IMAGE);
+
+            FilmUniverse filmUniverse = filmUniverseCreateRequestDto.toEntity(article, urlList.get(0));
             filmUniverseRepository.save(filmUniverse);
         }
 
         if (requestDto instanceof CriticCreateRequestDto) {
             CriticCreateRequestDto criticCreateRequestDto = (CriticCreateRequestDto) requestDto;
-            Long mainImageId = criticCreateRequestDto.getMainImageId();
-            File mainImageFile = fileRepository.findById(mainImageId)
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
-            Critic critic = criticCreateRequestDto.toEntity(article, mainImageFile);
+            List<String> urlList = parseImage(criticCreateRequestDto.getContent());
+
+            if (urlList.isEmpty() || urlList.size() < 3)
+                throw new ApplicationException(ErrorCode.MORE_IMAGE_REQUIRED);
+            Critic critic = criticCreateRequestDto.toEntity(article, urlList.get(0));
             criticRepository.save(critic);
         }
 
@@ -118,14 +120,14 @@ public class ArticleService {
                     .toList(); //commentNum은 batch_size를 이용하여 쿼리 1번으로 구해짐
 
         } else if (category == Category.FILM_UNIVERSE) {
-            List<FilmUniverse> filmUniverses = filmUniverseRepository.findAllWithArticleAuthorMainImage(pageRequest); //category 정보 필요x, Notice의 id로 역정렬
+            List<FilmUniverse> filmUniverses = filmUniverseRepository.findAllWithArticleAuthor(pageRequest); //category 정보 필요x, Notice의 id로 역정렬
 
             return filmUniverses.stream()
                     .map(FilmUniverseMainPageResponseDto::from)
                     .toList();
 
         } else if (category == Category.CRITIC) {
-            List<Critic> critics = criticRepository.findAllWithArticleAuthorMainImageContent(pageRequest);//category 정보 필요x, Critic의 id로 역정렬
+            List<Critic> critics = criticRepository.findAllWithArticleAuthorContent(pageRequest);//category 정보 필요x, Critic의 id로 역정렬
 
             return critics.stream()
                     .map(CriticMainPageResponseDto::from)
@@ -355,15 +357,12 @@ public class ArticleService {
             FilmUniverseUpdateRequestDto filmUniverseUpdateRequestDto = (FilmUniverseUpdateRequestDto) requestDto;
             filmUniverseUpdateRequestDto.updateEntity(article);
 
-            File mainImage = fileRepository.findById(filmUniverseUpdateRequestDto.getMainImageId())
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
-            File previousMainImage = filmUniverse.getMainImage();
-            filmUniverseUpdateRequestDto.updateEntity(filmUniverse, mainImage);
+            List<String> urlList = parseImage(requestDto.getContent());
+            if (urlList == null)
+                throw new ApplicationException(ErrorCode.NO_IMAGE);
 
-            //메인 이미지가 바뀌었다면 기존 이미지는 삭제함
-            if (mainImage != previousMainImage) {
-                fileRepository.delete(previousMainImage);
-            }
+            filmUniverseUpdateRequestDto.updateEntity(filmUniverse, urlList.get(0));
+
 
         } else if (category == Category.CRITIC) {
             Critic critic = criticRepository.findByArticleIdWithArticle(articleId)
@@ -376,15 +375,22 @@ public class ArticleService {
             CriticUpdateRequestDto criticUpdateRequestDto = (CriticUpdateRequestDto) requestDto;
             criticUpdateRequestDto.updateEntity(article);
 
-            File mainImage = fileRepository.findById(criticUpdateRequestDto.getMainImageId())
-                    .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_FILE_ID));
-            File previousMainImage = critic.getMainImage();
-            criticUpdateRequestDto.updateEntity(critic, mainImage);
+            List<String> urlList = parseImage(requestDto.getContent());
+            if (urlList == null || urlList.size() < 3)
+                throw new ApplicationException(ErrorCode.MORE_IMAGE_REQUIRED);
 
-            if (mainImage != previousMainImage) {
-                fileRepository.delete(previousMainImage);
-            }
+            criticUpdateRequestDto.updateEntity(critic, urlList.get(0));
+
         }
+    }
+
+    private List<String> parseImage(String content) {
+        String patternString = "<img src=\\\"(https?:\\/\\/[a-z./0-9-]*)\\\">";
+
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(content);
+        //  https://api.filmdoms.studio/image/940f03e2-27dc-4418-80d6-0cbd5ad0abb7.jpg 로 이미지를 뽑아 리턴
+        return matcher.results().map(matchResult -> matchResult.group(1)).collect(Collectors.toList());
     }
 
     //requestDto의 tag가 category와 매치되는지 확인
