@@ -41,7 +41,7 @@ public class ArticleController {
     private final InitService2 initService2;
 
     @PostMapping("/article")
-    public Response<ArticleCreateResponseDto> createArticle(@RequestBody ParentCreateRequestDto parentCreateRequestDto, @AuthenticationPrincipal AccountDto accountDto) {
+    public Response<ArticleCreateResponseDto> createArticle(@RequestBody @Valid ParentCreateRequestDto parentCreateRequestDto, @AuthenticationPrincipal AccountDto accountDto) {
         ArticleCreateResponseDto responseDto = articleService.createArticle(parentCreateRequestDto, accountDto);
         return Response.success(responseDto);
     }
