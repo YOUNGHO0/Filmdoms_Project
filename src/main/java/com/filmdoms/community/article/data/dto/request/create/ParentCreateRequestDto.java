@@ -34,7 +34,7 @@ public abstract class ParentCreateRequestDto {
     private Category category;
     private Tag tag;
     @NotBlank(message = CONTENT_NOT_BLANK)
-    @Size(max = 10000, message = CONTENT_SIZE)
+    @Size(max = 50000, message = CONTENT_SIZE)
     private String content;
     boolean containsImage;
 

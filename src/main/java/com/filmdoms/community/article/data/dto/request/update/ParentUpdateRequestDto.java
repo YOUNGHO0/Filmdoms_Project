@@ -32,7 +32,7 @@ public abstract class ParentUpdateRequestDto {
     private Category category;
     private Tag tag;
     @NotBlank
-    @Size(max = 10000)
+    @Size(max = 50000)
     private String content;
     boolean containsImage;
 
