@@ -12,7 +12,6 @@ import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.AccountService;
 import com.filmdoms.community.account.service.AccountStatusCheck;
 import com.filmdoms.community.article.repository.ArticleRepository;
-import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
@@ -63,16 +62,20 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
             accountStatusCheck.checkAccountStatus(account);
 
-            JwtAndExpiredAtDto jwtAndExpiredAtDto = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
+            String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
             ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromAccount(account);
             OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
-            OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, jwtAndExpiredAtDto);
+            OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
 
             //Response 객체에 응답을 세팅
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+            //refresh 토큰 세팅
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+            //access 토큰 세팅
+            ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(accessToken);
+            response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
             response.getWriter()
                     .write(
                             objectMapper.writeValueAsString(

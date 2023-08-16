@@ -62,8 +62,12 @@ public class AccountController {
     @PostMapping("/login")
     public Response<AccessTokenResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
         LoginDto dto = accountService.login(requestDto.getEmail(), requestDto.getPassword());
-        ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        // refresh 토큰 셋팅
+        ResponseCookie refreshTokenCookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        // access 토큰 셋팅
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(dto.getAccessToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         return Response.success(AccessTokenResponseDto.from(dto));
     }
 
@@ -75,13 +79,24 @@ public class AccountController {
     }
 
     @PostMapping("/refresh-token")
-    public Response<AccessTokenResponseDto> refreshAccessToken(@CookieValue("refreshToken") String refreshToken) {
-        return Response.success(accountService.refreshAccessToken(refreshToken));
+    public Response<AccessTokenResponseDto> refreshAccessToken(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
+        //Dto 에서 엑세스 토큰을 꺼내 쿠키로 설정
+        AccessTokenResponseDto accessTokenResponseDto = accountService.refreshAccessToken(refreshToken);
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(accessTokenResponseDto.getAccessToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        return Response.success(accessTokenResponseDto);
     }
 
     @PostMapping("/logout")
-    public Response<Void> logout(@CookieValue("refreshToken") String refreshToken) {
+    public Response<Void> logout(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
         accountService.logout(refreshToken);
+
+        // 쿠키 삭제 진행
+        ResponseCookie refreshTokenCookie = jwtTokenProvider.deleteRefreshTokenCookie();
+        ResponseCookie accessTokenCookie = jwtTokenProvider.deleteAccessTokenCookie();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
         return Response.success();
     }
 
@@ -89,8 +104,10 @@ public class AccountController {
     public Response<AccessTokenResponseDto> join(@RequestBody JoinRequestDto requestDto, HttpServletResponse response) {
         accountService.createAccount(requestDto);
         LoginDto dto = accountService.login(requestDto.getEmail(), requestDto.getPassword());
-        ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        ResponseCookie refreshTokenCookie = jwtTokenProvider.createRefreshTokenCookie(dto.getRefreshToken());
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(dto.getAccessToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         return Response.success(AccessTokenResponseDto.from(dto));
     }
 

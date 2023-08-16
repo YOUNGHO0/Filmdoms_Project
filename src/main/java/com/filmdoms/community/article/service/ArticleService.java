@@ -1,22 +1,18 @@
 package com.filmdoms.community.article.service;
 
+import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.entity.Account;
-import com.filmdoms.community.article.data.dto.request.update.ArticleUpdateRequestDto;
-import com.filmdoms.community.article.data.dto.request.update.CriticUpdateRequestDto;
-import com.filmdoms.community.article.data.dto.request.update.FilmUniverseUpdateRequestDto;
-import com.filmdoms.community.article.data.dto.request.update.ParentUpdateRequestDto;
-import com.filmdoms.community.comment.data.entity.Comment;
-import com.filmdoms.community.comment.repository.CommentRepository;
-import com.filmdoms.community.comment.repository.CommentVoteRepository;
-import com.filmdoms.community.exception.ApplicationException;
-import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.dto.request.create.CriticCreateRequestDto;
 import com.filmdoms.community.article.data.dto.request.create.FilmUniverseCreateRequestDto;
 import com.filmdoms.community.article.data.dto.request.create.ParentCreateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.ArticleUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.CriticUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.FilmUniverseUpdateRequestDto;
+import com.filmdoms.community.article.data.dto.request.update.ParentUpdateRequestDto;
 import com.filmdoms.community.article.data.dto.response.boardlist.*;
 import com.filmdoms.community.article.data.dto.response.create.ArticleCreateResponseDto;
 import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResponseDto;
@@ -52,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -319,6 +314,9 @@ public class ArticleService {
     }
 
     private void checkPermission(Article article, AccountDto accountDto) {
+
+        if (accountDto.getAccountRole() == AccountRole.ADMIN)
+            return;
         if (!Objects.equals(article.getAuthor().getId(), accountDto.getId())) {
             throw new ApplicationException(ErrorCode.INVALID_PERMISSION);
         }

@@ -2,27 +2,30 @@ package com.filmdoms.community.config.jwt;
 
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.service.TokenAuthenticationService;
-import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenProvider {
 
     private final TokenAuthenticationService tokenAuthenticationService;
@@ -44,7 +47,7 @@ public class JwtTokenProvider {
     }
 
     // 액세스 토큰 생성
-    public JwtAndExpiredAtDto createAccessToken(String subject) {
+    public String createAccessToken(String subject) {
         Claims claims = Jwts.claims().setSubject(subject);
         Date now = new Date();
         String jwt = Jwts.builder()
@@ -53,7 +56,7 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime() + TOKEN_VALID_MILLISECOND))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
-        return new JwtAndExpiredAtDto(jwt, now.getTime() + TOKEN_VALID_MILLISECOND);
+        return jwt;
     }
 
     // 리프레시 토큰 생성
@@ -72,7 +75,41 @@ public class JwtTokenProvider {
                 .secure(true)
                 .maxAge(REFRESH_VALID_SECOND) // 초 단위
                 .sameSite("None")
-                .path("/api")
+                .domain(".filmdoms.studio")
+                .path("/")
+                .build();
+    }
+
+    public ResponseCookie createAccessTokenCookie(String accessToken) {
+        return ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(TOKEN_VALID_MILLISECOND / 1000) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/")
+                .build();
+    }
+
+    public ResponseCookie deleteRefreshTokenCookie() {
+        return ResponseCookie.from("refreshToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/")
+                .build();
+    }
+
+    public ResponseCookie deleteAccessTokenCookie() {
+        return ResponseCookie.from("accessToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/")
                 .build();
     }
 
@@ -94,9 +131,16 @@ public class JwtTokenProvider {
 
     // HTTP 헤더에서 Token 값 추출
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            Optional<Cookie> accessTokenCookie = Arrays.stream(cookies)
+                    .filter(cookie -> "accessToken".equals(cookie.getName()))
+                    .findFirst();
+            if (accessTokenCookie.isPresent()) {
+                return accessTokenCookie.get().getValue();
+            }
         }
         return null;
     }

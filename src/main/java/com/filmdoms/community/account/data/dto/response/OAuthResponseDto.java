@@ -1,7 +1,6 @@
 package com.filmdoms.community.account.data.dto.response;
 
 import com.filmdoms.community.account.data.constant.OAuthType;
-import com.filmdoms.community.config.dto.JwtAndExpiredAtDto;
 import lombok.Getter;
 
 @Getter
@@ -9,15 +8,13 @@ public class OAuthResponseDto {
 
     private OAuthType type;
     private String accessToken;
-    private long expiredAt;
 
-    private OAuthResponseDto(OAuthType type, JwtAndExpiredAtDto jwtAndExpiredAtDto) {
+    private OAuthResponseDto(OAuthType type, String accessToken) {
         this.type = type;
-        this.accessToken = jwtAndExpiredAtDto.getJwtToken();
-        this.expiredAt = jwtAndExpiredAtDto.getExpiredAt();
+        this.accessToken = accessToken;
     }
 
-    public static OAuthResponseDto from(OAuthType type, JwtAndExpiredAtDto jwtAndExpiredAtDto) {
-        return new OAuthResponseDto(type, jwtAndExpiredAtDto);
+    public static OAuthResponseDto from(OAuthType type, String accessToken) {
+        return new OAuthResponseDto(type, accessToken);
     }
 }
