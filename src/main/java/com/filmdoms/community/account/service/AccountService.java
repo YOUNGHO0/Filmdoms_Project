@@ -361,6 +361,7 @@ public class AccountService {
         List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
         favoriteMovieRepository.deleteAll(favoriteMovies);
 
+        //Todo vote 도 삭제 필요
         List<Article> articles = articleRepository.findByAuthor(account);
 
         for (Article article : articles) {
@@ -396,11 +397,18 @@ public class AccountService {
         return Stream.concat(existingMovies.stream(), savedMovies.stream()).toList();
     }
 
-    public ProfileArticleResponseDto getProfileArticles(Long accountId, Pageable pageable) {
+    public ProfileArticleResponseDto getPublicProfileArticles(Long accountId, Pageable pageable) {
         Account author = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
-        Page<Article> articlePage = articleRepository.findByAuthor(author, pageable);
+        Page<Article> articlePage = articleRepository.findByAuthorAndStatus(author, pageable, PostStatus.ACTIVE);
         return ProfileArticleResponseDto.from(articlePage);
+    }
+
+    public ProfileCommentResponseDto getPublicProfileComments(Long accountId, Pageable pageable) {
+        Account author = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Page<Comment> commentPage = commentRepository.findByAuthorWithArticleAndStatus(author, pageable);
+        return ProfileCommentResponseDto.from(commentPage);
     }
 
     public ProfileCommentResponseDto getProfileComments(Long accountId, Pageable pageable) {
@@ -408,6 +416,13 @@ public class AccountService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
         Page<Comment> commentPage = commentRepository.findByAuthorWithArticle(author, pageable);
         return ProfileCommentResponseDto.from(commentPage);
+    }
+
+    public ProfileArticleResponseDto getProfileArticles(Long accountId, Pageable pageable) {
+        Account author = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Page<Article> articlePage = articleRepository.findByAuthor(author, pageable);
+        return ProfileArticleResponseDto.from(articlePage);
     }
 
     public void addInformationToSocialLoginAccount(OAuthJoinRequestDto requestDto, HttpServletResponse response, AccountDto accountDto) {
