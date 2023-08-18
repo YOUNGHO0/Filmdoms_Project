@@ -54,6 +54,7 @@ public enum ErrorCode {
     DELETED_COMMENT(HttpStatus.BAD_REQUEST,"이미 삭제된 댓글입니다"),
     MORE_IMAGE_REQUIRED(HttpStatus.BAD_REQUEST,"최소 3장의 이미지를 넣어주세요"),
     NO_IMAGE(HttpStatus.BAD_REQUEST,"이미지를 첨부해 주세요"),
+    USER_NOT_EXIST(HttpStatus.BAD_REQUEST,"사용자가 존재하지 않습니다."),
     CATEGORY_DOES_NOT_MATCH(HttpStatus.BAD_REQUEST, "카테고리가 일치하지 않습니다.");
 
 
