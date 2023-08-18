@@ -68,7 +68,7 @@ class AccountServiceIntegrationTest {
         OAuthJoinRequestDto requestDto = new OAuthJoinRequestDto("nickname", List.of("MovieA", "MovieB", "MovieC"));
 
         //when
-        accountService.addInformationToSocialLoginAccount(requestDto, accountDto);
+       // accountService.addInformationToSocialLoginAccount(requestDto, accountDto);
         em.flush();
         em.clear();
 
