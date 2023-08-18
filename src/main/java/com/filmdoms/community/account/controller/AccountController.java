@@ -203,6 +203,19 @@ public class AccountController {
         return Response.success(accountResponseDto);
     }
 
+    @GetMapping("/profile/comment")
+    public Response<ProfileCommentResponseDto> getUserProfileComments(@AuthenticationPrincipal AccountDto accountDto, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileCommentResponseDto responseDto = accountService.getProfileComments(accountDto.getId(), pageable);
+        return Response.success(responseDto);
+    }
+
+    @GetMapping("/profile/article")
+    public Response<ProfileArticleResponseDto> getUserProfileArticles(@AuthenticationPrincipal AccountDto accountDto, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileArticleResponseDto responseDto = accountService.getProfileArticles(accountDto.getId(), pageable);
+        return Response.success(responseDto);
+    }
+
+
     private boolean duplicateExistsInMovieNameList(List<String> favoriteMovies) {
         return favoriteMovies.size() != favoriteMovies.stream().distinct().count();
     }
