@@ -115,7 +115,7 @@ public class AccountController {
     }
 
     @PostMapping("/oauth")
-    public Response addInformationToSocialLoginAccount(@RequestBody @Valid OAuthJoinRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) throws MethodArgumentNotValidException {
+    public Response addInformationToSocialLoginAccount(@RequestBody @Valid OAuthJoinRequestDto requestDto, BindingResult bindingResult, HttpServletResponse response, @AuthenticationPrincipal AccountDto accountDto) throws MethodArgumentNotValidException {
         List<String> favoriteMovies = requestDto.getFavoriteMovies();
         if (duplicateExistsInMovieNameList(favoriteMovies)) {
             bindingResult.rejectValue("favoriteMovies", "duplicate");
@@ -123,7 +123,7 @@ public class AccountController {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(null, bindingResult);
         }
-        accountService.addInformationToSocialLoginAccount(requestDto, accountDto);
+        accountService.addInformationToSocialLoginAccount(requestDto, response, accountDto);
         return Response.success();
     }
 
