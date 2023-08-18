@@ -170,14 +170,14 @@ public class AccountController {
     }
 
     @GetMapping("/profile/{accountId}/article")
-    public Response<ProfileArticleResponseDto> getProfileArticles(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        ProfileArticleResponseDto responseDto = accountService.getProfileArticles(accountId, pageable);
+    public Response<ProfileArticleResponseDto> getPublicProfileArticles(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileArticleResponseDto responseDto = accountService.getPublicProfileArticles(accountId, pageable);
         return Response.success(responseDto);
     }
 
     @GetMapping("/profile/{accountId}/comment")
-    public Response<ProfileCommentResponseDto> getProfileComments(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        ProfileCommentResponseDto responseDto = accountService.getProfileComments(accountId, pageable);
+    public Response<ProfileCommentResponseDto> getPublicProfileComments(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileCommentResponseDto responseDto = accountService.getPublicProfileComments(accountId, pageable);
         return Response.success(responseDto);
     }
 
