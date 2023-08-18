@@ -64,9 +64,11 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             , countQuery = "SELECT count(a) from Article a inner join a.author where a.category =:categoryId and a.author.nickname =:nickname and a.status = 'ACTIVE'")
     Page<Article> findArticlesByNickname(@Param("categoryId") Category category, @Param("nickname") String nickname, Pageable pageable);
 
-    Page<Article> findByAuthor(Account author, Pageable pageable);
+    Page<Article> findByAuthorAndStatus(Account author, Pageable pageable,PostStatus postStatus);
 
     List<Article> findByAuthor(Account account);
+
+    Page<Article> findByAuthor(Account author, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Article a SET a.status =:postStatus WHERE a.author =:author")
