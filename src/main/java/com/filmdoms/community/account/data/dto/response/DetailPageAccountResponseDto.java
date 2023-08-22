@@ -27,5 +27,10 @@ public class DetailPageAccountResponseDto {
                 FileResponseDto.from(account.getProfileImage())
         );
     }
+
+    public static DetailPageAccountResponseDto makeMockAccount() {
+        return new DetailPageAccountResponseDto(-1L, "사용자", FileResponseDto.from("8ffbe57a-741e-46a2-bbda-f507ed6c51fb.png"));
+    }
+
 }
 
