@@ -17,8 +17,8 @@ public class FilmUniverseUpdateRequestDto extends ParentUpdateRequestDto {
     private LocalDateTime endAt;
 
 
-    public FilmUniverseUpdateRequestDto(String title, Category category, Tag tag, String content, boolean containsImage, LocalDateTime startAt, LocalDateTime endAt, Long mainImageId) {
-        super(title, category, tag, content, containsImage);
+    public FilmUniverseUpdateRequestDto(String title, Category category, Tag tag, String content, LocalDateTime startAt, LocalDateTime endAt) {
+        super(title, category, tag, content);
         this.startAt = startAt;
         this.endAt = endAt;
 
