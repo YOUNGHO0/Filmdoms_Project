@@ -15,8 +15,8 @@ public class CriticCreateRequestDto extends ParentCreateRequestDto {
 
     //테스트 용도
     @Builder
-    public CriticCreateRequestDto(String title, Category category, Tag tag, String content, boolean containsImage, Long mainImageId) {
-        super(title, category, tag, content, containsImage);
+    public CriticCreateRequestDto(String title, Category category, Tag tag, String content) {
+        super(title, category, tag, content);
     }
 
     public Critic toEntity(Article article, String mainImage) {

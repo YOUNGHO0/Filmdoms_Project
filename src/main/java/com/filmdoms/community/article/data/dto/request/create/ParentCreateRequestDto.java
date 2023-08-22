@@ -36,11 +36,12 @@ public abstract class ParentCreateRequestDto {
     @NotBlank(message = CONTENT_NOT_BLANK)
     @Size(max = 50000, message = CONTENT_SIZE)
     private String content;
-    boolean containsImage;
 
-    public Article toEntity(Account author) {
+
+    public Article toEntity(Account author, int imageCount) {
         //필름 유니버스, 비평 게시판은 항상 이미지를 포함
-        if (this instanceof FilmUniverseCreateRequestDto || this instanceof CriticCreateRequestDto) {
+        boolean containsImage = false;
+        if (this instanceof FilmUniverseCreateRequestDto || this instanceof CriticCreateRequestDto || imageCount > 0) {
             containsImage = true;
         }
 

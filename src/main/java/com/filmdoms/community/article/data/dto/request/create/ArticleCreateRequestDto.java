@@ -10,7 +10,7 @@ public class ArticleCreateRequestDto extends ParentCreateRequestDto {
 
     //테스트 용도
     @Builder
-    public ArticleCreateRequestDto(String title, Category category, Tag tag, String content, boolean containsImage) {
-        super(title, category, tag, content, containsImage);
+    public ArticleCreateRequestDto(String title, Category category, Tag tag, String content) {
+        super(title, category, tag, content);
     }
 }

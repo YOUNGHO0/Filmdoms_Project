@@ -18,8 +18,8 @@ public class FilmUniverseCreateRequestDto extends ParentCreateRequestDto {
     private LocalDateTime endAt;
 
     @Builder
-    public FilmUniverseCreateRequestDto(String title, Category category, Tag tag, String content, boolean containsImage, LocalDateTime startAt, LocalDateTime endAt, Long mainImageId) {
-        super(title, category, tag, content, containsImage);
+    public FilmUniverseCreateRequestDto(String title, Category category, Tag tag, String content, LocalDateTime startAt, LocalDateTime endAt) {
+        super(title, category, tag, content);
         this.startAt = startAt;
         this.endAt = endAt;
     }
