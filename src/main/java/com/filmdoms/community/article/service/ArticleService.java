@@ -68,15 +68,15 @@ public class ArticleService {
         Category category = requestDto.getCategory();
         Tag tag = requestDto.getTag();
         tag.verifyCategory(category);
-
+        List<String> urlList = parseImage(requestDto.getContent());
         Account author = accountRepository.getReferenceById(accountDto.getId());
-        Article article = requestDto.toEntity(author);
+        Article article = requestDto.toEntity(author, urlList.size());
+
         articleRepository.save(article);
 
         if (requestDto instanceof FilmUniverseCreateRequestDto) {
             FilmUniverseCreateRequestDto filmUniverseCreateRequestDto = (FilmUniverseCreateRequestDto) requestDto;
 
-            List<String> urlList = parseImage(filmUniverseCreateRequestDto.getContent());
             if (urlList.isEmpty())
                 throw new ApplicationException(ErrorCode.NO_IMAGE);
 
@@ -86,7 +86,6 @@ public class ArticleService {
 
         if (requestDto instanceof CriticCreateRequestDto) {
             CriticCreateRequestDto criticCreateRequestDto = (CriticCreateRequestDto) requestDto;
-            List<String> urlList = parseImage(criticCreateRequestDto.getContent());
 
             if (urlList.isEmpty() || urlList.size() < 3)
                 throw new ApplicationException(ErrorCode.MORE_IMAGE_REQUIRED);
@@ -344,7 +343,8 @@ public class ArticleService {
             checkPermission(article, accountDto);
 
             ArticleUpdateRequestDto articleUpdateRequestDto = (ArticleUpdateRequestDto) requestDto;
-            articleUpdateRequestDto.updateEntity(article);
+            List<String> urlList = parseImage(requestDto.getContent());
+            articleUpdateRequestDto.updateEntity(article, urlList.size());
 
         } else if (category == Category.FILM_UNIVERSE) {
             FilmUniverse filmUniverse = filmUniverseRepository.findByArticleIdWithArticle(articleId)
@@ -355,11 +355,10 @@ public class ArticleService {
             checkPermission(article, accountDto);
 
             FilmUniverseUpdateRequestDto filmUniverseUpdateRequestDto = (FilmUniverseUpdateRequestDto) requestDto;
-            filmUniverseUpdateRequestDto.updateEntity(article);
-
             List<String> urlList = parseImage(requestDto.getContent());
             if (urlList == null)
                 throw new ApplicationException(ErrorCode.NO_IMAGE);
+            filmUniverseUpdateRequestDto.updateEntity(article, urlList.size());
 
             filmUniverseUpdateRequestDto.updateEntity(filmUniverse, urlList.get(0));
 
@@ -372,13 +371,11 @@ public class ArticleService {
             checkTag(requestDto, category);
             checkPermission(article, accountDto);
 
-            CriticUpdateRequestDto criticUpdateRequestDto = (CriticUpdateRequestDto) requestDto;
-            criticUpdateRequestDto.updateEntity(article);
-
             List<String> urlList = parseImage(requestDto.getContent());
             if (urlList == null || urlList.size() < 3)
                 throw new ApplicationException(ErrorCode.MORE_IMAGE_REQUIRED);
-
+            CriticUpdateRequestDto criticUpdateRequestDto = (CriticUpdateRequestDto) requestDto;
+            criticUpdateRequestDto.updateEntity(article, urlList.size());
             criticUpdateRequestDto.updateEntity(critic, urlList.get(0));
 
         }
