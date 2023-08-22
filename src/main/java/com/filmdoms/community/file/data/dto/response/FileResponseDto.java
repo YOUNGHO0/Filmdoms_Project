@@ -17,4 +17,7 @@ public class FileResponseDto {
     public static FileResponseDto from(File file) {
         return new FileResponseDto(file.getId(), file.getUuidFileName());
     }
+    public static FileResponseDto from(String uuidFileName) {
+        return new FileResponseDto(-1L, uuidFileName);
+    }
 }
