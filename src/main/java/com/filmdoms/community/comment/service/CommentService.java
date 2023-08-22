@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +40,7 @@ public class CommentService {
     private final ArticleRepository articleRepository;
     private final AccountRepository accountRepository;
     private final CommentVoteRepository commentVoteRepository;
+
 
     public DetailPageCommentResponseDto getDetailPageCommentList(Long articleId) {
         List<Comment> comments = commentRepository.findByArticleIdWithAuthorProfileImage(articleId);
@@ -122,27 +124,41 @@ public class CommentService {
         if (comment.getParentComment() != null) {
             //DELETED 상태인 부모 댓글의 하나뿐인 자식 댓글이 삭제된 경우 삭제 처리
             // 자식 댓글 삭제시 부모 댓글이 삭제된 댓글이면 같이 삭제
+            // 삭제된 댓글이지만, 다른 자식 댓글이 있다면 자식댓글 한개만 삭제함
             Comment parentComment = comment.getParentComment();
             if (parentComment.getAuthor() == null) {
                 List<Comment> parentChildCommentList = commentRepository.findByParentComment(parentComment);
                 if (parentChildCommentList.size() == 1 && parentChildCommentList.get(0) == comment) {
-                    commentRepository.delete(comment);
-                    commentRepository.delete(parentComment);
+                    deleteCommentEntityWithVote(comment);
+                    deleteCommentEntityWithVote(parentComment);
                 } else {
-                    commentRepository.delete(comment);
+                    deleteCommentEntityWithVote(comment);
                 }
+            } else {
+                deleteCommentEntityWithVote(comment);
             }
             return;
         }
         //부모 댓글의 경우
         if (commentRepository.existsByParentComment(comment)) {
             //자식 댓글이 있으면 게시글 내용은 삭제된 댓글입니다.와 작성자 Null처리
+            // 추천삭제는 최종댓글 삭제시에 적용됨 지금은 내용만 마스킹 처리
             comment.deleteContentAndAuthor();
-            commentRepository.save(comment);
         } else {
             //자식 댓글이 없으면 삭제
-            commentRepository.delete(comment);
+            deleteCommentEntityWithVote(comment);
         }
+    }
+
+    private void deleteCommentEntityWithVote(Comment comment) {
+        // 해당 댓글에 추천되어있는 vote를 전부 삭제하고 댓글을 삭제함
+        // 리스트로 쿼리가 만들어져 있어서 List 만들어서 사용함
+        List<Comment> commentList = new ArrayList<>();
+        commentList.add(comment);
+        commentVoteRepository.deleteByComments(commentList);
+
+        commentRepository.delete(comment);
+
     }
 
     private void checkPermission(AccountDto accountDto, Comment comment) {
