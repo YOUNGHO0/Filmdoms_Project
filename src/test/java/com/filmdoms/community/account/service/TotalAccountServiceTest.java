@@ -222,18 +222,18 @@ class TotalAccountServiceTest {
     }
 
     private void createMovie(String title, Category category, Tag tag, String content, boolean containsImage, Account account) {
-        ArticleCreateRequestDto movieRequestDto = new ArticleCreateRequestDto(title, category, tag, content, containsImage);
+        ArticleCreateRequestDto movieRequestDto = new ArticleCreateRequestDto(title, category, tag, content);
         articleService.createArticle(movieRequestDto, AccountDto.from(account));
     }
 
     private void createFilmUniverse(String title, Category category, Tag tag, String content, boolean containsImage, LocalDateTime startAt, LocalDateTime endAt, Long mainImageId, Account account) {
         FilmUniverseCreateRequestDto filmUniverseCreateRequestDto
-                = new FilmUniverseCreateRequestDto(title, category, tag, content, containsImage, startAt, endAt, mainImageId);
+                = new FilmUniverseCreateRequestDto(title, category, tag, content, startAt, endAt);
         articleService.createArticle(filmUniverseCreateRequestDto, AccountDto.from(account));
     }
 
     private void createCritic(String title, Category category, Tag tag, String content, boolean containsImage, Long mainImageId, Account account) {
-        CriticCreateRequestDto criticCreateRequestDto = new CriticCreateRequestDto(title, category, tag, content, containsImage, mainImageId);
+        CriticCreateRequestDto criticCreateRequestDto = new CriticCreateRequestDto(title, category, tag, content);
         articleService.createArticle(criticCreateRequestDto, AccountDto.from(account));
 
     }

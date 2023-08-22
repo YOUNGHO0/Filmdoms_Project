@@ -88,7 +88,6 @@ class ArticleServiceTest {
                 .category(Category.MOVIE)
                 .tag(Tag.MOVIE)
                 .content("test content")
-                .containsImage(false)
                 .build();
 
         //when
@@ -102,7 +101,6 @@ class ArticleServiceTest {
         assertThat(article.getCategory()).isEqualTo(requestDto.getCategory());
         assertThat(article.getTag()).isEqualTo(requestDto.getTag());
         assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
-        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
         assertThat(article.getAuthor().getId()).isEqualTo(testAuthor.getId());
     }
 
@@ -122,10 +120,8 @@ class ArticleServiceTest {
                 .category(Category.FILM_UNIVERSE)
                 .tag(Tag.CLUB)
                 .content("test content")
-                .containsImage(true)
                 .startAt(startDate)
                 .endAt(endDate)
-                .mainImageId(testMainImage.getId())
                 .build();
 
         //when
@@ -140,11 +136,10 @@ class ArticleServiceTest {
         assertThat(article.getCategory()).isEqualTo(requestDto.getCategory());
         assertThat(article.getTag()).isEqualTo(requestDto.getTag());
         assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
-        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
         assertThat(article.getAuthor().getId()).isEqualTo(testAuthor.getId());
         assertThat(filmUniverse.getStartDate()).isEqualTo(requestDto.getStartAt());
         assertThat(filmUniverse.getEndDate()).isEqualTo(requestDto.getEndAt());
-        assertThat(filmUniverse.getMainImage().getId()).isEqualTo(requestDto.getMainImageId());
+
     }
 
     @Test
@@ -161,8 +156,6 @@ class ArticleServiceTest {
                 .category(Category.CRITIC)
                 .tag(Tag.CRITIC_ACTOR)
                 .content("test content")
-                .containsImage(true)
-                .mainImageId(testMainImage.getId())
                 .build();
 
         //when
@@ -177,9 +170,7 @@ class ArticleServiceTest {
         assertThat(article.getCategory()).isEqualTo(requestDto.getCategory());
         assertThat(article.getTag()).isEqualTo(requestDto.getTag());
         assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
-        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
         assertThat(article.getAuthor().getId()).isEqualTo(testAuthor.getId());
-        assertThat(critic.getMainImage().getId()).isEqualTo(requestDto.getMainImageId());
     }
 
     @Test
@@ -246,7 +237,6 @@ class ArticleServiceTest {
                 .article(article)
                 .startDate(LocalDateTime.of(2023, 7, 1, 0, 0))
                 .endDate(LocalDateTime.of(2023, 8, 1, 0, 0))
-                .mainImage(mainImageFile)
                 .build();
 
         filmUniverseRepository.save(filmUniverse);
@@ -290,7 +280,7 @@ class ArticleServiceTest {
                 .build();
         articleRepository.save(article);
 
-        ArticleUpdateRequestDto requestDto = new ArticleUpdateRequestDto("updated title", Category.MOVIE, Tag.OTT, "updated content", true);
+        ArticleUpdateRequestDto requestDto = new ArticleUpdateRequestDto("updated title", Category.MOVIE, Tag.OTT, "updated content");
 
         //when
         articleService.updateArticle(Category.MOVIE, article.getId(), AccountDto.from(testAuthor), requestDto);
@@ -299,7 +289,6 @@ class ArticleServiceTest {
         assertThat(article.getTitle()).isEqualTo(requestDto.getTitle());
         assertThat(article.getTag()).isEqualTo(requestDto.getTag());
         assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
-        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
     }
 
     @Test
@@ -329,7 +318,6 @@ class ArticleServiceTest {
                 .article(article)
                 .startDate(previousStartDate)
                 .endDate(previousEndDate)
-                .mainImage(previousMainImageFile)
                 .build();
 
         filmUniverseRepository.save(filmUniverse);
@@ -337,7 +325,7 @@ class ArticleServiceTest {
         LocalDateTime updateStartDate = LocalDateTime.of(2023, 9, 1, 0, 0);
         LocalDateTime updateEndDate = LocalDateTime.of(2023, 10, 1, 0, 0);
 
-        FilmUniverseUpdateRequestDto requestDto = new FilmUniverseUpdateRequestDto("updated title", Category.FILM_UNIVERSE, Tag.COMPETITION, "updated content", true, updateStartDate, updateEndDate, updateMainImageFile.getId());
+        FilmUniverseUpdateRequestDto requestDto = new FilmUniverseUpdateRequestDto("updated title", Category.FILM_UNIVERSE, Tag.COMPETITION, "updated content", updateStartDate, updateEndDate);
 
         //when
         articleService.updateArticle(Category.FILM_UNIVERSE, article.getId(), AccountDto.from(testAuthor), requestDto);
@@ -346,9 +334,7 @@ class ArticleServiceTest {
         assertThat(article.getTitle()).isEqualTo(requestDto.getTitle());
         assertThat(article.getTag()).isEqualTo(requestDto.getTag());
         assertThat(article.getContent().getContent()).isEqualTo(requestDto.getContent());
-        assertThat(article.isContainsImage()).isEqualTo(requestDto.isContainsImage());
         assertThat(filmUniverse.getStartDate()).isEqualTo(requestDto.getStartAt());
         assertThat(filmUniverse.getEndDate()).isEqualTo(requestDto.getEndAt());
-        assertThat(filmUniverse.getMainImage().getId()).isEqualTo(requestDto.getMainImageId());
     }
 }
