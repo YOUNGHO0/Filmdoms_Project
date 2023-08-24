@@ -41,7 +41,7 @@ public class CommentResponseDto {
             this.content = "삭제된 댓글입니다.";
             this.status = comment.getStatus();
             this.likes = 0;
-            this.author = null;
+            this.author = DetailPageAccountResponseDto.makeMockAccount();
         }
 
 

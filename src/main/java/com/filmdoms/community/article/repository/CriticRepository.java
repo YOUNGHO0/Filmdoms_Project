@@ -17,16 +17,14 @@ public interface CriticRepository extends JpaRepository<Critic, Long> {
     @Query("SELECT c FROM Critic c " +
             "LEFT JOIN FETCH c.article " +
             "LEFT JOIN FETCH c.article.author " +
-            "LEFT JOIN FETCH c.mainImage " +
             "LEFT JOIN FETCH c.article.content where c.article.status = 'ACTIVE'")
-    List<Critic> findAllWithArticleAuthorMainImageContent(Pageable pageable);
+    List<Critic> findAllWithArticleAuthorContent(Pageable pageable);
 
     Optional<Critic> findByArticleId(Long articleId);
 
     @Query(value = "SELECT c FROM Critic c " +
             "LEFT JOIN FETCH c.article " +
             "LEFT JOIN FETCH c.article.author " +
-            "LEFT JOIN FETCH c.mainImage " +
             "LEFT JOIN FETCH c.article.content where c.article.status = 'ACTIVE'"
             , countQuery = "select count(c) from Critic c where c.article.status = 'ACTIVE'")
     Page<Critic> getCritics(Pageable pageable);
@@ -34,7 +32,6 @@ public interface CriticRepository extends JpaRepository<Critic, Long> {
     @Query(value = "SELECT c FROM Critic c " +
             "LEFT JOIN FETCH c.article " +
             "LEFT JOIN FETCH c.article.author " +
-            "LEFT JOIN FETCH c.mainImage " +
             "LEFT JOIN FETCH c.article.content where c.article.tag =:tagId and c.article.status = 'ACTIVE'"
             , countQuery = "SELECT count(c) from Critic c inner join c.article where c.article.tag =:tagId and c.article.status = 'ACTIVE'")
     Page<Critic> getCriticsByTag(@Param("tagId") Tag tag, Pageable pageable);

@@ -50,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/oauth").hasRole("GUEST")
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/account/profile").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/account/profile/article").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/account/profile/comment").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/email/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/banner").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/banner/**").hasRole("ADMIN")

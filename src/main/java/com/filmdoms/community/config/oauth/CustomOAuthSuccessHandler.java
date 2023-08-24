@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -57,34 +58,82 @@ public class CustomOAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         try {
             String email = resolveEmailFromAuthentication(oAuth2AuthenticationToken);
-            Account account = accountRepository.findByEmail(email)
-                    .orElseGet(() -> createGuestAccountWithEmail(email)); //가입된 이메일이 아닌 경우 GUEST 등급의 Account 생성
-            checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
-            accountStatusCheck.checkAccountStatus(account);
+            Optional<Account> optionalAccount = accountRepository.findByEmail(email);
 
-            String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
-            ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromAccount(account);
-            OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
-            OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
+            // 처음 회원가입 또는 Guest 계정 시 처리되는 로직
+            if (optionalAccount.isEmpty()) {
+                log.info("가입한 사용자가 아님");
+                Account account = createGuestAccountWithEmail(email);
+                handleNonuserAndGuest(response, account);
+                return;
+            } else {
+                Account account = optionalAccount.get();
+                if (account.getAccountRole() == AccountRole.GUEST) {
+                    log.info("가입했지만 guest임");
+                    handleNonuserAndGuest(response, account);
+                    return;
+                }
+            }
 
-            //Response 객체에 응답을 세팅
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("utf-8");
-            //refresh 토큰 세팅
-            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-            //access 토큰 세팅
-            ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(accessToken);
-            response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-            response.getWriter()
-                    .write(
-                            objectMapper.writeValueAsString(
-                                    Response.success(responseDto)
-                            )
-                    );
+            handleAlreadyRegisteredUser(response, optionalAccount);
         } catch (ApplicationException e) {
             createApplicationExceptionResponse(response, e);
         }
+    }
+
+    private void handleAlreadyRegisteredUser(HttpServletResponse response, Optional<Account> optionalAccount) throws IOException {
+        // 이미 회원가입 된 사용자가 처리되는 로직
+        Account account = optionalAccount.get();
+        checkSocialLoginAccount(account); //소셜 로그인 계정 여부 확인
+        accountStatusCheck.checkAccountStatus(account);
+
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
+        ResponseCookie refreshTokenCookie = resolveRefreshTokenCookieFromAccount(account);
+        OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
+        OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
+
+        //Response 객체에 응답을 세팅
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        //refresh 토큰 세팅
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        //access 토큰 세팅
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(accessToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.getWriter()
+                .write(
+                        objectMapper.writeValueAsString(
+                                Response.success(responseDto)
+                        )
+                );
+    }
+
+    private void handleNonuserAndGuest(HttpServletResponse response, Account account) throws IOException {
+        // 아직 회원가입 하지 않는 유저와 Guest 유저를 핸들링 하는 메서드
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
+        OAuthType oAuthType = resolveOAuthTypeFromAccountRole(account.getAccountRole());
+        OAuthResponseDto responseDto = OAuthResponseDto.from(oAuthType, accessToken);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        //refresh 토큰 세팅
+        String refreshTokenKey = String.valueOf(account.getId());
+        String refreshToken = refreshTokenRepository.findByKey(refreshTokenKey)
+                .orElseGet(() -> jwtTokenProvider.createRefreshToken(refreshTokenKey));
+        refreshTokenRepository.save(refreshTokenKey, refreshToken);
+        ResponseCookie guestUserRefreshTokenCookie = jwtTokenProvider.createGuestUserRefreshTokenCookie(refreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, guestUserRefreshTokenCookie.toString());
+        //access 토큰 세팅
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createGuestUserAccessTokenCookie(accessToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.getWriter()
+                .write(
+                        objectMapper.writeValueAsString(
+                                Response.success(responseDto)
+                        )
+                );
     }
 
     private void createApplicationExceptionResponse(HttpServletResponse response, ApplicationException e) throws IOException {

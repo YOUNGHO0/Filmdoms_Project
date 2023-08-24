@@ -24,6 +24,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query(value = "SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.article " +
+            "WHERE c.author = :author and c.status = 'ACTIVE'",
+            countQuery = "SELECT COUNT(c) FROM Comment c " +
+                    "WHERE c.author = :author and c.status = 'ACTIVE'")
+    Page<Comment> findByAuthorWithArticleAndStatus(@Param("author") Account author, Pageable pageable);
+
+    @Query(value = "SELECT c FROM Comment c " +
+            "LEFT JOIN FETCH c.article " +
             "WHERE c.author = :author",
             countQuery = "SELECT COUNT(c) FROM Comment c " +
                     "WHERE c.author = :author")

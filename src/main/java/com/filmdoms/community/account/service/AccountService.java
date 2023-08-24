@@ -34,10 +34,13 @@ import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -358,6 +361,7 @@ public class AccountService {
         List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
         favoriteMovieRepository.deleteAll(favoriteMovies);
 
+        //Todo vote 도 삭제 필요
         List<Article> articles = articleRepository.findByAuthor(account);
 
         for (Article article : articles) {
@@ -393,11 +397,18 @@ public class AccountService {
         return Stream.concat(existingMovies.stream(), savedMovies.stream()).toList();
     }
 
-    public ProfileArticleResponseDto getProfileArticles(Long accountId, Pageable pageable) {
+    public ProfileArticleResponseDto getPublicProfileArticles(Long accountId, Pageable pageable) {
         Account author = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
-        Page<Article> articlePage = articleRepository.findByAuthor(author, pageable);
+        Page<Article> articlePage = articleRepository.findByAuthorAndStatus(author, pageable, PostStatus.ACTIVE);
         return ProfileArticleResponseDto.from(articlePage);
+    }
+
+    public ProfileCommentResponseDto getPublicProfileComments(Long accountId, Pageable pageable) {
+        Account author = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Page<Comment> commentPage = commentRepository.findByAuthorWithArticleAndStatus(author, pageable);
+        return ProfileCommentResponseDto.from(commentPage);
     }
 
     public ProfileCommentResponseDto getProfileComments(Long accountId, Pageable pageable) {
@@ -407,7 +418,14 @@ public class AccountService {
         return ProfileCommentResponseDto.from(commentPage);
     }
 
-    public void addInformationToSocialLoginAccount(OAuthJoinRequestDto requestDto, AccountDto accountDto) {
+    public ProfileArticleResponseDto getProfileArticles(Long accountId, Pageable pageable) {
+        Account author = accountRepository.findById(accountId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
+        Page<Article> articlePage = articleRepository.findByAuthor(author, pageable);
+        return ProfileArticleResponseDto.from(articlePage);
+    }
+
+    public void addInformationToSocialLoginAccount(OAuthJoinRequestDto requestDto, HttpServletResponse response, AccountDto accountDto) {
 
         if (isNicknameDuplicate(requestDto.getNickname())) {
             throw new ApplicationException(ErrorCode.DUPLICATE_NICKNAME);
@@ -430,6 +448,31 @@ public class AccountService {
                         .build())
                 .toList();
         favoriteMovieRepository.saveAll(favoriteMovies);
+
+        deleteGuestToken(response);
+        setUserToken(response, account);
+
+    }
+
+    private void setUserToken(HttpServletResponse response, Account account) {
+        String refreshTokenKey = String.valueOf(account.getId());
+        String refreshToken = refreshTokenRepository.findByKey(refreshTokenKey)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_IN_DB));
+
+        // 실 서비스 토큰 세팅
+        ResponseCookie refreshTokenCookie = jwtTokenProvider.createRefreshTokenCookie(refreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        //access 토큰 세팅
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(account.getId()));
+        ResponseCookie accessTokenCookie = jwtTokenProvider.createAccessTokenCookie(accessToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+    }
+
+    private void deleteGuestToken(HttpServletResponse response) {
+        ResponseCookie guestRefreshTokenCookie = jwtTokenProvider.deleteGuestUserRefreshTokenCookie();
+        response.addHeader(HttpHeaders.SET_COOKIE, guestRefreshTokenCookie.toString());
+        ResponseCookie guestAccessTokenCookie = jwtTokenProvider.deleteGuestUserAccessTokenCookie();
+        response.addHeader(HttpHeaders.SET_COOKIE, guestAccessTokenCookie.toString());
     }
 
 

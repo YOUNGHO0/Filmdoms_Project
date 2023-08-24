@@ -32,12 +32,14 @@ public abstract class ParentUpdateRequestDto {
     private Category category;
     private Tag tag;
     @NotBlank
-    @Size(max = 10000)
+    @Size(max = 50000)
     private String content;
-    boolean containsImage;
 
-    public void updateEntity(Article article) {
-        if (this instanceof FilmUniverseUpdateRequestDto || this instanceof CriticUpdateRequestDto) {
+
+    public void updateEntity(Article article, int imageCount) {
+        boolean containsImage = false;
+
+        if (this instanceof FilmUniverseUpdateRequestDto || this instanceof CriticUpdateRequestDto || imageCount > 0) {
             containsImage = true;
         }
         article.update(title, tag, content, containsImage);

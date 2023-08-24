@@ -91,6 +91,50 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    public ResponseCookie createGuestUserRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(REFRESH_VALID_SECOND) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/api/v1/account/oauth")
+                .build();
+    }
+
+    public ResponseCookie createGuestUserAccessTokenCookie(String accessToken) {
+        return ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(TOKEN_VALID_MILLISECOND / 1000) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/api/v1/account/oauth")
+                .build();
+    }
+
+    public ResponseCookie deleteGuestUserRefreshTokenCookie() {
+        return ResponseCookie.from("refreshToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/api/v1/account/oauth")
+                .build();
+    }
+
+    public ResponseCookie deleteGuestUserAccessTokenCookie() {
+        return ResponseCookie.from("accessToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0) // 초 단위
+                .sameSite("None")
+                .domain(".filmdoms.studio")
+                .path("/api/v1/account/oauth")
+                .build();
+    }
+
     public ResponseCookie deleteRefreshTokenCookie() {
         return ResponseCookie.from("refreshToken", null)
                 .httpOnly(true)

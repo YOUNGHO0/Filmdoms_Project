@@ -92,7 +92,7 @@ public class InitServiceGenerator {
 
     public FilmUniverse filmUniverseGenerator(File file, Article article, LocalDateTime startTime, LocalDateTime endTime) {
         FilmUniverse filmUniverse = FilmUniverse.builder()
-                .mainImage(file)
+                .mainImage("https://api.filmdoms.studio/image/940f03e2-27dc-4418-80d6-0cbd5ad0abb7.jpg")
                 .article(article)
                 .startDate(startTime)
                 .endDate(endTime)
@@ -105,7 +105,7 @@ public class InitServiceGenerator {
 
         Critic critic = Critic.builder()
                 .article(article)
-                .mainImage(mainImage)
+                .mainImage("https://api.filmdoms.studio/image/940f03e2-27dc-4418-80d6-0cbd5ad0abb7.jpg")
                 .build();
         criticRepository.save(critic);
         return critic;

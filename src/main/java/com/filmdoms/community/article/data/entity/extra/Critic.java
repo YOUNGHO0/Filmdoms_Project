@@ -2,14 +2,11 @@ package com.filmdoms.community.article.data.entity.extra;
 
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.file.data.entity.File;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,12 +21,10 @@ public class Critic {
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     private Article article;
 
-    @JoinColumn(name = "file_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private File mainImage;
+    private String mainImage;
 
     @Builder
-    private Critic(Article article, File mainImage) {
+    private Critic(Article article, String mainImage) {
         if (article.getCategory() != Category.CRITIC || article.getTag().getCategory() != Category.CRITIC) {
             throw new IllegalArgumentException("Wrong article category or tag");
         }
@@ -37,7 +32,7 @@ public class Critic {
         this.mainImage = mainImage;
     }
 
-    public void update(File mainImage) {
+    public void update(String mainImage) {
         this.mainImage = mainImage;
     }
 }

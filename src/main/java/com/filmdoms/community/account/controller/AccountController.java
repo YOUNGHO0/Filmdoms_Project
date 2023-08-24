@@ -1,5 +1,6 @@
 package com.filmdoms.community.account.controller;
 
+import com.filmdoms.community.account.data.DefaultProfileImage;
 import com.filmdoms.community.account.data.constant.AccountRole;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.LoginDto;
@@ -44,6 +45,7 @@ public class AccountController {
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final DefaultProfileImage defaultProfileImage;
     @Value("${admin-password}")
     private String password;
 
@@ -51,6 +53,7 @@ public class AccountController {
     public Response generateAdmin() {
         Account account = Account.builder()
                 .nickname("admin")
+                .profileImage(defaultProfileImage.getDefaultProfileImage())
                 .password(passwordEncoder.encode(password))
                 .role(AccountRole.ADMIN)
                 .email("testadmin@naver.com")
@@ -112,7 +115,7 @@ public class AccountController {
     }
 
     @PostMapping("/oauth")
-    public Response addInformationToSocialLoginAccount(@RequestBody @Valid OAuthJoinRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) throws MethodArgumentNotValidException {
+    public Response addInformationToSocialLoginAccount(@RequestBody @Valid OAuthJoinRequestDto requestDto, BindingResult bindingResult, HttpServletResponse response, @AuthenticationPrincipal AccountDto accountDto) throws MethodArgumentNotValidException {
         List<String> favoriteMovies = requestDto.getFavoriteMovies();
         if (duplicateExistsInMovieNameList(favoriteMovies)) {
             bindingResult.rejectValue("favoriteMovies", "duplicate");
@@ -120,7 +123,7 @@ public class AccountController {
         if (bindingResult.hasErrors()) {
             throw new MethodArgumentNotValidException(null, bindingResult);
         }
-        accountService.addInformationToSocialLoginAccount(requestDto, accountDto);
+        accountService.addInformationToSocialLoginAccount(requestDto, response, accountDto);
         return Response.success();
     }
 
@@ -167,14 +170,14 @@ public class AccountController {
     }
 
     @GetMapping("/profile/{accountId}/article")
-    public Response<ProfileArticleResponseDto> getProfileArticles(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        ProfileArticleResponseDto responseDto = accountService.getProfileArticles(accountId, pageable);
+    public Response<ProfileArticleResponseDto> getPublicProfileArticles(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileArticleResponseDto responseDto = accountService.getPublicProfileArticles(accountId, pageable);
         return Response.success(responseDto);
     }
 
     @GetMapping("/profile/{accountId}/comment")
-    public Response<ProfileCommentResponseDto> getProfileComments(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        ProfileCommentResponseDto responseDto = accountService.getProfileComments(accountId, pageable);
+    public Response<ProfileCommentResponseDto> getPublicProfileComments(@PathVariable Long accountId, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileCommentResponseDto responseDto = accountService.getPublicProfileComments(accountId, pageable);
         return Response.success(responseDto);
     }
 
@@ -199,6 +202,19 @@ public class AccountController {
         PublicAccountResponseDto accountResponseDto = accountService.readAccount(accountId);
         return Response.success(accountResponseDto);
     }
+
+    @GetMapping("/profile/comment")
+    public Response<ProfileCommentResponseDto> getUserProfileComments(@AuthenticationPrincipal AccountDto accountDto, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileCommentResponseDto responseDto = accountService.getProfileComments(accountDto.getId(), pageable);
+        return Response.success(responseDto);
+    }
+
+    @GetMapping("/profile/article")
+    public Response<ProfileArticleResponseDto> getUserProfileArticles(@AuthenticationPrincipal AccountDto accountDto, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        ProfileArticleResponseDto responseDto = accountService.getProfileArticles(accountDto.getId(), pageable);
+        return Response.success(responseDto);
+    }
+
 
     private boolean duplicateExistsInMovieNameList(List<String> favoriteMovies) {
         return favoriteMovies.size() != favoriteMovies.stream().distinct().count();

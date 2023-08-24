@@ -6,21 +6,18 @@ import com.filmdoms.community.account.repository.AccountRepository;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.article.data.entity.extra.Announce;
 import com.filmdoms.community.article.data.entity.extra.Critic;
 import com.filmdoms.community.article.data.entity.extra.FilmUniverse;
 import com.filmdoms.community.article.repository.AnnounceRepository;
 import com.filmdoms.community.article.repository.ArticleRepository;
 import com.filmdoms.community.article.repository.CriticRepository;
 import com.filmdoms.community.article.repository.FilmUniverseRepository;
-import com.filmdoms.community.file.data.entity.File;
-import com.filmdoms.community.file.data.entity.FileContent;
-import com.filmdoms.community.file.repository.FileContentRepository;
-import com.filmdoms.community.file.repository.FileRepository;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.file.data.entity.File;
+import com.filmdoms.community.file.repository.FileContentRepository;
+import com.filmdoms.community.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,22 +73,9 @@ public class InitService {
                     .content("Movie 게시판 " + i + "번째 글 내용\nMovie 게시판 " + i + "번째 글 내용")
                     .containsImage(false)
                     .build();
-            for(int p=i; p<=limit-3; p++)
+            for (int p = i; p <= limit - 3; p++)
                 article.addVote();
             articleRepository.save(article);
-
-//            FileContent fileContent = FileContent.builder()
-//                    .file(defaultImage)
-//                    .content(article.getContent())
-//                    .build();
-//
-//            FileContent fileContent2 = FileContent.builder()
-//                    .file(defaultImage2)
-//                    .content(article.getContent())
-//                    .build();
-//
-//            fileContentRepository.save(fileContent);
-//            fileContentRepository.save(fileContent2);
 
             int commentNum = (i - 1) % 3 + 1; //댓글 개수는 1,2,3,1,2,3,... 순서로 데이터 만들기
             for (int j = 1; j <= commentNum; j++) {
@@ -132,29 +116,17 @@ public class InitService {
                     .containsImage(true)
                     .content("File Universe 게시판 " + i + "번째 글 내용\nFile Universe 게시판 " + i + "번째 글 내용")
                     .build();
-            for(int p=i/3; p<=limit/2; p++)
+            for (int p = i / 3; p <= limit / 2; p++)
                 article.addVote();
 
             FilmUniverse filmUniverse = FilmUniverse.builder()
-                    .mainImage(defaultImage)
+                    .mainImage("https://api.filmdoms.studio/image/940f03e2-27dc-4418-80d6-0cbd5ad0abb7.jpg")
                     .article(article)
                     .startDate(LocalDateTime.of(2023, 4, 1, 0, 0, 0).plusDays(i - 1))
                     .endDate(LocalDateTime.of(2023, 5, 1, 0, 0, 0).plusDays(i - 1))
                     .build();
             filmUniverseRepository.save(filmUniverse);
 
-            FileContent fileContent = FileContent.builder()
-                    .file(defaultImage)
-                    .content(article.getContent())
-                    .build();
-
-            FileContent fileContent2 = FileContent.builder()
-                    .file(defaultImage2)
-                    .content(article.getContent())
-                    .build();
-
-            fileContentRepository.save(fileContent);
-            fileContentRepository.save(fileContent2);
 
             int commentNum = (i - 1) % 3 + 1;
             for (int j = 1; j <= commentNum; j++) {
@@ -195,26 +167,14 @@ public class InitService {
                     .containsImage(true)
                     .content("Critic 게시판 " + i + "번째 글 내용\nCritic 게시판 " + i + "번째 글 내용")
                     .build();
-            for(int p=i; p<=limit-10; p++)
+            for (int p = i; p <= limit - 10; p++)
                 article.addVote();
             Critic critic = Critic.builder()
                     .article(article)
-                    .mainImage(defaultImage)
+                    .mainImage("https://api.filmdoms.studio/image/940f03e2-27dc-4418-80d6-0cbd5ad0abb7.jpg")
                     .build();
             criticRepository.save(critic);
 
-            FileContent fileContent = FileContent.builder()
-                    .file(defaultImage)
-                    .content(article.getContent())
-                    .build();
-
-            FileContent fileContent2 = FileContent.builder()
-                    .file(defaultImage2)
-                    .content(article.getContent())
-                    .build();
-
-            fileContentRepository.save(fileContent);
-            fileContentRepository.save(fileContent2);
 
             int commentNum = (i - 1) % 3 + 1;
             for (int j = 1; j <= commentNum; j++) {
@@ -243,39 +203,5 @@ public class InitService {
             }
         }
 
-        for(int i=0; i<limit/2; i++)
-        {
-            Article article = Article.builder()
-                    .title("공지사항 게시판 " + i + "번째 글 제목")
-                    .category(Category.FILM_UNIVERSE)
-                    .tag(noticeTagList.get(i % noticeTagList.size()))
-                    .author(admin)
-                    .containsImage(false)
-                    .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
-                    .build();
-            articleRepository.save(article);
-            Announce announce = Announce.builder()
-                    .article(article)
-                    .build();
-            announceRepository.save(announce);
-
-        }
-
-        for(int i=limit/2; i<limit; i++)
-        {
-            Article article = Article.builder()
-                    .title("공지사항 게시판 " + i + "번째 글 제목")
-                    .category(Category.CRITIC)
-                    .tag(criticTagList.get(i % noticeTagList.size()))
-                    .author(admin)
-                    .containsImage(false)
-                    .content("공지사항 게시판 " + i + "번째 글 내용\n 공지사항 게시판 " + i + "번째 글 내용")
-                    .build();
-            articleRepository.save(article);
-            Announce announce = Announce.builder()
-                    .article(article)
-                    .build();
-            announceRepository.save(announce);
-        }
     }
 }
