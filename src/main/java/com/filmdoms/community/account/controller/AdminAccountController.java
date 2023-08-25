@@ -24,4 +24,11 @@ public class AdminAccountController {
         return Response.success();
 
     }
+
+    @DeleteMapping("/account/suspend/{accountId}")
+    public Response userSuspendRequest(@PathVariable Long accountId, @AuthenticationPrincipal AccountDto accountDto)
+    {
+        return adminAccountService.suspendUser(accountId);
+    }
+
 }
