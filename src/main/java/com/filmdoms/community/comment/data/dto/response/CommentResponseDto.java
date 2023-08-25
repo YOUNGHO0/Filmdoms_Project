@@ -29,14 +29,11 @@ public class CommentResponseDto {
         this.updatedAt = ZonedDateTime.of(comment.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.isManagerComment = comment.isManagerComment();
 
-        if (comment.getStatus() == CommentStatus.ACTIVE) {
+        if (comment.getAuthor() != null) {
             this.content = comment.getContent();
             this.status = comment.getStatus();
             this.likes = comment.getVoteCount();
-            if (comment.getAuthor() != null)
-                this.author = DetailPageAccountResponseDto.from(comment.getAuthor());
-            else
-                this.author = null;
+            this.author = DetailPageAccountResponseDto.from(comment.getAuthor());
         } else {
             this.content = "삭제된 댓글입니다.";
             this.status = comment.getStatus();
