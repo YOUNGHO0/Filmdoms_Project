@@ -114,8 +114,6 @@ public class CommentService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_COMMENT_ID));
         if (comment.getAuthor() == null)
             throw new ApplicationException(ErrorCode.DELETED_COMMENT);
-        //ACTIVE 상태인 댓글만 삭제 가능
-        checkCommentStatus(comment);
 
         //삭제 권한 확인
         checkPermission(accountDto, comment);
