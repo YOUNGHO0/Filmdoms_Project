@@ -17,7 +17,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.author.profileImage " +
-            "WHERE c.article.id = :articleId")
+            "WHERE c.article.id = :articleId and c.status = 'ACTIVE'")
     List<Comment> findByArticleIdWithAuthorProfileImage(@Param("articleId") Long articleId);
 
     boolean existsByParentComment(Comment parentComment);
