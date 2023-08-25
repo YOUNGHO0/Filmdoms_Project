@@ -78,7 +78,6 @@ public class Comment extends BaseTimeEntity {
     public void deleteContentAndAuthor(){
         this.content = "삭제된 댓글입니다.";
         this.author = null;
-        this.status = CommentStatus.DELETED;
     }
 
     public int removeVote() {
