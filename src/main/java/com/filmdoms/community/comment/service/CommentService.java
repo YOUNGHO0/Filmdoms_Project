@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,7 +45,9 @@ public class CommentService {
 
     public DetailPageCommentResponseDto getDetailPageCommentList(Long articleId) {
         List<Comment> comments = commentRepository.findByArticleIdWithAuthorProfileImage(articleId);
-        return DetailPageCommentResponseDto.from(comments);
+        // 해당 되는 글의 댓글을 전부 가져온 다음에, 자식 댓글이 Deleted 된 것들은 제외하고 댓글 만들기 시작
+        List<Comment> commentsWithoutDeletedChildComments = comments.stream().filter(comment -> !(comment.getParentComment() != null && comment.getStatus() == CommentStatus.DELETED)).collect(Collectors.toList());
+        return DetailPageCommentResponseDto.from(commentsWithoutDeletedChildComments);
     }
 
     public CommentCreateResponseDto createComment(CommentCreateRequestDto requestDto, AccountDto accountDto) {
@@ -114,8 +117,6 @@ public class CommentService {
                 .orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_COMMENT_ID));
         if (comment.getAuthor() == null)
             throw new ApplicationException(ErrorCode.DELETED_COMMENT);
-        //ACTIVE 상태인 댓글만 삭제 가능
-        checkCommentStatus(comment);
 
         //삭제 권한 확인
         checkPermission(accountDto, comment);
