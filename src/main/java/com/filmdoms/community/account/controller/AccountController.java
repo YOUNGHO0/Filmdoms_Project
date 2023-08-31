@@ -127,6 +127,16 @@ public class AccountController {
         return Response.success();
     }
 
+    @GetMapping("/oauth/profile")
+    public Response guestUserProfileRequest(@AuthenticationPrincipal AccountDto accountDto) {
+        return Response.success(accountService.readAccount(accountDto));
+    }
+
+    @GetMapping("/oauth/profile/email")
+    public Response guestUserEmailRequest(@AuthenticationPrincipal AccountDto accountDto) {
+        return Response.success(accountService.readAccount(accountDto));
+    }
+
     @GetMapping("/check/nickname")
     public Response<CheckDuplicateResponseDto> isUsernameDuplicate(@RequestParam String nickname) {
         return Response.success(new CheckDuplicateResponseDto(accountService.isNicknameDuplicate(nickname)));
