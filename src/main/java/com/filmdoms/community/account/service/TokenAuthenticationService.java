@@ -33,8 +33,6 @@ public class TokenAuthenticationService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.USER_NOT_FOUND));
 
-        accountStatusCheck.checkAccountStatus(account);
-
         return AccountDto.from(account);
     }
 }

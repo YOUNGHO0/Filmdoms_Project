@@ -1,6 +1,7 @@
 package com.filmdoms.community.article.data.dto.response.mainpage;
 
 import com.filmdoms.community.article.data.entity.Article;
+import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import lombok.Getter;
 
 /**
@@ -8,11 +9,12 @@ import lombok.Getter;
  */
 @Getter
 public class MovieAndRecentMainPageResponseDto extends ParentMainPageResponseDto { //recent, movie 메인페이지
-    private int commentCount;
+    private Long commentCount;
 
     private MovieAndRecentMainPageResponseDto(Article article) {
         super(article);
-        this.commentCount = article.getComments().size();
+        this.commentCount = article.getComments()
+                .stream().filter(comment -> comment.getStatus() == CommentStatus.ACTIVE).count();
     }
 
     public static MovieAndRecentMainPageResponseDto from(Article article) {

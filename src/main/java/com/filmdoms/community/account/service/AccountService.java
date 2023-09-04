@@ -21,7 +21,6 @@ import com.filmdoms.community.account.repository.FavoriteMovieRepository;
 import com.filmdoms.community.account.repository.MovieRepository;
 import com.filmdoms.community.account.repository.RefreshTokenRepository;
 import com.filmdoms.community.account.service.utils.RedisUtil;
-import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.PostStatus;
 import com.filmdoms.community.article.data.entity.Article;
 import com.filmdoms.community.article.repository.ArticleRepository;
@@ -29,11 +28,14 @@ import com.filmdoms.community.article.service.ArticleService;
 import com.filmdoms.community.comment.data.dto.constant.CommentStatus;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.repository.CommentRepository;
+import com.filmdoms.community.comment.repository.CommentVoteRepository;
+import com.filmdoms.community.comment.service.CommentService;
 import com.filmdoms.community.config.jwt.JwtTokenProvider;
 import com.filmdoms.community.exception.ApplicationException;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.file.data.entity.File;
 import com.filmdoms.community.file.repository.FileRepository;
+import com.filmdoms.community.vote.repository.VoteRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +72,9 @@ public class AccountService {
     private final DefaultProfileImage defaultProfileImage;
     private final ArticleService articleService;
     private final AccountStatusCheck accountStatusCheck;
+    private final CommentVoteRepository commentVoteRepository;
+    private final CommentService commentService;
+    private final VoteRepository voteRepository;
 
     @Transactional
     public LoginDto login(String email, String password) {
@@ -358,17 +363,20 @@ public class AccountService {
 
     @Transactional
     public void deleteExpiredAccount(Account account) {
+        // 관심영화 삭제 후 작성 글 삭제
+        // 작성 글 삭제시 작성 글과 작성되어있는 댓글, 추천이 삭제됨
+        // 자신이 작성하지 않은 다른 글에 추천한 vote 삭제
+        // 작성 댓글 삭제 -> 해당 댓글에 좋아요 누른 vote도 같이 삭제
+        // 해당 계정이 다른 사람 댓글에 좋아요 누른 Vote 삭제
         List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByAccount(account);
         favoriteMovieRepository.deleteAll(favoriteMovies);
-
-        //Todo vote 도 삭제 필요
         List<Article> articles = articleRepository.findByAuthor(account);
+        articles.stream().forEach(article -> articleService.deleteArticle(article.getCategory(), article.getId(), AccountDto.from(account)));
+        voteRepository.deleteByAccount(account);
 
-        for (Article article : articles) {
-            Category category = article.getCategory();
-            Long id = article.getId();
-            articleService.deleteArticle(category, id, AccountDto.from(account));
-        }
+        List<Comment> commentList = commentRepository.findByAuthor(account);
+        commentList.stream().forEach(comment -> commentService.deleteComment(comment.getId(), AccountDto.from(account)));
+        commentVoteRepository.deleteByAccount(account);
         accountRepository.delete(account);
 
 

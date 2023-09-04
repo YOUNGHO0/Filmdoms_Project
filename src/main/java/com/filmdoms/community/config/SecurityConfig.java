@@ -48,6 +48,8 @@ public class SecurityConfig {
                         // localhost:8080/h2-console 사용하기 위한 설정
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/oauth").hasRole("GUEST")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/account/oauth/profile").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/account/oauth/profile/email").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/account/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/account/profile").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/account/profile/article").authenticated()

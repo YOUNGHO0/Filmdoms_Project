@@ -29,24 +29,18 @@ public class CommentResponseDto {
         this.updatedAt = ZonedDateTime.of(comment.getDateLastModified(), ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.isManagerComment = comment.isManagerComment();
 
-        if (comment.getStatus() == CommentStatus.ACTIVE) {
-            this.content = comment.getContent();
-            this.status = comment.getStatus();
-            this.likes = comment.getVoteCount();
-            if (comment.getAuthor() != null)
-                this.author = DetailPageAccountResponseDto.from(comment.getAuthor());
-            else
-                this.author = null;
-        } else {
+        if (comment.getAuthor() == null || comment.getStatus() == CommentStatus.DELETED) {
             this.content = "삭제된 댓글입니다.";
             this.status = comment.getStatus();
             this.likes = 0;
             this.author = DetailPageAccountResponseDto.makeMockAccount();
+        } else {
+            this.content = comment.getContent();
+            this.status = comment.getStatus();
+            this.likes = comment.getVoteCount();
+            this.author = DetailPageAccountResponseDto.from(comment.getAuthor());
         }
-
-
     }
-
     public static CommentResponseDto from(Comment comment) {
         return new CommentResponseDto(comment);
     }

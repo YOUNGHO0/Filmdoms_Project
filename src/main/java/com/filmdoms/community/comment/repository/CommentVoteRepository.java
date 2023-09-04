@@ -1,5 +1,6 @@
 package com.filmdoms.community.comment.repository;
 
+import com.filmdoms.community.account.data.entity.Account;
 import com.filmdoms.community.comment.data.entity.Comment;
 import com.filmdoms.community.comment.data.entity.CommentVote;
 import com.filmdoms.community.comment.data.entity.CommentVoteKey;
@@ -19,4 +20,10 @@ public interface CommentVoteRepository extends JpaRepository<CommentVote, Commen
     @Query("DELETE FROM CommentVote cv " +
             "WHERE cv.voteKey.comment IN :comments")
     void deleteByComments(@Param("comments") List<Comment> comments);
+
+    @Modifying
+    @Query("DELETE FROM CommentVote cv " +
+            "WHERE cv.voteKey.account =:account")
+    void deleteByAccount(@Param("account") Account account);
+
 }
