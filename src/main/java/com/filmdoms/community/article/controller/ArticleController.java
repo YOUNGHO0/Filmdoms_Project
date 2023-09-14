@@ -3,6 +3,7 @@ package com.filmdoms.community.article.controller;
 import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.article.data.dto.request.update.ParentUpdateRequestDto;
+import com.filmdoms.community.article.repository.ArticleQuerydslRepository;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
@@ -39,6 +40,8 @@ public class ArticleController {
     private final ArticleService articleService;
     private final InitService initService;
     private final InitService2 initService2;
+    private final ArticleQuerydslRepository articleQuerydslRepository;
+
 
     @PostMapping("/article")
     public Response<ArticleCreateResponseDto> createArticle(@RequestBody @Valid ParentCreateRequestDto parentCreateRequestDto, @AuthenticationPrincipal AccountDto accountDto) {
@@ -119,5 +122,10 @@ public class ArticleController {
     public Response getTopPosts() {
         List<TopFiveArticleResponseDto> topFiveArticles = articleService.getTopFiveArticles();
         return Response.success(topFiveArticles);
+    }
+
+    @GetMapping("/article/testQuerydsl")
+    public Response getLists() {
+        return Response.success(  articleQuerydslRepository.getArticles());
     }
 }
