@@ -25,10 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -211,5 +208,22 @@ public class CommentService {
                 .voteCount(voteCount)
                 .isVoted(pressedResult)
                 .build();
+    }
+
+    public void deleteArticleComments(Article article) {
+        List<Comment> comments = commentRepository.findByArticle(article);
+        //댓글의 연관 Vote 객체 삭제
+        deleteCommentsVotes(comments);
+
+        Map<Boolean, List<Comment>> isParentCommentToCommentList = comments.stream()
+                .collect(Collectors.partitioningBy(comment -> comment.getParentComment() == null));
+        //자식 댓글부터 삭제
+        commentRepository.deleteAll(isParentCommentToCommentList.get(false));
+        //부모 댓글 삭제
+        commentRepository.deleteAll(isParentCommentToCommentList.get(true));
+    }
+
+    private void deleteCommentsVotes(List<Comment> comments) {
+        commentVoteRepository.deleteByComments(comments);
     }
 }

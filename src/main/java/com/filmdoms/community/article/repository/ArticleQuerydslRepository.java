@@ -2,7 +2,7 @@ package com.filmdoms.community.article.repository;
 
 import com.filmdoms.community.article.data.dto.response.boardlist.MovieListResponseResponseDto;
 import com.filmdoms.community.article.data.entity.Article;
-import com.filmdoms.community.file.data.entity.QFile;
+
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

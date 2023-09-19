@@ -4,6 +4,7 @@ import com.filmdoms.community.account.data.dto.AccountDto;
 import com.filmdoms.community.account.data.dto.response.Response;
 import com.filmdoms.community.article.data.dto.request.update.ParentUpdateRequestDto;
 import com.filmdoms.community.article.repository.ArticleQuerydslRepository;
+import com.filmdoms.community.article.service.*;
 import com.filmdoms.community.exception.ErrorCode;
 import com.filmdoms.community.article.data.constant.Category;
 import com.filmdoms.community.article.data.constant.Tag;
@@ -15,9 +16,6 @@ import com.filmdoms.community.article.data.dto.response.detail.ArticleDetailResp
 import com.filmdoms.community.article.data.dto.response.mainpage.MovieAndRecentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.mainpage.ParentMainPageResponseDto;
 import com.filmdoms.community.article.data.dto.response.trending.TopFiveArticleResponseDto;
-import com.filmdoms.community.article.service.ArticleService;
-import com.filmdoms.community.article.service.InitService;
-import com.filmdoms.community.article.service.InitService2;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,17 +39,20 @@ public class ArticleController {
     private final InitService initService;
     private final InitService2 initService2;
     private final ArticleQuerydslRepository articleQuerydslRepository;
+    private final ArticleServiceFactory articleServiceFactory;
 
 
     @PostMapping("/article")
     public Response<ArticleCreateResponseDto> createArticle(@RequestBody @Valid ParentCreateRequestDto parentCreateRequestDto, @AuthenticationPrincipal AccountDto accountDto) {
-        ArticleCreateResponseDto responseDto = articleService.createArticle(parentCreateRequestDto, accountDto);
+        ArticleExecutor executableService = articleServiceFactory.getArticleExecutor(parentCreateRequestDto.getCategory());
+        ArticleCreateResponseDto responseDto = executableService.createArticle(parentCreateRequestDto, accountDto);
         return Response.success(responseDto);
     }
 
     @GetMapping("/main/{category}")
     public Response<List<? extends ParentMainPageResponseDto>> readMain(@PathVariable Category category, @RequestParam(defaultValue = "5") int limit) {
-        List<? extends ParentMainPageResponseDto> dtoList = articleService.getMainPageDtoList(category, limit);
+        ArticleExecutor executableService = articleServiceFactory.getArticleExecutor(category);
+        List<? extends ParentMainPageResponseDto> dtoList = executableService.getMainPageDtoList(category, limit);
         return Response.success(dtoList);
     }
 
@@ -63,19 +64,22 @@ public class ArticleController {
 
     @GetMapping("/article/{category}/{articleId}")
     public Response<ArticleDetailResponseDto> readDetail(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
-        ArticleDetailResponseDto dto = articleService.getDetail(category, articleId, accountDto);
+        ArticleExecutor executableService = articleServiceFactory.getArticleExecutor(category);
+        ArticleDetailResponseDto dto = executableService.getDetail(category, articleId, accountDto);
         return Response.success(dto);
     }
 
     @PutMapping("/article/{category}/{articleId}")
     public Response<Void> update(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto, @RequestBody @Valid ParentUpdateRequestDto requestDto) {
-        articleService.updateArticle(category, articleId, accountDto, requestDto);
+        ArticleExecutor executableService = articleServiceFactory.getArticleExecutor(category);
+        executableService.updateArticle(category,articleId,accountDto,requestDto);
         return Response.success();
     }
 
     @DeleteMapping("/article/{category}/{articleId}")
     public Response<Void> delete(@PathVariable Category category, @PathVariable Long articleId, @AuthenticationPrincipal AccountDto accountDto) {
-        articleService.deleteArticle(category, articleId, accountDto);
+        ArticleExecutor executableService = articleServiceFactory.getArticleExecutor(category);
+        executableService.deleteArticle(category,articleId,accountDto);
         return Response.success();
     }
 
@@ -107,7 +111,8 @@ public class ArticleController {
         if (pageable.getPageSize() > 50)
             pageable = PageRequest.of(pageable.getPageNumber(), 24, Sort.by(Sort.Direction.DESC, "id")); //Article의 id로 역정렬
 
-        Page<? extends ParentBoardListResponseDto> boardList = articleService.getBoardList(category, tag, pageable);
+        ArticleExecutor executableService = articleServiceFactory.getArticleExecutor(category);
+        Page<? extends ParentBoardListResponseDto> boardList = executableService.getBoardList(category, tag, pageable);
 
         if (boardList == null)
             return Response.error(ErrorCode.CATEGORY_NOT_FOUND.getMessage());

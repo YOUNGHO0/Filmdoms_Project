@@ -56,4 +56,19 @@ public class VoteService {
                 .isVoted(pressedResult)
                 .build();
     }
+
+    public void deleteArticleVotes(Article article) {
+        voteRepository.deleteByArticle(article);
+    }
+
+    public boolean getVoteStatusOfAccountInArticle(AccountDto accountDto, Article article) { //해당 Account가 Article을 추천했는지 boolean으로 반환
+        if (accountDto != null) {
+            VoteKey voteKey = VoteKey.builder()
+                    .account(accountRepository.getReferenceById(accountDto.getId()))
+                    .article(article)
+                    .build();
+            return voteRepository.findByVoteKey(voteKey).isPresent();
+        }
+        return false; //로그인하지 않은 익명 사용자의 경우 항상 false를 반환
+    }
 }
