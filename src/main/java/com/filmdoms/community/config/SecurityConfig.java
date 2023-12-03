@@ -93,7 +93,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(Arrays.asList("https://film-doms.vercel.app", "http://localhost:*", "https://filmdoms.studio"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://m.filmdoms.studio","https://film-doms.vercel.app", "http://localhost:*", "https://filmdoms.studio"));
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
